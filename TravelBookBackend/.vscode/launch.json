@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:TravelBookBackend}",
+            "name": "Debug TravelBookBackend",
+            "target": "TravelBookBackend",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug TravelBookBackend"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:TravelBookBackend}",
+            "name": "Release TravelBookBackend",
+            "target": "TravelBookBackend",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release TravelBookBackend"
+        }
+    ]
+}
