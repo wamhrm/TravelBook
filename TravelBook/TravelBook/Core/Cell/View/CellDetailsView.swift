@@ -8,6 +8,7 @@
 import SwiftUI
 import Combine
 import Kingfisher
+import UIKit
 
 struct CellDetailsView: View {
     @StateObject private var vm: CellDetailsViewModel
@@ -74,7 +75,7 @@ struct CellDetailsView: View {
                             }
                         }
                     }
-                    .frame(height: 225)
+                    .frame(height: UIDevice.isProMax ? 262 : 225)
                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .automatic))
                     .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .never))
                     .clipShape(RoundedRectangle(cornerRadius: 10))
@@ -84,7 +85,7 @@ struct CellDetailsView: View {
                 .alert("Пожалуйста, авторизуйтесь или зарегистрируйтесь", isPresented: $showAuthAlert) {
                     Button("OK", role: .cancel) {}
                 }
-                .padding(.top, -116)
+                .padding(.top, UIDevice.isProMax ? -153 : -116)
             }
         }
     }

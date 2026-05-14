@@ -8,29 +8,30 @@
 import SwiftUI
 
 struct SignInAlreadyHaveAccountView: View {
+    @Environment(\.displayScale) var displayScale
     let type: SignInAlreadyHaveAccountType
     let onTapHandler: () -> Void
     
     var body: some View {
-        Button(action: onTapHandler) {
-            HStack {
-                Spacer()
-                
-                Text(type.rawValue)
-                    .foregroundStyle(.blackAndWhite)
-                
-                Button {
-                    
-                } label: {
-                    Text(type.buttonTitle)
-                        .foregroundStyle(.blue)
-                        .bold()
-                }
-                
-                Spacer()
+        HStack {
+            Spacer()
+            
+            Text(type.rawValue)
+                .font(UIDevice.isProMax ? .callout : .footnote)
+                .foregroundStyle(.blackAndWhite)
+            
+            Button {
+                onTapHandler()
+            } label: {
+                Text(type.buttonTitle)
+                    .font(UIDevice.isProMax ? .callout : .footnote)
+                    .foregroundStyle(.blue)
+                    .bold()
             }
-            .font(.callout)
+            
+            Spacer()
         }
+        .font(.callout)
     }
 }
 

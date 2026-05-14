@@ -35,6 +35,7 @@ struct SignInCreateAccountButtonView: View {
                         .foregroundStyle(type == .signIn ? .white : .black)
                 }
             }
+            .font(UIDevice.isProMax ? .callout : .footnote)
             .bold()
             .padding()
             .frame(maxWidth: .infinity)

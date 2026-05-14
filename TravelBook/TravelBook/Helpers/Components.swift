@@ -15,7 +15,7 @@ struct Components {
             .fontWeight(.semibold)
             .padding(.leading, 4)
     }
-    
+
     static func bigLogo() -> some View {
         Image("logo")
             .resizable()
@@ -28,7 +28,7 @@ struct Components {
                     .foregroundStyle(Color(uiColor: .systemGray3))
             }
     }
-    
+
     static func categoriesTheme(_ category: Categories, _ size: CategoriesThemeSizes) -> some View {
         Text(category.title)
             .font(size.font)
@@ -39,18 +39,18 @@ struct Components {
             .background(category.color.opacity(0.120))
             .clipShape(RoundedRectangle(cornerRadius: 6))
     }
-    
+
     static func backgroundColor() -> some View {
         return Color(uiColor: .background).ignoresSafeArea()
     }
-    
+
     static func readingTime(_ cell: CellModel, _ isFeed: Bool) -> some View {
         HStack {
             Image(systemName: "clock")
-            
+
             Text("\(cell.readingTime) мин чтения")
         }
-        .font(isFeed ? .footnote : .caption2)
+        .font(UIDevice.isProMax ? (isFeed ? .footnote : .caption) : (isFeed ? .footnote : .caption2))
         .fontWeight(.semibold)
         .foregroundStyle(isFeed ? .readingTimeTrue : .readingTimeFalse)
     }
@@ -58,7 +58,7 @@ struct Components {
 
 enum CategoriesThemeSizes {
     case feed, search
-    
+
     var font: Font {
         switch self {
             case .feed:

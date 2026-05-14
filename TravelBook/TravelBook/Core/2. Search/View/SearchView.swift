@@ -28,7 +28,7 @@ struct SearchView: View {
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 25) {
-                        VStack(alignment: .leading, spacing: 12) {
+                        VStack(alignment: .leading, spacing: UIDevice.isProMax ? 14 : 12) {
                             Components.headerView("Популярные запросы")
 
                             FlowLayout(spacing: 5) {
@@ -42,7 +42,7 @@ struct SearchView: View {
                         .padding(.top, 5)
                         .padding(.horizontal)
 
-                        VStack(alignment: .leading, spacing: 10) {
+                        VStack(alignment: .leading, spacing: UIDevice.isProMax ? 12 : 10) {
                             HStack {
                                 Components.headerView("Категории")
 
@@ -56,7 +56,7 @@ struct SearchView: View {
                                 }
                             }
 
-                            VStack(alignment: .leading, spacing: 5) {
+                            VStack(alignment: .leading, spacing: UIDevice.isProMax ? 8 : 7) {
                                 ForEach(vm.displayCategories.prefix(3)) { category in
                                     CategoriesCellView(category: category,
                                                        categoryCellsCount: category.cells.count) {
@@ -67,10 +67,10 @@ struct SearchView: View {
                         }
                         .padding(.horizontal)
 
-                        VStack(alignment: .leading, spacing: 10) {
+                        VStack(alignment: .leading, spacing: UIDevice.isProMax ? 12 : 10) {
                             Components.headerView("Посты")
 
-                            LazyVStack(alignment: .leading, spacing: 12) {
+                            LazyVStack(alignment: .leading, spacing: UIDevice.isProMax ? 12 : 10) {
                                 ForEach(vm.displayCells) { cell in
                                     BigCellView(cell: cell, isCellDetails: false)
                                         .padding()

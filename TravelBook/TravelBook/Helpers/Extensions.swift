@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import UIKit
 
 extension View {
     func bottomAreaPadding() -> some View {
@@ -17,14 +18,14 @@ extension View {
     func cellDetailsModifier() -> some View {
         self
             .scaledToFill()
-            .frame(width: 410, height: 285)
+            .frame(width: UIDevice.isProMax ? 447 : 410, height: UIDevice.isProMax ? 322 : 285)
             .clipped()
     }
 
     func categoryCellViewModifier() -> some View {
         self
             .scaledToFill()
-            .frame(width: 200, height: 300)
+            .frame(width: UIDevice.isProMax ? 237 : 200, height: UIDevice.isProMax ? 337 : 300)
             .clipped()
     }
 
@@ -38,7 +39,7 @@ extension View {
     func feedHeadCellModifier() -> some View {
         self
             .scaledToFill()
-            .frame(width: 370, height: 215)
+            .frame(width: UIDevice.isProMax ? 407 : 370, height: UIDevice.isProMax ? 252 : 215)
             .clipped()
             .opacity(0.35)
     }
@@ -46,7 +47,7 @@ extension View {
     func searchSmallCategoriesModifier() -> some View {
         self
             .scaledToFill()
-            .frame(width: 50, height: 50)
+            .frame(width: UIDevice.isProMax ? 50 : 45, height: UIDevice.isProMax ? 50 : 45)
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .clipped()
     }
@@ -60,10 +61,23 @@ extension View {
 
     func signInTextFieldModifier() -> some View {
         self
-            .padding(.vertical, 15)
-            .padding(.horizontal, 20)
+            .font(UIDevice.isProMax ? .callout : .footnote)
+            .padding(15)
             .background(.signInTextField)
             .clipShape(RoundedRectangle(cornerRadius: 10))
+    }
+}
+
+extension UIDevice {
+    static var isProMax: Bool {
+        guard let screen = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first?.screen
+        else {
+            return false
+        }
+
+        return screen.nativeBounds.height >= 2796
     }
 }
 
@@ -76,8 +90,3 @@ extension Date {
     }
 }
 
-extension ColorScheme {
-    var isLight: Bool {
-        self == .light
-    }
-}

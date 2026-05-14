@@ -6,17 +6,19 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct SignInCreateAccountView: View {
     @ObservedObject var vm: ProfileViewModel
     let type: SignInCreateAccountType
     @Binding var showSignInCreate: Bool
+    let onTapHandler: () -> Void
     
     var body: some View {
         VStack(alignment: .leading, spacing: 25) {
             HStack {
                 Text(type == .signIn ? "Войти" : "Создать аккаунт")
-                    .font(.title)
+                    .font(.title2)
                     .fontWeight(.semibold)
                 
                 Spacer()
@@ -27,8 +29,11 @@ struct SignInCreateAccountView: View {
                     }
                 } label: {
                     Image(systemName: "xmark")
+                        .imageScale(.small)
+                        .foregroundStyle(.blackAndWhite)
+                        .fontWeight(.semibold)
                         .padding(10)
-                        .background(Color(.systemGray6))
+                        .background(.signInCreateXmarkButton)
                         .clipShape(Circle())
                 }
             }
@@ -40,7 +45,7 @@ struct SignInCreateAccountView: View {
                     SignInCreateAccountButtonView(type: .signIn, signedOut: false) {
                         vm.signIn()
                     }
-                    .padding(.top, 5)
+                    .padding(.top, 30)
                 }
             } else {
                 VStack(spacing: 10) {
@@ -50,7 +55,7 @@ struct SignInCreateAccountView: View {
                     SignInCreateAccountButtonView(type: .createAccount, signedOut: false) {
                         vm.createAccount()
                     }
-                    .padding(.top, 5)
+                    .padding(.top, 30)
                 }
             }
             
@@ -59,6 +64,7 @@ struct SignInCreateAccountView: View {
                     .frame(height: 0.5)
                 
                 Text("или")
+                    .font(UIDevice.isProMax ? .callout : .footnote)
                 
                 Rectangle()
                     .frame(height: 0.5)
@@ -77,16 +83,16 @@ struct SignInCreateAccountView: View {
             
             if type == .signIn {
                 SignInAlreadyHaveAccountView(type: .signIn) {
-                    
+                    onTapHandler()
                 }
             } else {
                 SignInAlreadyHaveAccountView(type: .alreadyHaveAccount) {
-                    
+                    onTapHandler()
                 }
             }
         }
         .frame(maxWidth: .infinity)
-        .frame(height: type == .signIn ? 520 : 610)
+        .frame(height: type == .signIn ? (UIDevice.isProMax ? 530 : 500) : (UIDevice.isProMax ? 610 : 580))
         .padding(25)
         .background(RoundedRectangle(cornerRadius: 15) .fill(.backgroundWithShape))
         .padding(.horizontal)
@@ -102,7 +108,9 @@ enum SignInCreateAccountType: String {
     NavigationStack {
         ZStack {
             Components.backgroundColor()
-            SignInCreateAccountView(vm: ProfileViewModel(authService: AuthService()), type: .createAccount, showSignInCreate: .constant(true))
+            SignInCreateAccountView(vm: ProfileViewModel(authService: AuthService()), type: .createAccount, showSignInCreate: .constant(true)) {
+                
+            }
         }
         .navigationTitle("Профиль")
         .navigationBarTitleDisplayMode(.inline)
