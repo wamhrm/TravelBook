@@ -11,28 +11,28 @@ struct SignedOutView: View {
     @ObservedObject var vm: ProfileViewModel
     @State var showSignIn = false
     @State var showCreateAccount = false
-    
+
     var body: some View {
         ZStack {
             Components.backgroundColor()
-                
+
             VStack(spacing: 55) {
                 VStack(spacing: 25) {
                     Components.bigLogo()
-                        
+
                     Text("Ваш профиль путешественника")
                         .font(.title2)
                         .bold()
                         .multilineTextAlignment(.center)
                 }
-                    
+
                 VStack(spacing: 12) {
                     SignInCreateAccountButtonView(type: .signIn, signedOut: true) {
                         withAnimation(.spring) {
                             showSignIn.toggle()
                         }
                     }
-                        
+
                     SignInCreateAccountButtonView(type: .createAccount, signedOut: true) {
                         withAnimation(.spring) {
                             showCreateAccount.toggle()
@@ -47,9 +47,15 @@ struct SignedOutView: View {
         .navigationBarTitleDisplayMode(.inline)
         .overlay {
             if showSignIn {
-                SignInCreateAccountView(vm: vm, type: .signIn, showSignInCreate: $showSignIn)
+                SignInCreateAccountView(vm: vm, type: .signIn, showSignInCreate: $showSignIn) {
+                    showSignIn = false
+                    showCreateAccount = true
+                }
             } else if showCreateAccount {
-                SignInCreateAccountView(vm: vm, type: .createAccount, showSignInCreate: $showCreateAccount)
+                SignInCreateAccountView(vm: vm, type: .createAccount, showSignInCreate: $showCreateAccount) {
+                    showCreateAccount = false
+                    showSignIn = true
+                }
             }
         }
         .ignoresSafeArea(.keyboard)

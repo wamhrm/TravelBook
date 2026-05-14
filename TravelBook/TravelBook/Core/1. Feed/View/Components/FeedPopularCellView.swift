@@ -7,9 +7,9 @@
 
 import SwiftUI
 import Kingfisher
+import UIKit
 
 struct FeedPopularCellView: View {
-    @Environment(\.colorScheme) private var colorScheme
     let cell: CellModel
     let onTapHandler: () -> Void
 
@@ -26,13 +26,13 @@ struct FeedPopularCellView: View {
                             ProgressView()
                         }
                         .resizable()
-                        .frame(height: 140)
+                        .frame(height: UIDevice.isProMax ? 177 : 140)
                         .clipped()
                 } else {
                     Image("test")
                         .resizable()
                         .scaledToFill()
-                        .frame(height: 140)
+                        .frame(height: UIDevice.isProMax ? 177 : 140)
                         .clipped()
                 }
 
@@ -40,7 +40,7 @@ struct FeedPopularCellView: View {
                     Components.categoriesTheme(cell.category, .feed)
 
                     Text(cell.title)
-                        .font(.system(size: 13))
+                        .font(.system(size: UIDevice.isProMax ? 14 : 13))
                         .foregroundStyle(.title)
                         .fontWeight(.semibold)
                         .lineLimit(2)
@@ -50,7 +50,7 @@ struct FeedPopularCellView: View {
 
                 Spacer()
             }
-            .frame(width: 230, height: 250)
+            .frame(width: UIDevice.isProMax ? 267 : 230, height: UIDevice.isProMax ? 287 : 250)
             .backgroundWithShape(15)
         }
     }

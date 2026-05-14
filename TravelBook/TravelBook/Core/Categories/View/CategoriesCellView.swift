@@ -16,7 +16,7 @@ struct CategoriesCellView: View {
     private var displayCategories: Bool {
         category.image.isEmpty
     }
-    
+
     var body: some View {
         Button(action: onTapHandler) {
             HStack(alignment: .center, spacing: 15) {
@@ -36,7 +36,7 @@ struct CategoriesCellView: View {
                 VStack(alignment: .leading, spacing: 7) {
                     Text(category.type.title)
                         .foregroundStyle(.blackAndWhite)
-                        .font(.callout)
+                        .font(UIDevice.isProMax ? .callout : .footnote)
                         .bold()
                     
                     if categoryCellsCount == 0 {
@@ -44,8 +44,8 @@ struct CategoriesCellView: View {
                             .font(.footnote)
                             .foregroundStyle(.gray)
                     } else {
-                        Text("\(categoryCellsCount) статей")
-                            .font(.caption)
+                        Text(articlesCountLabel)
+                            .font(UIDevice.isProMax ? .caption : .caption2)
                             .foregroundStyle(.gray)
                             .fontWeight(.medium)
                     }
@@ -55,16 +55,35 @@ struct CategoriesCellView: View {
                 
                 Text("Перейти")
                     .foregroundStyle(.title)
-                    .font(.system(size: 14))
+                    .font(.system(size: UIDevice.isProMax ? 14 : 12))
                     .fontWeight(.semibold)
-                    .padding(.vertical, 8)
-                    .padding(.horizontal, 12)
+                    .padding(.vertical, UIDevice.isProMax ? 8 : 6)
+                    .padding(.horizontal, UIDevice.isProMax ? 12 : 10)
                     .background(.categoriesCellBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 5))
             }
             .padding(12)
             .backgroundWithShape(12)
         }
+    }
+}
+
+extension CategoriesCellView {
+    private var articlesCountLabel: String {
+        let n = categoryCellsCount
+        let mod10 = n % 10
+        let mod100 = n % 100
+        let word: String
+        
+        if mod10 == 1, mod100 != 11 {
+            word = "статья"
+        } else if (2...4).contains(mod10), !(12...14).contains(mod100) {
+            word = "статьи"
+        } else {
+            word = "статей"
+        }
+        
+        return "\(n) \(word)"
     }
 }
 

@@ -17,7 +17,7 @@ struct SignedInView: View {
             Components.backgroundColor()
 
             ScrollView {
-                VStack(alignment: .leading, spacing: 15) {
+                VStack(alignment: .leading, spacing: UIDevice.isProMax ? 16 : 14) {
                     VStack(spacing: 15) {
                         Text(user.name.prefix(2).uppercased())
                             .font(.title)
@@ -52,7 +52,7 @@ struct SignedInView: View {
                         Text("""
                              "Путешествия - это не только места, которые вы посещаете, но и моменты, которые остаются с вами навсегда."
                              """)
-                        .font(.footnote)
+                        .font(UIDevice.isProMax ? .callout : .footnote)
                         .italic()
                         .fontWeight(.medium)
                     }
@@ -66,7 +66,7 @@ struct SignedInView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 15))
 
 
-                    VStack(alignment: .leading, spacing: 10) {
+                    VStack(alignment: .leading, spacing: UIDevice.isProMax ? 12 : 10) {
                         ProfileCellView(type: .appearance) {
                             vm.profileRoutes.append(.appearance)
                         }

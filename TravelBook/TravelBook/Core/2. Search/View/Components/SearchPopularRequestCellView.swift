@@ -10,14 +10,14 @@ import SwiftUI
 struct SearchPopularRequestCellView: View {
     let request: String
     let onTapHandler: () -> Void
-    
+
     var body: some View {
         Button {
             onTapHandler()
         } label: {
             Text(request)
                 .foregroundStyle(.blackAndWhite)
-                .font(.caption)
+                .font(UIDevice.isProMax ? .footnote : .caption)
                 .fontWeight(.medium)
                 .padding(.vertical, 10)
                 .padding(.horizontal, 12)
@@ -29,6 +29,6 @@ struct SearchPopularRequestCellView: View {
 
 #Preview {
     SearchPopularRequestCellView(request: "Поезда на Бали") {
-        
+
     }
 }

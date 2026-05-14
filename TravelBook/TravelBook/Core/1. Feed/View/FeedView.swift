@@ -30,8 +30,8 @@ struct FeedView: View {
                     ProgressView()
                 } else {
                     ScrollView {
-                        VStack(alignment: .leading, spacing: 30) {
-                            VStack(alignment: .leading, spacing: 12) {
+                        VStack(alignment: .leading, spacing: UIDevice.isProMax ? 32 : 30) {
+                            VStack(alignment: .leading, spacing: UIDevice.isProMax ? 12 : 10) {
                                 HStack(spacing: 10) {
                                     Image("logo")
                                         .resizable()
@@ -43,7 +43,7 @@ struct FeedView: View {
                                         Text("УЧЕБНИК")
                                         Text("ПУТЕШЕСТВИЙ")
                                     }
-                                    .font(.footnote)
+                                    .font(UIDevice.isProMax ? .system(size: 14) : .footnote)
                                     .fontDesign(.monospaced)
                                     .fontWeight(.heavy)
 
@@ -56,7 +56,7 @@ struct FeedView: View {
                             }
                             .padding(.horizontal)
 
-                            VStack(alignment: .leading, spacing: 10) {
+                            VStack(alignment: .leading, spacing: UIDevice.isProMax ? 12 : 10) {
                                 HStack {
                                     Components.headerView("Популярное")
 
@@ -72,7 +72,7 @@ struct FeedView: View {
                                 .padding(.horizontal)
 
                                 ScrollView(.horizontal) {
-                                    HStack(spacing: 12) {
+                                    HStack(spacing: UIDevice.isProMax ? 12 : 10) {
                                         ForEach(vm.displayPopularCells.prefix(5)) { cell in
                                             FeedPopularCellView(cell: cell) {
                                                 vm.feedRoutes.append(.bigCell(cell))
@@ -83,7 +83,7 @@ struct FeedView: View {
                                 }
                             }
 
-                            VStack(alignment: .leading, spacing: 10) {
+                            VStack(alignment: .leading, spacing: UIDevice.isProMax ? 12 : 10) {
                                 Components.headerView("Лента")
 
                                 LazyVStack(alignment: .leading, spacing: 12) {
@@ -143,7 +143,7 @@ extension FeedView {
     let contentService = ContentService()
     let favoritesService = FavoritesService()
     let vm = FeedViewModel(contentService: contentService, favoritesService: favoritesService)
-    
+
     return NavigationStack {
         FeedView(vm: vm, authService: AuthService(), favoritesService: favoritesService)
     }

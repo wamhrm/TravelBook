@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Kingfisher
+import UIKit
 
 struct FeedHeadView: View {
     @Environment(\.colorScheme) var colorScheme
@@ -38,16 +39,16 @@ struct FeedHeadView: View {
                 VStack(alignment: .leading) {
                     VStack(alignment: .leading, spacing: 15) {
                         Text("УЧЕБНИК")
-                            .font(.caption)
+                            .font(UIDevice.isProMax ? .caption : .caption2)
                             .foregroundStyle(.white)
                             .bold()
-                            .padding(7)
-                            .padding(.horizontal, 4)
+                            .padding(UIDevice.isProMax ? 7 : 6)
+                            .padding(.horizontal, UIDevice.isProMax ? 4 : 3)
                             .background(.feedBigPopular.opacity(colorScheme == .light ? 0.75 : 0.5))
                             .clipShape(RoundedRectangle(cornerRadius: 8))
                         
                         Text(cell.title)
-                            .font(.title2)
+                            .font(UIDevice.isProMax ? .title2 : .title3)
                             .foregroundStyle(.white)
                             .fontWeight(.bold)
                             .lineLimit(3)
@@ -60,7 +61,7 @@ struct FeedHeadView: View {
                 }
                 .padding(20)
             }
-            .frame(width: 370, height: 215)
+            .frame(width: UIDevice.isProMax ? 407 : 370, height: UIDevice.isProMax ? 252 : 215)
             .clipShape(RoundedRectangle(cornerRadius: 15))
         }
     }

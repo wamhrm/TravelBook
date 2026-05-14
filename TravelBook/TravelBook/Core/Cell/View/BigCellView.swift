@@ -12,14 +12,14 @@ struct BigCellView: View {
     let isCellDetails: Bool
     @Binding private var isFavorite: Bool
     private var onFavoriteTapHandler: (() -> Void)?
-    
+
     init(cell: CellModel, isCellDetails: Bool) {
         self.cell = cell
         self.isCellDetails = isCellDetails
         self._isFavorite = .constant(false)
         self.onFavoriteTapHandler = nil
     }
-    
+
     init(cell: CellModel, isCellDetails: Bool,
          isFavorite: Binding<Bool>, onFavoriteTapHandler: (() -> Void)?) {
         self.cell = cell
@@ -27,49 +27,46 @@ struct BigCellView: View {
         self._isFavorite = isFavorite
         self.onFavoriteTapHandler = onFavoriteTapHandler
     }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: isCellDetails ? 10 : 8) {
             if !isCellDetails {
                 Components.categoriesTheme(cell.category, .search)
             }
-            
+
             VStack(alignment: .leading, spacing: isCellDetails ? 12 : 10) {
                 Text(cell.title)
                     .font(isCellDetails ? .title2 : .default)
                     .fontWeight(.semibold)
                     .foregroundStyle(.title)
-                    .lineLimit(2)
+                    .lineLimit(isCellDetails ? .max : 2)
                     .multilineTextAlignment(.leading)
-                
+
                 Text(cell.subtitle)
-                    .font(isCellDetails ? .callout : .footnote)
+                    .font(isCellDetails ? (UIDevice.isProMax ? .default : .system(size: 14)) : (UIDevice.isProMax ? .system(size: 14) : .footnote))
                     .foregroundStyle(.subtitle)
-                    .fontWeight(.medium)
-                    .lineLimit(2)
+                    .lineLimit(isCellDetails ? .max : 2)
                     .multilineTextAlignment(.leading)
-                
+
                 HStack(spacing: isCellDetails ? 15 : 10) {
                     Text("\(cell.dateString)")
-                        .font(isCellDetails ? .default : .footnote)
-                    
+
                     Rectangle()
                         .foregroundStyle(.cellDivider)
-                        .frame(width: 1, height: 15)
-                    
+                        .frame(width: 1, height: UIDevice.isProMax ? 15 : 13)
+
                     Text("\(cell.readingTime) мин")
-                        .font(isCellDetails ? .default : .footnote)
-                    
+
                     if isCellDetails {
                         Rectangle()
                             .foregroundStyle(.cellDivider)
-                            .frame(width: 1, height: 17)
-                        
+                            .frame(width: 1, height: UIDevice.isProMax ? 15 : 13)
+
                         Button {
                             withAnimation {
                                 isFavorite.toggle()
                             }
-                            
+
                             onFavoriteTapHandler?()
                         } label: {
                             Image(systemName: isFavorite ? "heart.fill" : "heart")
@@ -78,20 +75,18 @@ struct BigCellView: View {
                         }
                     }
                 }
+                .font(isCellDetails ? (UIDevice.isProMax ? .system(size: 14) : .footnote) : (UIDevice.isProMax ? .footnote : .caption))
                 .foregroundStyle(.subtitle)
-                .font(.subheadline)
-                .fontWeight(.medium)
             }
             .padding(.top, 7)
-            
+
             Text(cell.description)
-                .font(isCellDetails ? .callout : .footnote)
-                .foregroundStyle(.subtitle)
-                .fontWeight(.medium)
+                .font(isCellDetails ? (UIDevice.isProMax ? .callout : .system(size: 14)) : (UIDevice.isProMax ? .callout : .footnote))
+                .foregroundStyle(.description)
                 .lineSpacing(6)
                 .padding(.vertical, 10)
-                .lineLimit(!isCellDetails ? 3 : .max)
-            
+                .lineLimit(isCellDetails ? .max : 3)
+
             if !isCellDetails {
                 Text("Читать далее")
                     .font(.subheadline)

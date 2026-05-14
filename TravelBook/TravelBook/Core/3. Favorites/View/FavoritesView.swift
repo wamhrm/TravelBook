@@ -32,7 +32,7 @@ struct FavoritesView: View {
                     }
                 } else {
                     ScrollView {
-                        LazyVStack(spacing: 15) {
+                        LazyVStack(spacing: UIDevice.isProMax ? 12 : 10) {
                             ForEach(vm.favorites) { cell in
                                 CompactCellView(cell: cell) {
                                     vm.favoritesRoutes.append(.cellDetails(cell))

@@ -33,7 +33,7 @@ struct ProfileCellView: View {
                 }
                 
                 Text(type.rawValue)
-                    .font(.callout)
+                    .font(UIDevice.isProMax ? .callout : .system(size: 14))
                     .foregroundStyle(.blackAndWhite)
                     .fontWeight(.medium)
                 
