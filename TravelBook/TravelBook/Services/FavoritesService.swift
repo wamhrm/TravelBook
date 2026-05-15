@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 protocol FavoritesServiceProtocol: ObservableObject {
-    var favoritesItems: CurrentValueSubject<[CellModel], Never> { get }
+    var favoriteCells: CurrentValueSubject<[CellModel], Never> { get }
     var likedIDs: CurrentValueSubject<Set<UUID>, Never> { get }
     
     func fetchFavorites() async
@@ -19,21 +19,35 @@ protocol FavoritesServiceProtocol: ObservableObject {
 
 @MainActor
 final class FavoritesService: FavoritesServiceProtocol {
-    var favoritesItems = CurrentValueSubject<[CellModel], Never>([])
+    var favoriteCells = CurrentValueSubject<[CellModel], Never>([])
     var likedIDs = CurrentValueSubject<Set<UUID>, Never>([])
     
+    private let authService: any AuthServiceProtocol
     private let baseURL = "\(Constants.address)/favorites"
+    
     private var cancellables = Set<AnyCancellable>()
+
+    init(authService: any AuthServiceProtocol) {
+        self.authService = authService
+    }
+    
+    deinit {
+        cancellables.removeAll()
+    }
     
     func fetchFavorites() async {
+        guard authService.authState.value != .signedOut else { return }
+
         do {
             let data = try await NetworkHelper.request(url: baseURL, method: "GET")
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = .iso8601
+            
             let cells = try decoder.decode([CellModel].self, from: data)
+            self.favoriteCells.send(cells)
             
-            updateLocalState(with: cells)
-            
+            let ids = Set(cells.compactMap { $0.id })
+            self.likedIDs.send(ids)
         } catch {
             print("Ошибка загрузки избранного: \(error)")
         }
@@ -71,38 +85,32 @@ final class FavoritesService: FavoritesServiceProtocol {
     }
     
     func clearFavorites() {
-        favoritesItems.send([])
+        favoriteCells.send([])
         likedIDs.send([])
     }
     
-    private func updateLocalState(with cells: [CellModel]) {
-        self.favoritesItems.send(cells)
-        let ids = Set(cells.compactMap { $0.id })
-        self.likedIDs.send(ids)
-    }
-    
     private func addToLocalState(cell: CellModel) {
-        var currentItems = favoritesItems.value
+        var currentItems = favoriteCells.value
         var currentIDs = likedIDs.value
         
         if !currentIDs.contains(cell.id!) {
             currentItems.append(cell)
             currentIDs.insert(cell.id!)
             
-            favoritesItems.send(currentItems)
+            favoriteCells.send(currentItems)
             likedIDs.send(currentIDs)
         }
     }
     
     private func removeFromLocalState(id: UUID) {
-        var currentItems = favoritesItems.value
+        var currentItems = favoriteCells.value
         var currentIDs = likedIDs.value
         
         if currentIDs.contains(id) {
             currentItems.removeAll { $0.id == id }
             currentIDs.remove(id)
             
-            favoritesItems.send(currentItems)
+            favoriteCells.send(currentItems)
             likedIDs.send(currentIDs)
         }
     }

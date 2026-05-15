@@ -31,7 +31,7 @@ struct CellDetailsView: View {
     var body: some View {
         ZStack {
             Components.backgroundColor()
-            
+
             ScrollView {
                 VStack(spacing: 17) {
                     if !isMock {
@@ -44,7 +44,7 @@ struct CellDetailsView: View {
                             .resizable()
                             .cellDetailsModifier()
                     }
-                    
+
                     BigCellView(cell: cell, isCellDetails: true, isFavorite: $vm.isFavorite) {
                         if case .signedIn = authService.authState.value {
                             vm.toggleFavorite()
@@ -75,7 +75,7 @@ struct CellDetailsView: View {
                             }
                         }
                     }
-                    .frame(height: UIDevice.isProMax ? 262 : 225)
+                    .frame(height: Components.isProMax(262, 225))
                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .automatic))
                     .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .never))
                     .clipShape(RoundedRectangle(cornerRadius: 10))
@@ -85,16 +85,19 @@ struct CellDetailsView: View {
                 .alert("Пожалуйста, авторизуйтесь или зарегистрируйтесь", isPresented: $showAuthAlert) {
                     Button("OK", role: .cancel) {}
                 }
-                .padding(.top, UIDevice.isProMax ? -153 : -116)
+                .padding(.top, Components.isProMax(-153, -116))
             }
         }
     }
 }
 
 #Preview {
-    NavigationStack {
+    let authService = AuthService()
+    let favoritesService = FavoritesService(authService: authService)
+
+    return NavigationStack {
         CellDetailsView(cell: .mock,
-                        authService: AuthService(),
-                        favoritesService: FavoritesService())
+                        authService: authService,
+                        favoritesService: favoritesService)
     }
 }

@@ -1,5 +1,5 @@
 //
-//  Networ.swift
+//  NetworkHelper.swift
 //  TravelBook
 //
 //  Created by ddorsat on 09.01.2026.

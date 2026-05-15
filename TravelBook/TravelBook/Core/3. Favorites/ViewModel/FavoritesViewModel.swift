@@ -22,20 +22,24 @@ enum FavoritesRoutes: Hashable {
 @MainActor
 final class FavoritesViewModel: ObservableObject {
     @Published var favoritesRoutes: [FavoritesRoutes] = []
-    @Published private(set) var favorites: [CellModel] = []
-    
+    @Published private(set) var favoriteCells: [CellModel] = []
+
     let favoritesService: any FavoritesServiceProtocol
     private let authService: any AuthServiceProtocol
-    
+
     private var cancellables = Set<AnyCancellable>()
-    
+
     init(authService: any AuthServiceProtocol,
          favoritesService: any FavoritesServiceProtocol) {
         self.authService = authService
         self.favoritesService = favoritesService
-        self.favorites = favoritesService.favoritesItems.value
-        
+        self.favoriteCells = favoritesService.favoriteCells.value
+
         setupSubscriptions()
+    }
+    
+    deinit {
+        cancellables.removeAll()
     }
 
     private func setupSubscriptions() {
@@ -50,22 +54,18 @@ final class FavoritesViewModel: ObservableObject {
                 }
             }
             .store(in: &cancellables)
-            
-        favoritesService.favoritesItems
-            .receive(on: RunLoop.main)
-            .assign(to: \.favorites, on: self)
-            .store(in: &cancellables)
-    }
-    
-    func handleFavoriteToggle(for cell: CellModel) {
-        favoritesService.toggleFavorite(for: cell)
-    }
 
-    func removeFromFavorites(cell: CellModel) {
-        favoritesService.toggleFavorite(for: cell)
+        favoritesService.favoriteCells
+            .receive(on: RunLoop.main)
+            .assign(to: \.favoriteCells, on: self)
+            .store(in: &cancellables)
     }
 
     func fetchFavorites() {
         Task { await favoritesService.fetchFavorites() }
+    }
+
+    func removeFromFavorites(cell: CellModel) {
+        favoritesService.toggleFavorite(for: cell)
     }
 }

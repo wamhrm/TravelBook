@@ -43,3 +43,12 @@ final class User: Model, Content, @unchecked Sendable, Authenticatable {
         self.dateRegistered = dateRegistered
     }
 }
+
+extension User {
+    func toDTO() -> UserDTO {
+        UserDTO(id: self.id,
+                name: self.name,
+                email: self.email,
+                dateRegistered: self.dateRegistered)
+    }
+}

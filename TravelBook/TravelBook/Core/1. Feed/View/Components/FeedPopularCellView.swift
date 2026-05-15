@@ -26,13 +26,13 @@ struct FeedPopularCellView: View {
                             ProgressView()
                         }
                         .resizable()
-                        .frame(height: UIDevice.isProMax ? 177 : 140)
+                        .frame(height: Components.isProMax(177, 140))
                         .clipped()
                 } else {
                     Image("test")
                         .resizable()
                         .scaledToFill()
-                        .frame(height: UIDevice.isProMax ? 177 : 140)
+                        .frame(height: Components.isProMax(177, 140))
                         .clipped()
                 }
 
@@ -40,7 +40,7 @@ struct FeedPopularCellView: View {
                     Components.categoriesTheme(cell.category, .feed)
 
                     Text(cell.title)
-                        .font(.system(size: UIDevice.isProMax ? 14 : 13))
+                        .font(.system(size: Components.isProMax(14, 13)))
                         .foregroundStyle(.title)
                         .fontWeight(.semibold)
                         .lineLimit(2)
@@ -50,7 +50,7 @@ struct FeedPopularCellView: View {
 
                 Spacer()
             }
-            .frame(width: UIDevice.isProMax ? 267 : 230, height: UIDevice.isProMax ? 287 : 250)
+            .frame(width: Components.isProMax(267, 230), height: Components.isProMax(287, 250))
             .backgroundWithShape(15)
         }
     }

@@ -43,7 +43,7 @@ struct BigCellView: View {
                     .multilineTextAlignment(.leading)
 
                 Text(cell.subtitle)
-                    .font(isCellDetails ? (UIDevice.isProMax ? .default : .system(size: 14)) : (UIDevice.isProMax ? .system(size: 14) : .footnote))
+                    .font(isCellDetails ? Components.isProMax(.default, .system(size: 14)) : Components.isProMax(.system(size: 14), .footnote))
                     .foregroundStyle(.subtitle)
                     .lineLimit(isCellDetails ? .max : 2)
                     .multilineTextAlignment(.leading)
@@ -53,14 +53,14 @@ struct BigCellView: View {
 
                     Rectangle()
                         .foregroundStyle(.cellDivider)
-                        .frame(width: 1, height: UIDevice.isProMax ? 15 : 13)
+                        .frame(width: 1, height: Components.isProMax(15, 13))
 
                     Text("\(cell.readingTime) мин")
 
                     if isCellDetails {
                         Rectangle()
                             .foregroundStyle(.cellDivider)
-                            .frame(width: 1, height: UIDevice.isProMax ? 15 : 13)
+                            .frame(width: 1, height: Components.isProMax(15, 13))
 
                         Button {
                             withAnimation {
@@ -75,13 +75,13 @@ struct BigCellView: View {
                         }
                     }
                 }
-                .font(isCellDetails ? (UIDevice.isProMax ? .system(size: 14) : .footnote) : (UIDevice.isProMax ? .footnote : .caption))
+                .font(isCellDetails ? Components.isProMax(.system(size: 14), .footnote) : Components.isProMax(.footnote, .caption))
                 .foregroundStyle(.subtitle)
             }
             .padding(.top, 7)
 
             Text(cell.description)
-                .font(isCellDetails ? (UIDevice.isProMax ? .callout : .system(size: 14)) : (UIDevice.isProMax ? .callout : .footnote))
+                .font(isCellDetails ? Components.isProMax(.callout, .system(size: 14)) : Components.isProMax(.callout, .footnote))
                 .foregroundStyle(.description)
                 .lineSpacing(6)
                 .padding(.vertical, 10)

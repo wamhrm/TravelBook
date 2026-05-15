@@ -15,7 +15,7 @@ struct CompactCellView: View {
 
     var body: some View {
         Button(action: onTapHandler) {
-            VStack(alignment: .leading, spacing: UIDevice.isProMax ? 17 : 15) {
+            VStack(alignment: .leading, spacing: Components.isProMax(17, 15)) {
                 Components.categoriesTheme(cell.category, .feed)
 
                 Text(cell.title)
@@ -25,7 +25,7 @@ struct CompactCellView: View {
                     .multilineTextAlignment(.leading)
 
                 Text(cell.description)
-                    .font(UIDevice.isProMax ? .system(size: 14) : .footnote)
+                    .font(Components.isProMax(.system(size: 14), .footnote))
                     .foregroundStyle(.deepGray)
                     .lineLimit(3)
                     .multilineTextAlignment(.leading)
@@ -33,7 +33,7 @@ struct CompactCellView: View {
                 Components.readingTime(cell, false)
             }
             .padding(15)
-            .frame(maxWidth: .infinity, maxHeight: UIDevice.isProMax ? 262 : 225)
+            .frame(maxWidth: .infinity, maxHeight: Components.isProMax(262, 225))
             .backgroundWithShape(15)
         }
     }

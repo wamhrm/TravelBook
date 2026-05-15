@@ -14,24 +14,25 @@ extension Application {
 
         let port = Int(Environment.get("POSTGRESQL_PORT") ?? "5432") ?? 5432
 
-        var tlsConfig = TLSConfiguration.makeClientConfiguration()
-        if let certPath = Environment.get("POSTGRESQL_CA_CERT_PATH"), !certPath.isEmpty {
-            guard FileManager.default.fileExists(atPath: certPath) else {
-                throw Abort(.internalServerError, reason: "PostgreSQL CA certificate not found")
-            }
-
+        let tls: PostgresConnection.Configuration.TLS
+        if let certPath = Environment.get("POSTGRESQL_CA_CERT_PATH"),
+           !certPath.isEmpty,
+           FileManager.default.fileExists(atPath: certPath) {
+            var tlsConfig = TLSConfiguration.makeClientConfiguration()
             tlsConfig.trustRoots = .file(certPath)
+            tlsConfig.certificateVerification = .fullVerification
+            let sslContext = try NIOSSLContext(configuration: tlsConfig)
+            tls = .require(sslContext)
+        } else {
+            tls = .disable
         }
-
-        tlsConfig.certificateVerification = .fullVerification
-        let sslContext = try NIOSSLContext(configuration: tlsConfig)
 
         let dbConfig = SQLPostgresConfiguration(hostname: hostname,
                                                 port: port,
                                                 username: username,
                                                 password: password,
                                                 database: database,
-                                                tls: .require(sslContext))
+                                                tls: tls)
 
         self.databases.use(.postgres(configuration: dbConfig), as: .psql)
     }

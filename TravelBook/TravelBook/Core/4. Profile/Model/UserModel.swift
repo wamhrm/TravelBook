@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct UserModel: Identifiable, Codable {
+struct UserModel: Identifiable, Codable, Equatable {
     let id: UUID
     let name: String
     let email: String
@@ -20,9 +20,13 @@ struct UserModel: Identifiable, Codable {
         self.dateRegistered = dateRegistered
     }
 
-    enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case id, name, email
         case dateRegistered = "date_registered"
+    }
+    
+    static func == (lhs: UserModel, rhs: UserModel) -> Bool {
+        return lhs.id == rhs.id
     }
 }
 

@@ -29,7 +29,7 @@ final class SearchViewModel: ObservableObject {
     @Published private(set) var categories: [CategoryModel] = []
     @Published private(set) var canLoadMore = false
 
-    let contentService: any ContentServiceProtocol
+    private let contentService: any ContentServiceProtocol
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -41,17 +41,13 @@ final class SearchViewModel: ObservableObject {
         !categories.isEmpty ? categories : CategoryModel.mockArray
     }
 
-    var displaySearchResults: [CellModel] {
-        if selectedCategory != nil { return searchResults }
-        return !searchResults.isEmpty ? searchResults : CellModel.mockArray
-    }
-    
     var displayCategoryResults: [CellModel] {
         return !categoryResults.isEmpty ? categoryResults : CellModel.mockArray
     }
 
     var popularRequests: [String] {
-        return ["Святыни и храмы", "Лучшие клубы Берлина", "Как обмануть джетлаг", "Безопасность"]
+        return ["Храмы", "Лучшие суши", "Как обмануть джетлаг",
+                "Кофе в Италии", "Винные дороги"]
     }
 
     init(contentService: any ContentServiceProtocol) {

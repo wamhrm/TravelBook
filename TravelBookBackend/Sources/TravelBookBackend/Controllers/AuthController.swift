@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  TravelBookServer
-//
-//  Created by ddorsat on 07.01.2026.
-//
-
 import Vapor
 import Fluent
 
@@ -16,7 +9,7 @@ struct AuthController: RouteCollection {
         auth.post("signIn", use: signIn)
     }
 
-    func createAccount(_ req: Request) async throws -> UserDTO {
+    private func createAccount(_ req: Request) async throws -> UserDTO {
         let data = try req.content.decode(CreateAccountRequest.self)
         let name = data.name.trimmingCharacters(in: .whitespacesAndNewlines)
         let email = normalizedEmail(data.email)
@@ -45,7 +38,7 @@ struct AuthController: RouteCollection {
         return user.toDTO()
     }
 
-    func signIn(_ req: Request) async throws -> TokenDTO {
+    private func signIn(_ req: Request) async throws -> TokenDTO {
         let signInData = try req.content.decode(SignInRequest.self)
         let email = normalizedEmail(signInData.email)
 

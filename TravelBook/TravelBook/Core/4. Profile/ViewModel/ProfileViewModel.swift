@@ -13,7 +13,7 @@ enum ProfileRoutes: Hashable {
     case appearance, aboutApp
 }
 
-enum AuthInput {
+private enum AuthInput {
     static let minPasswordLength = 6
     static let minNameLength = 2
     static let authActionDelay = Duration.seconds(1)
@@ -75,6 +75,7 @@ final class ProfileViewModel: ObservableObject {
                 try await authService.createAccount(name: trimmedName, email: trimmedEmail, password: password)
 
                 profileRoutes = []
+                clearFields()
             } catch {
                 handleError(error)
             }
@@ -101,6 +102,7 @@ final class ProfileViewModel: ObservableObject {
                 try await authService.signIn(email: trimmedEmail, password: password)
 
                 profileRoutes = []
+                clearFields()
             } catch {
                 handleError(error)
             }
@@ -130,6 +132,12 @@ final class ProfileViewModel: ObservableObject {
                 }
             }
         )
+    }
+    
+    private func clearFields() {
+        name = ""
+        email = ""
+        password = ""
     }
 
     private func handleError(_ error: Error) {

@@ -39,16 +39,16 @@ struct FeedHeadView: View {
                 VStack(alignment: .leading) {
                     VStack(alignment: .leading, spacing: 15) {
                         Text("УЧЕБНИК")
-                            .font(UIDevice.isProMax ? .caption : .caption2)
+                            .font(Components.isProMax(.caption, .caption2))
                             .foregroundStyle(.white)
                             .bold()
-                            .padding(UIDevice.isProMax ? 7 : 6)
-                            .padding(.horizontal, UIDevice.isProMax ? 4 : 3)
+                            .padding(Components.isProMax(7, 6))
+                            .padding(.horizontal, Components.isProMax(4, 3))
                             .background(.feedBigPopular.opacity(colorScheme == .light ? 0.75 : 0.5))
                             .clipShape(RoundedRectangle(cornerRadius: 8))
                         
                         Text(cell.title)
-                            .font(UIDevice.isProMax ? .title2 : .title3)
+                            .font(Components.isProMax(.title2, .title3))
                             .foregroundStyle(.white)
                             .fontWeight(.bold)
                             .lineLimit(3)
@@ -61,7 +61,7 @@ struct FeedHeadView: View {
                 }
                 .padding(20)
             }
-            .frame(width: UIDevice.isProMax ? 407 : 370, height: UIDevice.isProMax ? 252 : 215)
+            .frame(width: Components.isProMax(407, 370), height: Components.isProMax(252, 215))
             .clipShape(RoundedRectangle(cornerRadius: 15))
         }
     }

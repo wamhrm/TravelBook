@@ -10,18 +10,18 @@ import SwiftUI
 struct SearchResultsView: View {
     @ObservedObject var vm: SearchViewModel
     let onTapHandler: (CellModel) -> Void
-    
+
     var body: some View {
         ZStack {
             Components.backgroundColor()
-            
+
             if vm.searchResults.isEmpty {
                 ContentUnavailableView {
                     Label("Ничего не найдено", systemImage: "magnifyingglass")
                 }
             } else {
                 ScrollView {
-                    LazyVStack(alignment: .leading, spacing: 20) {
+                    LazyVStack(alignment: .leading, spacing: Components.isProMax(12, 10)) {
                         ForEach(vm.searchResults) { cell in
                             CompactCellView(cell: cell) {
                                 onTapHandler(cell)
@@ -41,7 +41,7 @@ struct SearchResultsView: View {
 #Preview {
     NavigationStack {
         SearchResultsView(vm: SearchViewModel(contentService: ContentService())) { _ in
-            
+
         }
     }
 }

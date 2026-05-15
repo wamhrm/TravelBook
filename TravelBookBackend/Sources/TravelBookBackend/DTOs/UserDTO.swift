@@ -6,7 +6,7 @@ struct UserDTO: Content {
     let email: String
     let dateRegistered: Date
 
-    enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case id, name, email
         case dateRegistered = "date_registered"
     }

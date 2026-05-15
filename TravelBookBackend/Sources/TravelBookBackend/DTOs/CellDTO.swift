@@ -37,7 +37,7 @@ struct CellDTO: Content {
         self.isHeadCell = isHeadCell
     }
 
-    enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case id, title, subtitle, description, category, date, image, images
         case readingTime = "reading_time"
         case isPopular = "is_popular"

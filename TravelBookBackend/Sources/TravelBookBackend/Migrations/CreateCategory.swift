@@ -7,7 +7,7 @@
 
 import Fluent
 
-struct CreateCategories: AsyncMigration {
+struct CreateCategory: AsyncMigration {
     func prepare(on database: any Database) async throws {
         try await database.schema("categories")
             .id()

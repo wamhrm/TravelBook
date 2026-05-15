@@ -9,7 +9,7 @@ import Vapor
 import Fluent
 import FluentSQL
 
-struct CreateCells: AsyncMigration {
+struct CreateCell: AsyncMigration {
     func prepare(on database: any Database) async throws {
         try await database.schema("cells")
             .id()

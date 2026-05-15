@@ -11,7 +11,7 @@ struct ContentController: RouteCollection {
         routes.get("search", use: searchCells)
     }
 
-    func getCells(_ req: Request) async throws -> [CellDTO] {
+    private func getCells(_ req: Request) async throws -> [CellDTO] {
         let page = req.query[Int.self, at: "page"] ?? 1
         let limit = req.query[Int.self, at: "limit"] ?? 6
         let rawSeed = req.query[String.self, at: "seed"] ?? ""
@@ -27,7 +27,7 @@ struct ContentController: RouteCollection {
         return cells.map { $0.toDTO() }
     }
 
-    func getPopularCells(_ req: Request) async throws -> [CellDTO] {
+    private func getPopularCells(_ req: Request) async throws -> [CellDTO] {
         let popularCells = try await Cell.query(on: req.db)
             .with(\.$category)
             .filter(\.$isPopular == true)
@@ -36,7 +36,7 @@ struct ContentController: RouteCollection {
         return popularCells.map { $0.toDTO() }
     }
 
-    func getCategories(_ req: Request) async throws -> [CategoryDTO] {
+    private func getCategories(_ req: Request) async throws -> [CategoryDTO] {
         let categories = try await Category.query(on: req.db)
             .with(\.$cells) { $0.with(\.$category) }
             .all()
@@ -44,13 +44,13 @@ struct ContentController: RouteCollection {
         return categories.map { $0.toDTO() }
     }
 
-    func getUsers(_ req: Request) async throws -> [UserDTO] {
+    private func getUsers(_ req: Request) async throws -> [UserDTO] {
         let users = try await User.query(on: req.db).all()
 
         return users.map { $0.toDTO() }
     }
 
-    func searchCells(_ req: Request) async throws -> [CellDTO] {
+    private func searchCells(_ req: Request) async throws -> [CellDTO] {
         let searchTerm = req.query[String.self, at: "search"]
         let categoryTerm = req.query[String.self, at: "category"]
         let query = Cell.query(on: req.db).with(\.$category)

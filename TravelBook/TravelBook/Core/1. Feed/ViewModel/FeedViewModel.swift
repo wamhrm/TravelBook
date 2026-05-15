@@ -23,9 +23,10 @@ final class FeedViewModel: ObservableObject {
     @Published private(set) var popularCells: [CellModel] = []
     @Published private(set) var canLoadMore = false
     @Published private(set) var pinnedHeadCell: CellModel?
+    @Published private(set) var isServerWakingUp = false
 
-    let contentService: any ContentServiceProtocol
-    let favoritesService: any FavoritesServiceProtocol
+    private let contentService: any ContentServiceProtocol
+    private let favoritesService: any FavoritesServiceProtocol
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -65,6 +66,7 @@ final class FeedViewModel: ObservableObject {
                 guard let self else { return }
 
                 self.cells = newCells
+
                 if self.pinnedHeadCell == nil, !newCells.isEmpty {
                     self.pinnedHeadCell = newCells.first(where: { $0.isHeadCell }) ?? newCells.first
                 }
@@ -83,7 +85,24 @@ final class FeedViewModel: ObservableObject {
     }
 
     func fetchData() async {
+        let loadingTask = Task {
+            try? await Task.sleep(for: .seconds(2))
+            
+            if !Task.isCancelled {
+                await MainActor.run {
+                    self.isServerWakingUp = true
+                }
+            }
+        }
+        
         await contentService.fetchData()
+        
+        loadingTask.cancel()
+        
+        await MainActor.run {
+            self.isServerWakingUp = false
+        }
+        
         await favoritesService.fetchFavorites()
     }
 

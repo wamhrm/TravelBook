@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-enum AuthState {
+enum AuthState: Equatable {
     case signedIn(UserModel)
     case signedOut
 }

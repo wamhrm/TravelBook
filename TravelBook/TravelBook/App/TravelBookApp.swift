@@ -9,11 +9,17 @@ import SwiftUI
 
 @main
 struct TravelBookApp: App {
-    @StateObject private var authService = AuthService()
+    @StateObject private var authService: AuthService
     @StateObject private var contentService = ContentService()
-    @StateObject private var favoritesService = FavoritesService()
+    @StateObject private var favoritesService: FavoritesService
 
     @AppStorage("selectedTheme") private var selectedTheme: AppTheme = .system
+
+    init() {
+        let authService = AuthService()
+        _authService = StateObject(wrappedValue: authService)
+        _favoritesService = StateObject(wrappedValue: FavoritesService(authService: authService))
+    }
 
     var body: some Scene {
         WindowGroup {

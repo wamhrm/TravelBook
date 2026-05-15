@@ -7,7 +7,7 @@
 
 import Fluent
 
-struct CreateUserFavorites: AsyncMigration {
+struct CreateUserFavorite: AsyncMigration {
     func prepare(on database: any FluentKit.Database) async throws {
         try await database.schema("user_favorites")
             .id()
