@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ProfileCellView: View {
-    let user: UserModel?
+    private let user: UserModel?
     let type: ProfileCellType
     let onTapHandler: () -> Void
     
@@ -33,7 +33,7 @@ struct ProfileCellView: View {
                 }
                 
                 Text(type.rawValue)
-                    .font(UIDevice.isProMax ? .callout : .system(size: 14))
+                    .font(Components.isProMax(.callout, .system(size: 14)))
                     .foregroundStyle(.blackAndWhite)
                     .fontWeight(.medium)
                 
@@ -54,7 +54,7 @@ enum ProfileCellType: String {
     case aboutApp = "О приложении"
     case logOut = "Выйти"
     
-    var icon: String {
+    fileprivate var icon: String {
         switch self {
             case .appearance:  
                 return "paintpalette.fill"
@@ -65,7 +65,7 @@ enum ProfileCellType: String {
         }
     }
     
-    var backgroundColor: Color {
+    fileprivate var backgroundColor: Color {
         switch self {
             case .appearance:
                 return .green

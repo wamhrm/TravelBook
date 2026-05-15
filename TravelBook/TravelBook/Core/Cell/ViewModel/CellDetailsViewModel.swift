@@ -29,6 +29,10 @@ final class CellDetailsViewModel: ObservableObject {
         setupSubscription()
     }
     
+    deinit {
+        cancellables.removeAll()
+    }
+    
     private func setupSubscription() {
         guard let id = cell.id else { return }
         

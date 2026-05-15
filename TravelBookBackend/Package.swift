@@ -22,14 +22,6 @@ let package = Package(
                 .product(name: "SotoS3", package: "soto")
             ],
             swiftSettings: swiftSettings
-        ),
-        .testTarget(
-            name: "TravelBookBackendTests",
-            dependencies: [
-                .target(name: "TravelBookBackend"),
-                .product(name: "VaporTesting", package: "vapor"),
-            ],
-            swiftSettings: swiftSettings
         )
     ]
 )

@@ -8,7 +8,7 @@
 import Foundation
 
 struct Constants {
-    static let address = "http://127.0.0.1:8080"
+    static let address = "https://travelbook-mwu8.onrender.com"
     static let tokenPath = "com.travelbook.auth.token"
     static let tokenKey = "tokenKey"
     static let userKey = "userKey"

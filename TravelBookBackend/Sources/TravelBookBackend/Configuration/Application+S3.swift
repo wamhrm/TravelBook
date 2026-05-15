@@ -25,8 +25,12 @@ struct S3Key: StorageKey {
     typealias Value = S3
 }
 
-struct AWSClientLifecycleHandler: LifecycleHandler {
-    let client: AWSClient
+fileprivate struct AWSClientLifecycleHandler: LifecycleHandler {
+    private let client: AWSClient
+
+    init(client: AWSClient) {
+        self.client = client
+    }
 
     func shutdown(_ application: Application) {
         try? client.syncShutdown()

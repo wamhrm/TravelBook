@@ -10,8 +10,8 @@ import SwiftUI
 struct FavoritesView: View {
     @ObservedObject var vm: FavoritesViewModel
 
-    let authService: any AuthServiceProtocol
-    let favoritesService: any FavoritesServiceProtocol
+    private let authService: any AuthServiceProtocol
+    private let favoritesService: any FavoritesServiceProtocol
 
     init(vm: FavoritesViewModel,
          authService: any AuthServiceProtocol,
@@ -26,14 +26,14 @@ struct FavoritesView: View {
             ZStack {
                 Components.backgroundColor()
 
-                if vm.favorites.isEmpty {
+                if vm.favoriteCells.isEmpty {
                     ContentUnavailableView {
                         Label("Нет избранного", systemImage: "heart")
                     }
                 } else {
                     ScrollView {
-                        LazyVStack(spacing: UIDevice.isProMax ? 12 : 10) {
-                            ForEach(vm.favorites) { cell in
+                        LazyVStack(spacing: Components.isProMax(12, 10)) {
+                            ForEach(vm.favoriteCells) { cell in
                                 CompactCellView(cell: cell) {
                                     vm.favoritesRoutes.append(.cellDetails(cell))
                                 }
@@ -79,8 +79,8 @@ extension FavoritesView {
 
 #Preview {
     let authService = AuthService()
-    let favoritesService = FavoritesService()
+    let favoritesService = FavoritesService(authService: authService)
     let vm = FavoritesViewModel(authService: authService, favoritesService: favoritesService)
-    
+
     return FavoritesView(vm: vm, authService: authService, favoritesService: favoritesService)
 }

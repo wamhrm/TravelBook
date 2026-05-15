@@ -1,16 +1,13 @@
-//
-//  StorageController.swift
-//  TravelBookServer
-//
-//  Created by ddorsat on 13.01.2026.
-//
-
 import Vapor
 import Foundation
 import SotoS3
 
-struct StorageController {
-    func uploadImages(_ req: Request) async throws -> [String] {
+struct StorageController: RouteCollection {
+    func boot(routes: any RoutesBuilder) throws {
+        routes.post("api", "upload", use: uploadImages)
+    }
+    
+    private func uploadImages(_ req: Request) async throws -> [String] {
         guard let s3 = req.application.storage[S3Key.self] else {
             throw Abort(.internalServerError, reason: "S3 not configured")
         }
@@ -43,5 +40,3 @@ struct StorageController {
         return uploadedURLs
     }
 }
-
-

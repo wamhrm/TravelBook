@@ -20,7 +20,7 @@ struct PopularView: View {
             Components.backgroundColor()
             
             ScrollView {
-                LazyVStack(alignment: .leading, spacing: UIDevice.isProMax ? 12 : 10) {
+                LazyVStack(alignment: .leading, spacing: Components.isProMax(12, 10)) {
                     ForEach(displayCells) { cell in
                         CompactCellView(cell: cell) {
                             onTapHandler(cell)

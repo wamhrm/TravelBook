@@ -73,3 +73,19 @@ final class Cell: Model, Content, @unchecked Sendable  {
         self.isHeadCell = isHeadCell
     }
 }
+
+extension Cell {
+    func toDTO() -> CellDTO {
+        CellDTO(id: self.id,
+                image: self.image,
+                type: self.category.type,
+                title: self.title,
+                subtitle: self.subtitle,
+                date: self.date,
+                readingTime: self.readingTime,
+                description: self.description,
+                images: self.images,
+                isPopular: self.isPopular,
+                isHeadCell: self.isHeadCell)
+    }
+}

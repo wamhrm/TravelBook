@@ -17,21 +17,19 @@ struct SignInAlreadyHaveAccountView: View {
             Spacer()
             
             Text(type.rawValue)
-                .font(UIDevice.isProMax ? .callout : .footnote)
                 .foregroundStyle(.blackAndWhite)
             
             Button {
                 onTapHandler()
             } label: {
                 Text(type.buttonTitle)
-                    .font(UIDevice.isProMax ? .callout : .footnote)
                     .foregroundStyle(.blue)
                     .bold()
             }
             
             Spacer()
         }
-        .font(.callout)
+        .font(Components.isProMax(.callout, .footnote))
     }
 }
 

@@ -18,27 +18,28 @@ struct SignInCreateAccountButtonView: View {
                 if type == .google {
                     Image("google")
                         .resizable()
-                        .scaledToFit()
-                        .frame(maxWidth: 18, maxHeight: 18)
-                        .padding(.leading, 10)
-                        .clipped()
+                        .logoModifier()
+                        
                 } else if type == .apple {
                     Image(systemName: "apple.logo")
-                        .foregroundStyle(.white)
+                        .resizable()
+                        .logoModifier()
                 }
                         
                 if !signedOut {
                     Text(type.rawValue)
                         .foregroundStyle(type.foregroundColor)
+                    
                 } else {
                     Text(type.rawValue)
                         .foregroundStyle(type == .signIn ? .white : .black)
                 }
             }
-            .font(UIDevice.isProMax ? .callout : .footnote)
+            .font(Components.isProMax(.callout, .footnote))
             .bold()
-            .padding()
-            .frame(maxWidth: .infinity)
+            .padding(Components.isProMax(18, 16))
+            .padding(.leading, type == .apple ? -7 : 0)
+            .frame(maxWidth: .infinity, alignment: .center)
             .background(signedOut && type == .createAccount ? .white : type.backgroundColor)
             .background(signedOut && type == .signIn ? .blue : type.backgroundColor)
             .overlay(RoundedRectangle(cornerRadius: 10) .stroke(.black, lineWidth: type == .google ? 0.3 : 0.3))

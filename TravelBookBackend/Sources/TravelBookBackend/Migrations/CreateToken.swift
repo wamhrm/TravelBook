@@ -7,7 +7,7 @@
 
 import Fluent
 
-struct CreateTokens: AsyncMigration {
+struct CreateToken: AsyncMigration {
     func prepare(on database: any Database) async throws {
         try await database.schema("tokens")
             .id()

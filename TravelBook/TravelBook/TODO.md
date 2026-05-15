@@ -1,3 +1,1 @@
-
-статей статьи
-celldetails, profileview
+apple, google

@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  TravelBookServer
-//
-//  Created by ddorsat on 09.01.2026.
-//
-
 import Vapor
 import Fluent
 
@@ -18,7 +11,7 @@ struct FavoritesController: RouteCollection {
         favorites.get(use: getFavorites)
     }
 
-    func addFavorite(_ req: Request) async throws -> HTTPStatus {
+    private func addFavorite(_ req: Request) async throws -> HTTPStatus {
         let user = try req.auth.require(User.self)
         let userID = try user.requireID()
 
@@ -39,7 +32,7 @@ struct FavoritesController: RouteCollection {
         return .created
     }
 
-    func removeFavorite(_ req: Request) async throws -> HTTPStatus {
+    private func removeFavorite(_ req: Request) async throws -> HTTPStatus {
         let user = try req.auth.require(User.self)
         let userID = try user.requireID()
 
@@ -53,7 +46,7 @@ struct FavoritesController: RouteCollection {
         return .ok
     }
 
-    func getFavorites(_ req: Request) async throws -> [CellDTO] {
+    private func getFavorites(_ req: Request) async throws -> [CellDTO] {
         let user = try req.auth.require(User.self)
         let userID = try user.requireID()
 
@@ -69,7 +62,7 @@ struct FavoritesController: RouteCollection {
     }
 }
 
-struct UserAuthMiddleware: AsyncMiddleware {
+private struct UserAuthMiddleware: AsyncMiddleware {
     func respond(to req: Request, chainingTo next: any AsyncResponder) async throws -> Response {
         guard let tokenString = req.headers.bearerAuthorization?.token else {
             throw Abort(.unauthorized, reason: "Токен не найден")

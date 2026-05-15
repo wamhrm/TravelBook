@@ -16,7 +16,7 @@ struct CategoriesView: View {
             Components.backgroundColor()
             
             ScrollView {
-                VStack(alignment: .leading, spacing: UIDevice.isProMax ? 10 : 8) {
+                VStack(alignment: .leading, spacing: Components.isProMax(10, 8)) {
                     ForEach(categories) { category in
                         CategoriesCellView(category: category,
                                            categoryCellsCount: category.cells.count) {

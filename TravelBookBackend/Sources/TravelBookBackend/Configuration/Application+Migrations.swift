@@ -2,10 +2,10 @@ import Vapor
 
 extension Application {
     func configureMigrations() {
-        self.migrations.add(CreateCategories())
-        self.migrations.add(CreateCells())
-        self.migrations.add(CreateUsers())
-        self.migrations.add(CreateTokens())
-        self.migrations.add(CreateUserFavorites())
+        self.migrations.add(CreateCategory())
+        self.migrations.add(CreateCell())
+        self.migrations.add(CreateUser())
+        self.migrations.add(CreateToken())
+        self.migrations.add(CreateUserFavorite())
     }
 }

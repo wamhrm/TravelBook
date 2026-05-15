@@ -10,8 +10,8 @@ import SwiftUI
 struct SearchView: View {
     @ObservedObject var vm: SearchViewModel
 
-    let authService: any AuthServiceProtocol
-    let favoritesService: any FavoritesServiceProtocol
+    private let authService: any AuthServiceProtocol
+    private let favoritesService: any FavoritesServiceProtocol
 
     init(vm: SearchViewModel,
          authService: any AuthServiceProtocol,
@@ -28,7 +28,7 @@ struct SearchView: View {
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 25) {
-                        VStack(alignment: .leading, spacing: UIDevice.isProMax ? 14 : 12) {
+                        VStack(alignment: .leading, spacing: Components.isProMax(14, 12)) {
                             Components.headerView("Популярные запросы")
 
                             FlowLayout(spacing: 5) {
@@ -42,7 +42,7 @@ struct SearchView: View {
                         .padding(.top, 5)
                         .padding(.horizontal)
 
-                        VStack(alignment: .leading, spacing: UIDevice.isProMax ? 12 : 10) {
+                        VStack(alignment: .leading, spacing: Components.isProMax(12, 10)) {
                             HStack {
                                 Components.headerView("Категории")
 
@@ -56,7 +56,7 @@ struct SearchView: View {
                                 }
                             }
 
-                            VStack(alignment: .leading, spacing: UIDevice.isProMax ? 8 : 7) {
+                            VStack(alignment: .leading, spacing: Components.isProMax(8, 7)) {
                                 ForEach(vm.displayCategories.prefix(3)) { category in
                                     CategoriesCellView(category: category,
                                                        categoryCellsCount: category.cells.count) {
@@ -67,10 +67,10 @@ struct SearchView: View {
                         }
                         .padding(.horizontal)
 
-                        VStack(alignment: .leading, spacing: UIDevice.isProMax ? 12 : 10) {
+                        VStack(alignment: .leading, spacing: Components.isProMax(12, 10)) {
                             Components.headerView("Посты")
 
-                            LazyVStack(alignment: .leading, spacing: UIDevice.isProMax ? 12 : 10) {
+                            LazyVStack(alignment: .leading, spacing: Components.isProMax(12, 10)) {
                                 ForEach(vm.displayCells) { cell in
                                     BigCellView(cell: cell, isCellDetails: false)
                                         .padding()
@@ -146,8 +146,11 @@ extension SearchView {
 #Preview {
     let contentService = ContentService()
     let vm = SearchViewModel(contentService: contentService)
-    
+
+    let authService = AuthService()
+    let favoritesService = FavoritesService(authService: authService)
+
     return NavigationStack {
-        SearchView(vm: vm, authService: AuthService(), favoritesService: FavoritesService())
+        SearchView(vm: vm, authService: authService, favoritesService: favoritesService)
     }
 }

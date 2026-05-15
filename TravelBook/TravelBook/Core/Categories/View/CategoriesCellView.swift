@@ -36,7 +36,7 @@ struct CategoriesCellView: View {
                 VStack(alignment: .leading, spacing: 7) {
                     Text(category.type.title)
                         .foregroundStyle(.blackAndWhite)
-                        .font(UIDevice.isProMax ? .callout : .footnote)
+                        .font(Components.isProMax(.callout, .footnote))
                         .bold()
                     
                     if categoryCellsCount == 0 {
@@ -45,7 +45,7 @@ struct CategoriesCellView: View {
                             .foregroundStyle(.gray)
                     } else {
                         Text(articlesCountLabel)
-                            .font(UIDevice.isProMax ? .caption : .caption2)
+                            .font(Components.isProMax(.caption, .caption2))
                             .foregroundStyle(.gray)
                             .fontWeight(.medium)
                     }
@@ -55,10 +55,10 @@ struct CategoriesCellView: View {
                 
                 Text("Перейти")
                     .foregroundStyle(.title)
-                    .font(.system(size: UIDevice.isProMax ? 14 : 12))
+                    .font(.system(size: Components.isProMax(14, 12)))
                     .fontWeight(.semibold)
-                    .padding(.vertical, UIDevice.isProMax ? 8 : 6)
-                    .padding(.horizontal, UIDevice.isProMax ? 12 : 10)
+                    .padding(.vertical, Components.isProMax(8, 6))
+                    .padding(.horizontal, Components.isProMax(12, 10))
                     .background(.categoriesCellBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 5))
             }

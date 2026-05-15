@@ -10,8 +10,8 @@ import SwiftUI
 struct FeedView: View {
     @ObservedObject var vm: FeedViewModel
 
-    let authService: any AuthServiceProtocol
-    let favoritesService: any FavoritesServiceProtocol
+    private let authService: any AuthServiceProtocol
+    private let favoritesService: any FavoritesServiceProtocol
 
     init(vm: FeedViewModel,
          authService: any AuthServiceProtocol,
@@ -27,11 +27,26 @@ struct FeedView: View {
                 Components.backgroundColor()
 
                 if vm.cells.isEmpty {
-                    ProgressView()
+                    VStack(spacing: 30) {
+                        ProgressView()
+                        
+                        if vm.isServerWakingUp {
+                            VStack(spacing: 20) {
+                                Text("Сервер просыпается. Первый запуск может занять до 50 секунд.")
+                                    .lineSpacing(3)
+
+                                Text("Пожалуйста, подождите.")
+                            }
+                            .font(.callout)
+                            .bold()
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 55)
+                        }
+                    }
                 } else {
                     ScrollView {
-                        VStack(alignment: .leading, spacing: UIDevice.isProMax ? 32 : 30) {
-                            VStack(alignment: .leading, spacing: UIDevice.isProMax ? 12 : 10) {
+                        VStack(alignment: .leading, spacing: Components.isProMax(32, 30)) {
+                            VStack(alignment: .leading, spacing: Components.isProMax(12, 10)) {
                                 HStack(spacing: 10) {
                                     Image("logo")
                                         .resizable()
@@ -43,7 +58,7 @@ struct FeedView: View {
                                         Text("УЧЕБНИК")
                                         Text("ПУТЕШЕСТВИЙ")
                                     }
-                                    .font(UIDevice.isProMax ? .system(size: 14) : .footnote)
+                                    .font(Components.isProMax(.system(size: 14), .footnote))
                                     .fontDesign(.monospaced)
                                     .fontWeight(.heavy)
 
@@ -56,7 +71,7 @@ struct FeedView: View {
                             }
                             .padding(.horizontal)
 
-                            VStack(alignment: .leading, spacing: UIDevice.isProMax ? 12 : 10) {
+                            VStack(alignment: .leading, spacing: Components.isProMax(12, 10)) {
                                 HStack {
                                     Components.headerView("Популярное")
 
@@ -72,7 +87,7 @@ struct FeedView: View {
                                 .padding(.horizontal)
 
                                 ScrollView(.horizontal) {
-                                    HStack(spacing: UIDevice.isProMax ? 12 : 10) {
+                                    HStack(spacing: Components.isProMax(12, 10)) {
                                         ForEach(vm.displayPopularCells.prefix(5)) { cell in
                                             FeedPopularCellView(cell: cell) {
                                                 vm.feedRoutes.append(.bigCell(cell))
@@ -83,7 +98,7 @@ struct FeedView: View {
                                 }
                             }
 
-                            VStack(alignment: .leading, spacing: UIDevice.isProMax ? 12 : 10) {
+                            VStack(alignment: .leading, spacing: Components.isProMax(12, 10)) {
                                 Components.headerView("Лента")
 
                                 LazyVStack(alignment: .leading, spacing: 12) {
@@ -140,11 +155,12 @@ extension FeedView {
 }
 
 #Preview {
+    let authService = AuthService()
     let contentService = ContentService()
-    let favoritesService = FavoritesService()
+    let favoritesService = FavoritesService(authService: authService)
     let vm = FeedViewModel(contentService: contentService, favoritesService: favoritesService)
 
     return NavigationStack {
-        FeedView(vm: vm, authService: AuthService(), favoritesService: favoritesService)
+        FeedView(vm: vm, authService: authService, favoritesService: favoritesService)
     }
 }

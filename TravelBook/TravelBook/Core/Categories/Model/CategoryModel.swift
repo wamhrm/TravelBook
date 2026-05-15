@@ -23,18 +23,8 @@ struct CategoryModel: Identifiable, Hashable, Codable {
         self.cells = cells
     }
 
-    enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case id, title, type, image, cells
-    }
-
-    init(from decoder: any Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-
-        self.id = try container.decode(UUID.self, forKey: .id)
-        self.title = try container.decode(String.self, forKey: .title)
-        self.type = try container.decode(Categories.self, forKey: .type)
-        self.image = try container.decode(String.self, forKey: .image)
-        self.cells = try container.decodeIfPresent([CellModel].self, forKey: .cells) ?? []
     }
 }
 

@@ -1,6 +1,6 @@
 import Vapor
 
-struct ImageUpload: Content {
+private struct ImageUpload: Content {
     var file: File
 }
 

@@ -35,3 +35,13 @@ final class Category: Model, Content, @unchecked Sendable {
         self.image = image
     }
 }
+
+extension Category {
+    func toDTO() -> CategoryDTO {
+        CategoryDTO(id: self.id,
+                    title: self.title,
+                    type: self.type,
+                    image: self.image,
+                    cells: self.cells.map { $0.toDTO() })
+    }
+}

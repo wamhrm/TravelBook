@@ -8,12 +8,12 @@ struct AdminController: RouteCollection {
         routes.get("upload", use: seedDatabase)
     }
 
-    func clearDatabase(_ req: Request) async throws -> String {
+    private func clearDatabase(_ req: Request) async throws -> String {
         try await databaseSeeder.clear(on: req.db)
         return "База данных очищена"
     }
 
-    func seedDatabase(_ req: Request) async throws -> String {
+    private func seedDatabase(_ req: Request) async throws -> String {
         try await databaseSeeder.seed(on: req.db)
         return "База данных обновлена!"
     }
