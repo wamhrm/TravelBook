@@ -10,15 +10,8 @@ import SwiftUI
 struct FavoritesView: View {
     @ObservedObject var vm: FavoritesViewModel
 
-    private let authService: any AuthServiceProtocol
-    private let favoritesService: any FavoritesServiceProtocol
-
-    init(vm: FavoritesViewModel,
-         authService: any AuthServiceProtocol,
-         favoritesService: any FavoritesServiceProtocol) {
+    init(vm: FavoritesViewModel) {
         self.vm = vm
-        self.authService = authService
-        self.favoritesService = favoritesService
     }
 
     var body: some View {
@@ -71,8 +64,8 @@ extension FavoritesView {
         switch route {
             case .cellDetails(let cell):
                 CellDetailsView(cell: cell,
-                                authService: authService,
-                                favoritesService: vm.favoritesService)
+                                authService: vm.cellDetailsAuthService,
+                                favoritesService: vm.cellDetailsFavoritesService)
         }
     }
 }
@@ -82,5 +75,5 @@ extension FavoritesView {
     let favoritesService = FavoritesService(authService: authService)
     let vm = FavoritesViewModel(authService: authService, favoritesService: favoritesService)
 
-    return FavoritesView(vm: vm, authService: authService, favoritesService: favoritesService)
+    return FavoritesView(vm: vm)
 }

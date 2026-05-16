@@ -3,12 +3,17 @@ import Fluent
 import FluentSQL
 
 struct ContentController: RouteCollection {
+    private let databaseSeeder = DatabaseSeeder()
+
     func boot(routes: any RoutesBuilder) throws {
         routes.get("cells", use: getCells)
         routes.get("popular", use: getPopularCells)
         routes.get("categories", use: getCategories)
         routes.get("users", use: getUsers)
         routes.get("search", use: searchCells)
+        
+        routes.get("clear", use: clearDatabase)
+        routes.get("upload", use: uploadDatabase)
     }
 
     private func getCells(_ req: Request) async throws -> [CellDTO] {
@@ -71,5 +76,15 @@ struct ContentController: RouteCollection {
         let cells = try await query.all()
 
         return cells.map { $0.toDTO() }
+    }
+
+    private func clearDatabase(_ req: Request) async throws -> String {
+        try await databaseSeeder.clear(on: req.db)
+        return "База данных очищена"
+    }
+
+    private func uploadDatabase(_ req: Request) async throws -> String {
+        try await databaseSeeder.seed(on: req.db)
+        return "База данных обновлена!"
     }
 }

@@ -8,7 +8,7 @@
 import Vapor
 import Fluent
 
-final class Cell: Model, Content, @unchecked Sendable  {
+final class Cell: Model, @unchecked Sendable {
     static let schema = "cells"
 
     @ID(key: .id)
@@ -43,9 +43,6 @@ final class Cell: Model, Content, @unchecked Sendable  {
 
     @Field(key: "is_head_cell")
     var isHeadCell: Bool
-
-    @Siblings(through: UserFavorite.self, from: \.$cell, to: \.$user)
-    var favoritedBy: [User]
 
     init() {}
 

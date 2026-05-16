@@ -78,7 +78,7 @@ final class SearchViewModel: ObservableObject {
             .assign(to: \.canLoadMore, on: self)
             .store(in: &cancellables)
     }
-    
+
     func requestToSearch(_ request: String) {
         searchText = request
         Task { await searchData(searchTerm: request) }
@@ -93,8 +93,6 @@ final class SearchViewModel: ObservableObject {
         if !term.isEmpty {
             queryItems.append(URLQueryItem(name: "search", value: term))
             selectedCategory = nil
-        } else if let category = selectedCategory {
-            queryItems.append(URLQueryItem(name: "category", value: category.rawValue))
         }
 
         guard !queryItems.isEmpty else { return }
@@ -121,7 +119,7 @@ final class SearchViewModel: ObservableObject {
                         searchRoutes.append(.searchResults)
                     }
                 case 401:
-                    throw NetworkError.incorrentsigInCredentials
+                    throw NetworkError.incorrentSignInCredentials
                 case 409:
                     throw NetworkError.userAlreadyExists
                 default:
@@ -137,10 +135,9 @@ final class SearchViewModel: ObservableObject {
         searchText = ""
 
         if let selectedCategory = categories.first(where: { $0.type == category }) {
-            self.categoryResults = selectedCategory.cells
+            categoryResults = selectedCategory.cells
         } else {
-            let allData = contentService.feedCells.value
-            self.categoryResults = allData.filter { $0.category.rawValue == category.rawValue }
+            categoryResults = contentService.searchCells.value.filter { $0.category == category }
         }
     }
 

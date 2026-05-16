@@ -59,7 +59,7 @@ struct SignedOutView: View {
             }
         }
         .ignoresSafeArea(.keyboard)
-        .alert(vm.errorMessage, isPresented: vm.authErrorAlertPresented()) {
+        .alert(vm.errorMessage, isPresented: $vm.showError) {
             Button("OK", role: .cancel) {}
         }
     }

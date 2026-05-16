@@ -9,7 +9,7 @@ struct AuthController: RouteCollection {
         auth.post("signIn", use: signIn)
     }
 
-    private func createAccount(_ req: Request) async throws -> UserDTO {
+    private func createAccount(_ req: Request) async throws -> HTTPStatus {
         let data = try req.content.decode(CreateAccountRequest.self)
         let name = data.name.trimmingCharacters(in: .whitespacesAndNewlines)
         let email = normalizedEmail(data.email)
@@ -35,19 +35,12 @@ struct AuthController: RouteCollection {
 
         try await user.save(on: req.db)
 
-        return user.toDTO()
+        return .created
     }
 
     private func signIn(_ req: Request) async throws -> TokenDTO {
         let signInData = try req.content.decode(SignInRequest.self)
         let email = normalizedEmail(signInData.email)
-
-        guard isValidEmail(email) else {
-            throw Abort(.badRequest, reason: "Укажите корректный e-mail")
-        }
-        guard signInData.password.count >= 6 else {
-            throw Abort(.badRequest, reason: "Пароль должен быть не короче 6 символов")
-        }
 
         guard let user = try await User.query(on: req.db)
             .filter(\User.$email == email)

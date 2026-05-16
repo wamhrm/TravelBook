@@ -24,7 +24,6 @@ protocol AuthServiceProtocol: ObservableObject {
 final class AuthService: AuthServiceProtocol {
     var authState = CurrentValueSubject<AuthState, Never>(.signedOut)
 
-    private let url = "\(Constants.address)/auth"
     private let tokenPath = Constants.tokenPath
     private let tokenKey = Constants.tokenKey
     private let userKey = Constants.userKey
@@ -34,33 +33,19 @@ final class AuthService: AuthServiceProtocol {
     }
 
     func createAccount(name: String, email: String, password: String) async throws {
-        let url = "\(url)/createAccount"
         let normalizedEmail = normalizeEmail(email)
-        let body = UserData(name: name, email: normalizedEmail, password: password)
-
-        let _ = try await NetworkHelper.request(url: url, method: "POST", body: body)
-
+        try await NetworkHelper.createAccount(name: name, email: normalizedEmail, password: password)
         try await signIn(email: normalizedEmail, password: password)
     }
 
     func signIn(email: String, password: String) async throws {
-        let url = "\(url)/signIn"
-        let body = UserData(email: normalizeEmail(email), password: password)
-        let data = try await NetworkHelper.request(url: url, method: "POST", body: body)
+        let response = try await NetworkHelper.signIn(email: normalizeEmail(email), password: password)
 
-        do {
-            let decoder = JSONDecoder()
-            decoder.dateDecodingStrategy = .iso8601
-            let tokenResponse = try decoder.decode(TokenResponse.self, from: data)
+        saveToken(response.token)
+        saveUserLocally(response.user)
 
-            saveToken(tokenResponse.token)
-            saveUserLocally(tokenResponse.user)
-
-            await MainActor.run {
-                authState.send(.signedIn(tokenResponse.user))
-            }
-        } catch {
-            throw NetworkError.decodingError
+        await MainActor.run {
+            authState.send(.signedIn(response.user))
         }
     }
 
@@ -96,21 +81,4 @@ final class AuthService: AuthServiceProtocol {
     private func normalizeEmail(_ email: String) -> String {
         email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
     }
-}
-
-private struct UserData: Encodable {
-    let name: String?
-    let email: String
-    let password: String
-
-    init(name: String? = nil, email: String, password: String) {
-        self.name = name
-        self.email = email
-        self.password = password
-    }
-}
-
-private struct TokenResponse: Decodable {
-    let token: String
-    let user: UserModel
 }

@@ -19,10 +19,10 @@ enum FeedRoutes: Hashable {
 
 final class FeedViewModel: ObservableObject {
     @Published var feedRoutes: [FeedRoutes] = []
-    @Published private(set) var cells: [CellModel] = []
+    @Published private(set) var feedCells: [CellModel] = []
     @Published private(set) var popularCells: [CellModel] = []
+    @Published private(set) var headCell: CellModel?
     @Published private(set) var canLoadMore = false
-    @Published private(set) var pinnedHeadCell: CellModel?
     @Published private(set) var isServerWakingUp = false
 
     private let contentService: any ContentServiceProtocol
@@ -31,11 +31,11 @@ final class FeedViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
 
     var displayHeadCell: CellModel {
-        pinnedHeadCell ?? CellModel.mock
+        headCell ?? CellModel.mock
     }
 
     var displayFeedCells: [CellModel] {
-        !cells.isEmpty ? cells : CellModel.mockArray
+        !feedCells.isEmpty ? feedCells : CellModel.mockArray
     }
 
     var displayPopularCells: [CellModel] {
@@ -46,8 +46,7 @@ final class FeedViewModel: ObservableObject {
          favoritesService: any FavoritesServiceProtocol) {
         self.contentService = contentService
         self.favoritesService = favoritesService
-
-        self.cells = contentService.feedCells.value
+        self.feedCells = contentService.feedCells.value
         self.popularCells = contentService.popularCells.value
 
         setupSubscriptions()
@@ -65,11 +64,8 @@ final class FeedViewModel: ObservableObject {
             .sink { [weak self] newCells in
                 guard let self else { return }
 
-                self.cells = newCells
-
-                if self.pinnedHeadCell == nil, !newCells.isEmpty {
-                    self.pinnedHeadCell = newCells.first(where: { $0.isHeadCell }) ?? newCells.first
-                }
+                self.feedCells = newCells
+                fetchHeadCell(newCells)
             }
             .store(in: &cancellables)
 
@@ -102,12 +98,16 @@ final class FeedViewModel: ObservableObject {
         await MainActor.run {
             self.isServerWakingUp = false
         }
-        
-        await favoritesService.fetchFavorites()
     }
 
     func fetchMoreCells() {
         Task { await contentService.fetchMoreFeedCells() }
+    }
+    
+    private func fetchHeadCell(_ newCells: [CellModel]) {
+        if headCell == nil && !newCells.isEmpty {
+            headCell = newCells.first(where: { $0.isHeadCell }) ?? newCells.first!
+        }
     }
 }
 
