@@ -29,7 +29,7 @@ struct BigCellView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: isCellDetails ? 10 : 8) {
+        VStack(alignment: .leading, spacing: isCellDetails ? Components.isProMax(10, 8) : Components.isProMax(8, 6)) {
             if !isCellDetails {
                 Components.categoriesTheme(cell.category, .search)
             }

@@ -30,7 +30,7 @@ struct CategoryModel: Identifiable, Hashable, Codable {
 
 enum Categories: String, Codable, CaseIterable {
     case abroad, fraud, leisure, food, tickets, packing, culture, health, family, budget
-        
+
     var title: String {
         switch self {
             case .abroad: return "Заграница"
@@ -45,7 +45,7 @@ enum Categories: String, Codable, CaseIterable {
             case .budget: return "Экономия"
         }
     }
-    
+
     var color: Color {
         switch self {
             case .abroad: return .orange
@@ -64,7 +64,7 @@ enum Categories: String, Codable, CaseIterable {
 
 extension CategoryModel {
     static let mock = CategoryModel(id: UUID(), title: "Как не стать жертвой обмана", type: .fraud, image: "")
-    
+
     static let mockArray: [CategoryModel] = [
         CategoryModel(id: UUID(), title: "Главный чек-лист перед выездом", type: .abroad, image: ""),
         CategoryModel(id: UUID(), title: "Как не стать жертвой обмана", type: .fraud, image: ""),

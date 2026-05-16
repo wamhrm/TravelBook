@@ -3,11 +3,9 @@
 .swiftpm/
 .cursor/
 .vscode/
-*.xcodeproj
-*.xcworkspace/xcuserdata/
 *.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
 *.xcuserstate
-db.sqlite
 *.sqlite
 *.sqlite3
 .env

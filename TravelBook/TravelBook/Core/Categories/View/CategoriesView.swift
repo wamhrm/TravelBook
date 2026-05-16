@@ -10,11 +10,11 @@ import SwiftUI
 struct CategoriesView: View {
     let categories: [CategoryModel]
     let onTapHandler: (CategoryModel) -> Void
-    
+
     var body: some View {
         ZStack {
             Components.backgroundColor()
-            
+
             ScrollView {
                 VStack(alignment: .leading, spacing: Components.isProMax(10, 8)) {
                     ForEach(categories) { category in
@@ -34,6 +34,6 @@ struct CategoriesView: View {
 
 #Preview {
     CategoriesView(categories: CategoryModel.mockArray) { _ in
-        
+
     }
 }

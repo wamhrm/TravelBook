@@ -8,7 +8,7 @@
 import Fluent
 import Vapor
 
-final class User: Model, Content, @unchecked Sendable, Authenticatable {
+final class User: Model, @unchecked Sendable, Authenticatable {
     static let schema = "users"
 
     @ID(key: .id)
@@ -25,9 +25,6 @@ final class User: Model, Content, @unchecked Sendable, Authenticatable {
 
     @Field(key: "date_registered")
     var dateRegistered: Date
-
-    @Siblings(through: UserFavorite.self, from: \.$user, to: \.$cell)
-    var favorites: [Cell]
 
     init() {}
 

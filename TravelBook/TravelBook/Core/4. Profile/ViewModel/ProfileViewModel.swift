@@ -29,7 +29,7 @@ final class ProfileViewModel: ObservableObject {
     @Published private(set) var authState = AuthState.signedOut
     @Published private(set) var isLoading = false
 
-    @Published private(set) var showError = false
+    @Published var showError = false
     @Published private(set) var errorMessage = ""
 
     private var authService: any AuthServiceProtocol
@@ -61,7 +61,7 @@ final class ProfileViewModel: ObservableObject {
         let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
 
         if let message = validateCreateAccount(name: trimmedName, email: trimmedEmail, password: password) {
-            presentAuthError(message)
+            showError(message)
             return
         }
 
@@ -77,7 +77,7 @@ final class ProfileViewModel: ObservableObject {
                 profileRoutes = []
                 clearFields()
             } catch {
-                handleError(error)
+                showError(error.localizedDescription)
             }
 
             isLoading = false
@@ -88,7 +88,7 @@ final class ProfileViewModel: ObservableObject {
         let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
 
         if let message = validateSignIn(email: trimmedEmail, password: password) {
-            presentAuthError(message)
+            showError(message)
             return
         }
 
@@ -104,7 +104,7 @@ final class ProfileViewModel: ObservableObject {
                 profileRoutes = []
                 clearFields()
             } catch {
-                handleError(error)
+                showError(error.localizedDescription)
             }
 
             isLoading = false
@@ -124,31 +124,13 @@ final class ProfileViewModel: ObservableObject {
         }
     }
 
-    func authErrorAlertPresented() -> Binding<Bool> {
-        Binding(get: { self.showError },
-                set: { newValue in
-                if !newValue {
-                    self.showError = false
-                }
-            }
-        )
-    }
-    
     private func clearFields() {
         name = ""
         email = ""
         password = ""
     }
 
-    private func handleError(_ error: Error) {
-        if let authError = error as? NetworkError {
-            presentAuthError(authError.errorDescription ?? "Произошла неизвестная ошибка")
-        } else {
-            presentAuthError(error.localizedDescription)
-        }
-    }
-
-    private func presentAuthError(_ message: String) {
+    private func showError(_ message: String) {
         showError = true
         errorMessage = message
     }

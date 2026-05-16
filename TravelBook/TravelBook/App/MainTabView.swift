@@ -9,7 +9,6 @@ import SwiftUI
 
 struct MainTabView: View {
     private let authService: AuthService
-    private let contentService: ContentService
     private let favoritesService: FavoritesService
 
     @StateObject private var feedViewModel: FeedViewModel
@@ -23,7 +22,6 @@ struct MainTabView: View {
          contentService: ContentService,
          favoritesService: FavoritesService) {
         self.authService = authService
-        self.contentService = contentService
         self.favoritesService = favoritesService
 
         _feedViewModel = StateObject(wrappedValue: FeedViewModel(
@@ -57,9 +55,7 @@ struct MainTabView: View {
             }
 
             Tab(value: .favorites, role: .none) {
-                FavoritesView(vm: favoritesViewModel,
-                              authService: authService,
-                              favoritesService: favoritesService)
+                FavoritesView(vm: favoritesViewModel)
             } label: {
                 Image(systemName: Tabs.favorites.icon)
             }
@@ -70,11 +66,8 @@ struct MainTabView: View {
                 Image(systemName: Tabs.profile.icon)
             }
         }
-        .disabled(feedViewModel.cells.isEmpty)
+        .disabled(feedViewModel.feedCells.isEmpty)
         .tabBarMinimizeBehavior(.never)
-        .environmentObject(authService)
-        .environmentObject(contentService)
-        .environmentObject(favoritesService)
     }
 }
 
@@ -103,7 +96,4 @@ fileprivate enum Tabs {
     return MainTabView(authService: authService,
                        contentService: contentService,
                        favoritesService: favoritesService)
-        .environmentObject(authService)
-        .environmentObject(contentService)
-        .environmentObject(favoritesService)
 }

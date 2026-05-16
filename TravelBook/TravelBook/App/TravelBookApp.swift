@@ -26,9 +26,6 @@ struct TravelBookApp: App {
             MainTabView(authService: authService,
                         contentService: contentService,
                         favoritesService: favoritesService)
-                .environmentObject(authService)
-                .environmentObject(contentService)
-                .environmentObject(favoritesService)
                 .preferredColorScheme(selectedTheme.colorScheme)
         }
     }

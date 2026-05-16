@@ -24,8 +24,11 @@ final class FavoritesViewModel: ObservableObject {
     @Published var favoritesRoutes: [FavoritesRoutes] = []
     @Published private(set) var favoriteCells: [CellModel] = []
 
-    let favoritesService: any FavoritesServiceProtocol
     private let authService: any AuthServiceProtocol
+    private let favoritesService: any FavoritesServiceProtocol
+
+    var cellDetailsAuthService: any AuthServiceProtocol { authService }
+    var cellDetailsFavoritesService: any FavoritesServiceProtocol { favoritesService }
 
     private var cancellables = Set<AnyCancellable>()
 

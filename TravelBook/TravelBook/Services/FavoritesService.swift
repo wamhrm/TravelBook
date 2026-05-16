@@ -23,7 +23,6 @@ final class FavoritesService: FavoritesServiceProtocol {
     var likedIDs = CurrentValueSubject<Set<UUID>, Never>([])
     
     private let authService: any AuthServiceProtocol
-    private let baseURL = "\(Constants.address)/favorites"
     
     private var cancellables = Set<AnyCancellable>()
 
@@ -39,11 +38,7 @@ final class FavoritesService: FavoritesServiceProtocol {
         guard authService.authState.value != .signedOut else { return }
 
         do {
-            let data = try await NetworkHelper.request(url: baseURL, method: "GET")
-            let decoder = JSONDecoder()
-            decoder.dateDecodingStrategy = .iso8601
-            
-            let cells = try decoder.decode([CellModel].self, from: data)
+            let cells = try await NetworkHelper.fetchFavorites()
             self.favoriteCells.send(cells)
             
             let ids = Set(cells.compactMap { $0.id })
@@ -67,11 +62,9 @@ final class FavoritesService: FavoritesServiceProtocol {
         Task {
             do {
                 if isCurrentlyLiked {
-                    let url = "\(baseURL)/\(id.uuidString)"
-                    let _ = try await NetworkHelper.request(url: url, method: "DELETE")
+                    try await NetworkHelper.removeFavorite(id: id)
                 } else {
-                    let url = "\(baseURL)/\(id.uuidString)"
-                    let _ = try await NetworkHelper.request(url: url, method: "POST")
+                    try await NetworkHelper.addFavorite(id: id)
                 }
             } catch {
                 print("Ошибка синхронизации лайка: \(error)")

@@ -8,7 +8,7 @@
 import Fluent
 import Vapor
 
-final class Token: Model, Content, @unchecked Sendable {
+final class Token: Model, @unchecked Sendable {
     static let schema = "tokens"
     
     @ID(key: .id)

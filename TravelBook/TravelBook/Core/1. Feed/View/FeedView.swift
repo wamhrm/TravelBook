@@ -26,16 +26,16 @@ struct FeedView: View {
             ZStack {
                 Components.backgroundColor()
 
-                if vm.cells.isEmpty {
+                if vm.feedCells.isEmpty {
                     VStack(spacing: 30) {
                         ProgressView()
-                        
+
                         if vm.isServerWakingUp {
                             VStack(spacing: 20) {
-                                Text("Сервер просыпается. Первый запуск может занять до 50 секунд.")
+                                Text("Сервер просыпается. Первый запуск может занять до 40 секунд.")
                                     .lineSpacing(3)
 
-                                Text("Пожалуйста, подождите.")
+                                Text("Пожалуйста, ожидайте.")
                             }
                             .font(.callout)
                             .bold()
@@ -108,7 +108,7 @@ struct FeedView: View {
                                         }
                                     }
 
-                                    if !vm.cells.isEmpty, vm.canLoadMore {
+                                    if !vm.feedCells.isEmpty, vm.canLoadMore {
                                         ProgressView()
                                             .frame(maxWidth: .infinity)
                                             .frame(height: 50)

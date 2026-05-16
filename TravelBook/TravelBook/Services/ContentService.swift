@@ -42,8 +42,6 @@ final class ContentService: ContentServiceProtocol {
     private var feedPage = 1
     private var searchPage = 1
 
-    private let baseURL = Constants.address
-
     init() {}
 
     func fetchData() async {
@@ -89,13 +87,11 @@ final class ContentService: ContentServiceProtocol {
     }
 
     private func fetchFeedCells(page: Int, seed: String) async throws -> [CellModel] {
-        let url = "\(baseURL)/cells?page=\(page)&limit=\(limit)&seed=\(seed)"
-        return try await NetworkHelper.fetch(url: url)
+        try await NetworkHelper.fetchCells(page: page, limit: limit, seed: seed)
     }
 
     private func fetchPopularCells() async throws -> [CellModel] {
-        let url = "\(baseURL)/popular"
-        let cells: [CellModel] = try await NetworkHelper.fetch(url: url)
+        let cells = try await NetworkHelper.fetchPopularCells()
         return cells.shuffled()
     }
 
@@ -146,10 +142,9 @@ final class ContentService: ContentServiceProtocol {
 
         let currentPage = self[keyPath: pagePath]
         let seed = (pagePath == \.feedPage) ? currentFeedSeed : currentSearchSeed
-        let url = "\(baseURL)/cells?page=\(currentPage)&limit=\(limit)&seed=\(seed)"
 
         do {
-            let newCells: [CellModel] = try await NetworkHelper.fetch(url: url)
+            let newCells = try await NetworkHelper.fetchCells(page: currentPage, limit: limit, seed: seed)
 
             await MainActor.run {
                 let cellsSubject = self[keyPath: cellsSubjectPath]
@@ -182,10 +177,8 @@ final class ContentService: ContentServiceProtocol {
     }
 
     private func fetchCategories() async {
-        let url = "\(baseURL)/categories"
-
         do {
-            let loadedCategories: [CategoryModel] = try await NetworkHelper.fetch(url: url)
+            let loadedCategories = try await NetworkHelper.fetchCategories()
             await MainActor.run { self.allCategories.send(loadedCategories) }
         } catch {
             print("ContentService - Ошибка fetch categories")

@@ -10,10 +10,6 @@ import SwiftUI
 struct ProfileView: View {
     @ObservedObject var vm: ProfileViewModel
 
-    init(vm: ProfileViewModel) {
-        self.vm = vm
-    }
-
     var body: some View {
         NavigationStack(path: $vm.profileRoutes) {
             Group {

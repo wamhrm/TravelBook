@@ -13,8 +13,7 @@ enum NetworkError: LocalizedError {
     case apiError(message: String)
     case decodingError
     case userAlreadyExists
-    case incorrentsigInCredentials
-    case badRequest(message: String)
+    case incorrentSignInCredentials
 
     var errorDescription: String? {
         switch self {
@@ -23,35 +22,104 @@ enum NetworkError: LocalizedError {
             case .apiError(let msg): return "Ошибка сервера: \(msg)"
             case .decodingError: return "Decoding Error"
             case .userAlreadyExists: return "Пользователь уже зарегистрирован"
-            case .incorrentsigInCredentials: return "Неправильный логин или пароль"
-            case .badRequest(let msg): return msg
+            case .incorrentSignInCredentials: return "Неправильный логин или пароль"
         }
     }
+}
+
+enum HTTPMethod: String {
+    case get = "GET"
+    case post = "POST"
+    case delete = "DELETE"
 }
 
 struct NetworkHelper {
     private static let tokenPath = Constants.tokenPath
     private static let tokenKey = Constants.tokenKey
 
-    static func request(url: String, method: String) async throws -> Data {
-        return try await request(url: url, method: method, body: nil as String?)
+    static func createAccount(name: String, email: String, password: String) async throws {
+        let body = try JSONEncoder().encode(AuthSignUpBody(name: name, email: email, password: password))
+        _ = try await request(endpoint: "/auth/createAccount", method: .post, body: body)
     }
 
-    static func request<T: Encodable>(url: String, method: String, body: T?) async throws -> Data {
-        guard let url = URL(string: url) else { throw NetworkError.invalidURL }
+    static func signIn(email: String, password: String) async throws -> AuthTokenResponse {
+        let body = try JSONEncoder().encode(AuthSignInBody(email: email, password: password))
+        let data = try await request(endpoint: "/auth/signIn", method: .post, body: body)
 
-        var request = URLRequest(url: url)
-        request.httpMethod = method
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        do {
+            return try decoder().decode(AuthTokenResponse.self, from: data)
+        } catch {
+            throw NetworkError.decodingError
+        }
+    }
+
+    static func fetchFavorites() async throws -> [CellModel] {
+        let data = try await request(endpoint: "/favorites", method: .get)
+
+        do {
+            return try decoder().decode([CellModel].self, from: data)
+        } catch {
+            throw NetworkError.decodingError
+        }
+    }
+
+    static func addFavorite(id: UUID) async throws {
+        _ = try await request(endpoint: "/favorites/\(id.uuidString)", method: .post)
+    }
+
+    static func removeFavorite(id: UUID) async throws {
+        _ = try await request(endpoint: "/favorites/\(id.uuidString)", method: .delete)
+    }
+
+    static func fetchCells(page: Int, limit: Int, seed: String) async throws -> [CellModel] {
+        let data = try await request(endpoint: "/cells?page=\(page)&limit=\(limit)&seed=\(seed)", method: .get)
+
+        do {
+            return try decoder().decode([CellModel].self, from: data)
+        } catch {
+            throw NetworkError.decodingError
+        }
+    }
+
+    static func fetchPopularCells() async throws -> [CellModel] {
+        let data = try await request(endpoint: "/popular", method: .get)
+
+        do {
+            return try decoder().decode([CellModel].self, from: data)
+        } catch {
+            throw NetworkError.decodingError
+        }
+    }
+
+    static func fetchCategories() async throws -> [CategoryModel] {
+        let data = try await request(endpoint: "/categories", method: .get)
+
+        do {
+            return try decoder().decode([CategoryModel].self, from: data)
+        } catch {
+            throw NetworkError.decodingError
+        }
+    }
+
+    private static func request(endpoint: String,
+                                method: HTTPMethod,
+                                body: Data? = nil) async throws -> Data {
+        guard let baseURL = URL(string: Constants.address),
+              let url = URL(string: endpoint, relativeTo: baseURL)?.absoluteURL else {
+            throw NetworkError.invalidURL
+        }
+
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = method.rawValue
+        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        urlRequest.httpBody = body
 
         if let tokenData = KeychainHelper.standard.read(path: tokenPath, key: tokenKey),
            let token = String(data: tokenData, encoding: .utf8) {
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            urlRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
 
-        if let body { request.httpBody = try JSONEncoder().encode(body) }
-
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await URLSession.shared.data(for: urlRequest)
 
         guard let httpResponse = response as? HTTPURLResponse else {
             throw NetworkError.invalidResponse
@@ -63,24 +131,33 @@ struct NetworkHelper {
             case 400:
                 throw NetworkError.apiError(message: "Status: \(httpResponse.statusCode)")
             case 401:
-                throw NetworkError.incorrentsigInCredentials
+                throw NetworkError.incorrentSignInCredentials
             case 409:
                 throw NetworkError.userAlreadyExists
             default:
                 throw NetworkError.apiError(message: "Status: \(httpResponse.statusCode)")
         }
     }
-
-    static func fetch<T: Decodable>(url: String) async throws -> T {
-        let data = try await request(url: url, method: "GET")
-
+    
+    private static func decoder() -> JSONDecoder {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
-
-        do {
-            return try decoder.decode(T.self, from: data)
-        } catch {
-            throw NetworkError.decodingError
-        }
+        return decoder
     }
+}
+
+struct AuthTokenResponse: Decodable {
+    let token: String
+    let user: UserModel
+}
+
+private struct AuthSignUpBody: Encodable {
+    let name: String
+    let email: String
+    let password: String
+}
+
+private struct AuthSignInBody: Encodable {
+    let email: String
+    let password: String
 }
