@@ -5,8 +5,8 @@
 //  Created by ddorsat on 09.01.2026.
 //
 
-import Vapor
 import Fluent
+import Foundation
 
 final class UserFavorite: Model, @unchecked Sendable {
     static let schema = "user_favorites"
@@ -25,7 +25,9 @@ final class UserFavorite: Model, @unchecked Sendable {
     
     init() {}
     
-    init(id: UUID? = nil, userID: User.IDValue, cellID: Cell.IDValue) {
+    init(id: UUID? = nil,
+         userID: User.IDValue,
+         cellID: Cell.IDValue) {
         self.id = id
         self.$user.id = userID
         self.$cell.id = cellID

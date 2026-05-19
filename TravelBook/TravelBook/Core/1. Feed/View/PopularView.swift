@@ -32,7 +32,7 @@ struct PopularView: View {
         }
         .navigationTitle("Популярное")
         .navigationBarTitleDisplayMode(.inline)
-        .scrollIndicators(.hidden)
+        .bottomAreaPadding()
     }
 }
 

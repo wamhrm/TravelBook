@@ -1,6 +1,6 @@
-import Vapor
 import Fluent
 import FluentSQL
+import Vapor
 
 struct ContentController: RouteCollection {
     private let databaseSeeder = DatabaseSeeder()
@@ -11,7 +11,7 @@ struct ContentController: RouteCollection {
         routes.get("categories", use: getCategories)
         routes.get("users", use: getUsers)
         routes.get("search", use: searchCells)
-        
+
         routes.get("clear", use: clearDatabase)
         routes.get("upload", use: uploadDatabase)
     }
