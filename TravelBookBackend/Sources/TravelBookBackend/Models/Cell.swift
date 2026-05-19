@@ -5,8 +5,8 @@
 //  Created by ddorsat on 05.01.2026.
 //
 
-import Vapor
 import Fluent
+import Foundation
 
 final class Cell: Model, @unchecked Sendable {
     static let schema = "cells"

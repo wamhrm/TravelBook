@@ -1,5 +1,5 @@
-import Vapor
 import Fluent
+import Vapor
 
 struct FavoritesController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {

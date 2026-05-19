@@ -1,5 +1,5 @@
-import Vapor
 import Fluent
+import Vapor
 
 struct AuthController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {
@@ -69,4 +69,15 @@ struct AuthController: RouteCollection {
         let domain = parts[1]
         return !local.isEmpty && !domain.isEmpty
     }
+}
+
+struct CreateAccountRequest: Content {
+    let email: String
+    let name: String
+    let password: String
+}
+
+struct SignInRequest: Content {
+    let email: String
+    let password: String
 }

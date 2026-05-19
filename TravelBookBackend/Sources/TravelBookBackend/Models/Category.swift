@@ -5,8 +5,8 @@
 //  Created by ddorsat on 06.01.2026.
 //
 
-import Vapor
 import Fluent
+import Foundation
 
 final class Category: Model, @unchecked Sendable {
     static let schema = "categories"
@@ -28,7 +28,10 @@ final class Category: Model, @unchecked Sendable {
 
     init() {}
 
-    init(id: UUID? = nil, title: String, type: String, image: String) {
+    init(id: UUID? = nil,
+         title: String,
+         type: String,
+         image: String) {
         self.id = id
         self.title = title
         self.type = type
