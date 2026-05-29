@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct SignInCreateAccountTextFieldView: View {
     let type: SignInCreateAccountFieldType
@@ -18,15 +19,23 @@ struct SignInCreateAccountTextFieldView: View {
                 .foregroundStyle(.blackAndWhite)
                 .fontWeight(.semibold)
                 
-            if type == .name || type == .email {
-                TextField(type.textField, text: $field)
-                    .signInTextFieldModifier()
-                    .textInputAutocapitalization(type == .email ? .never : .words)
-            } else {
-                SecureField(type.textField, text: $field)
-                    .signInTextFieldModifier()
-                    .textInputAutocapitalization(.never)
+            Group {
+                if type == .name || type == .email {
+                    TextField(type.textField, text: $field)
+                        .textInputAutocapitalization(type == .email ? .never : .words)
+                        .keyboardType(type == .email ? .emailAddress : .default)
+                } else {
+                    SecureField(type.textField, text: $field)
+                        .textInputAutocapitalization(.never)
+                }
             }
+            .font(Components.displaySize(.footnote, .system(size: 14), .callout))
+            .frame(maxWidth: .infinity)
+            .frame(height: Components.displaySize(20, 20, 22))
+            .padding(15)
+            .background(.signInTextField)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .autocorrectionDisabled(type == .email || type == .password)
         }
     }
 }

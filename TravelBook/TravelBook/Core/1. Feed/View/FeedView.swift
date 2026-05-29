@@ -32,7 +32,7 @@ struct FeedView: View {
 
                         if vm.isServerWakingUp {
                             VStack(spacing: 20) {
-                                Text("Сервер просыпается. Первый запуск может занять до 40 секунд.")
+                                Text("Сервер просыпается. Первый запуск может занять до 50 секунд.")
                                     .lineSpacing(3)
 
                                 Text("Пожалуйста, ожидайте.")

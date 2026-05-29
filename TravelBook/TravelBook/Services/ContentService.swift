@@ -51,14 +51,14 @@ final class ContentService: ContentServiceProtocol {
         canLoadMoreSearch.send(false)
 
         try await withThrowingTaskGroup(of: Void.self) { group in
-            group.addTask { try await self.refreshFeedAndPopularCells() }
+            group.addTask { try await self.fetchFeedAndPopularCells() }
             group.addTask { try await self.fetchSearchCells() }
             group.addTask { try await self.fetchCategories() }
             try await group.waitForAll()
         }
     }
 
-    private func refreshFeedAndPopularCells() async throws {
+    private func fetchFeedAndPopularCells() async throws {
         isFeedLoading = true
         feedPage = 1
         currentFeedSeed = UUID().uuidString
@@ -84,10 +84,10 @@ final class ContentService: ContentServiceProtocol {
                 self.isFeedLoading = false
                 self.canLoadMoreFeed.send(false)
             }
-            throw ContentServiceErrors.failedToRefreshFeedAndPopularCells
+            throw ContentServiceErrors.failedToFetchFeedAndPopularCells
         }
     }
-
+    
     private func fetchFeedCells(page: Int, seed: String) async throws -> [CellModel] {
         try await NetworkHelper.fetchCells(page: page, limit: limit, seed: seed)
     }
@@ -96,7 +96,7 @@ final class ContentService: ContentServiceProtocol {
         let cells = try await NetworkHelper.fetchPopularCells()
         return cells.shuffled()
     }
-
+    
     func fetchMoreFeedCells() async throws {
         guard canLoadMoreFeed.value, !isFeedLoading else { return }
 
@@ -177,7 +177,7 @@ final class ContentService: ContentServiceProtocol {
             throw ContentServiceErrors.failedToFetchCells
         }
     }
-
+    
     private func fetchCategories() async throws {
         do {
             let loadedCategories = try await NetworkHelper.fetchCategories()
@@ -193,13 +193,13 @@ final class ContentService: ContentServiceProtocol {
 }
 
 enum ContentServiceErrors: LocalizedError {
-    case failedToRefreshFeedAndPopularCells
+    case failedToFetchFeedAndPopularCells
     case failedToFetchCells
     case failedToFetchCategories
-    
+
     var errorDescription: String? {
         switch self {
-            case .failedToRefreshFeedAndPopularCells:
+            case .failedToFetchFeedAndPopularCells:
                 return "Ошибка загрузки основных и популярных ячеек"
             case .failedToFetchCells:
                 return "Ошибка загрузки основных ячеек"

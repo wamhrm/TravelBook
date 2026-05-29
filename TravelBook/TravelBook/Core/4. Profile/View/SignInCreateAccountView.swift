@@ -95,6 +95,7 @@ struct SignInCreateAccountView: View {
         .padding(25)
         .background(RoundedRectangle(cornerRadius: 15) .fill(.backgroundWithShape))
         .padding(.horizontal)
+        .dismissKeyboardOnTap()
         .onDisappear {
             vm.clearTextFields()
         }
