@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import UIKit
 
 struct SignInCreateAccountView: View {
     @ObservedObject var vm: ProfileViewModel
@@ -42,7 +41,7 @@ struct SignInCreateAccountView: View {
                 VStack(spacing: 13) {
                     SignInCreateAccountTextFieldView(type: .email, field: $vm.email)
                     SignInCreateAccountTextFieldView(type: .password, field: $vm.password)
-                    SignInCreateAccountButtonView(type: .signIn, signedOut: false) {
+                    SignInCreateAccountButtonView(type: .signIn, isSignedOut: false, isLoading: vm.isLoading) {
                         vm.signIn()
                     }
                     .padding(.top, 30)
@@ -52,7 +51,7 @@ struct SignInCreateAccountView: View {
                     SignInCreateAccountTextFieldView(type: .name, field: $vm.name)
                     SignInCreateAccountTextFieldView(type: .email, field: $vm.email)
                     SignInCreateAccountTextFieldView(type: .password, field: $vm.password)
-                    SignInCreateAccountButtonView(type: .createAccount, signedOut: false) {
+                    SignInCreateAccountButtonView(type: .createAccount, isSignedOut: false, isLoading: vm.isLoading) {
                         vm.createAccount()
                     }
                     .padding(.top, 30)
@@ -64,7 +63,7 @@ struct SignInCreateAccountView: View {
                     .frame(height: 0.5)
 
                 Text("или")
-                    .font(Components.isProMax(.callout, .footnote))
+                    .font(Components.displaySize(.footnote, .system(size: 14), .callout))
 
                 Rectangle()
                     .frame(height: 0.5)
@@ -72,11 +71,11 @@ struct SignInCreateAccountView: View {
             .foregroundStyle(.gray)
 
             VStack(spacing: 10) {
-                SignInCreateAccountButtonView(type: .google, signedOut: false) {
+                SignInCreateAccountButtonView(type: .google, isSignedOut: false) {
 
                 }
 
-                SignInCreateAccountButtonView(type: .apple, signedOut: false) {
+                SignInCreateAccountButtonView(type: .apple, isSignedOut: false) {
 
                 }
             }
@@ -92,10 +91,13 @@ struct SignInCreateAccountView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .frame(height: type == .signIn ? Components.isProMax(555, 510) : Components.isProMax(635, 590))
+        .frame(height: type == .signIn ? Components.displaySize(510, 525, 555) : Components.displaySize(590, 605, 635))
         .padding(25)
         .background(RoundedRectangle(cornerRadius: 15) .fill(.backgroundWithShape))
         .padding(.horizontal)
+        .onDisappear {
+            vm.clearTextFields()
+        }
     }
 }
 

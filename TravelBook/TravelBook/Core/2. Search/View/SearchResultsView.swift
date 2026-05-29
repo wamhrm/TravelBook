@@ -21,7 +21,7 @@ struct SearchResultsView: View {
                 }
             } else {
                 ScrollView {
-                    LazyVStack(alignment: .leading, spacing: Components.isProMax(12, 10)) {
+                    LazyVStack(alignment: .leading, spacing: Components.displaySize(10, 10, 12)) {
                         ForEach(vm.searchResults) { cell in
                             CompactCellView(cell: cell) {
                                 onTapHandler(cell)
@@ -29,12 +29,12 @@ struct SearchResultsView: View {
                         }
                     }
                     .padding(.horizontal)
+                    .bottomAreaPadding(15)
                 }
             }
         }
         .navigationTitle("Поиск")
         .navigationBarTitleDisplayMode(.inline)
-        .bottomAreaPadding()
     }
 }
 

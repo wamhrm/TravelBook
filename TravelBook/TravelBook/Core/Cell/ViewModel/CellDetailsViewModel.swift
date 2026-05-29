@@ -5,13 +5,6 @@
 //  Created by ddorsat on 09.01.2026.
 //
 
-//
-//  CellDetailsViewModel.swift
-//  TravelBook
-//
-//  Created by ddorsat on 09.01.2026.
-//
-
 import Foundation
 import Combine
 
@@ -46,6 +39,8 @@ final class CellDetailsViewModel: ObservableObject {
     }
         
     func toggleFavorite() {
-        favoritesService.toggleFavorite(for: cell)
+        Task {
+            try? await favoritesService.toggleFavorite(for: cell)
+        }
     }
 }

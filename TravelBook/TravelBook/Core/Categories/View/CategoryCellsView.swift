@@ -13,9 +13,7 @@ struct CategoryCellsView: View {
     let onTapHandler: (CellModel) -> Void
 
     private var displayedCells: [CellModel] {
-        if !category.cells.isEmpty {
-            return category.cells
-        }
+        if !category.cells.isEmpty { return category.cells }
         return vm.displayCategoryResults
     }
 
@@ -30,6 +28,7 @@ struct CategoryCellsView: View {
                     }
                 }
                 .padding(.horizontal)
+                .bottomAreaPadding(15)
             }
         }
         .navigationTitle(category.type.title)
@@ -39,7 +38,6 @@ struct CategoryCellsView: View {
                 vm.selectCategory(category.type)
             }
         }
-        .bottomAreaPadding()
     }
 }
 

@@ -7,27 +7,7 @@
 
 import Foundation
 
-enum NetworkError: LocalizedError {
-    case invalidURL
-    case invalidResponse
-    case apiError(message: String)
-    case decodingError
-    case userAlreadyExists
-    case incorrentSignInCredentials
-
-    var errorDescription: String? {
-        switch self {
-            case .invalidURL: return "Некорректный URL"
-            case .invalidResponse: return "Некорректный ответ от сервера"
-            case .apiError(let msg): return "Ошибка сервера: \(msg)"
-            case .decodingError: return "Decoding Error"
-            case .userAlreadyExists: return "Пользователь уже зарегистрирован"
-            case .incorrentSignInCredentials: return "Неправильный логин или пароль"
-        }
-    }
-}
-
-enum HTTPMethod: String {
+fileprivate enum HTTPMethod: String {
     case get = "GET"
     case post = "POST"
     case delete = "DELETE"
@@ -101,9 +81,38 @@ struct NetworkHelper {
         }
     }
 
+    static func fetchSearchResults(term: String) async throws -> [CellModel] {
+        var components = URLComponents()
+        components.queryItems = [URLQueryItem(name: "search", value: term)]
+        
+        guard let query = components.percentEncodedQuery else {
+            throw NetworkError.invalidURL
+        }
+
+        let data = try await request(endpoint: "/search?\(query)", method: .get)
+
+        do {
+            return try decoder().decode([CellModel].self, from: data)
+        } catch {
+            throw NetworkError.decodingError
+        }
+    }
+
     private static func request(endpoint: String,
                                 method: HTTPMethod,
-                                body: Data? = nil) async throws -> Data {
+                                body: Data? = nil,
+                                attempt: Int = 0) async throws -> Data {
+        do {
+            return try await performRequest(endpoint: endpoint, method: method, body: body)
+        } catch let urlError as URLError where urlError.code == .networkConnectionLost && attempt < 2 {
+            try await Task.sleep(for: .milliseconds(500))
+            return try await request(endpoint: endpoint, method: method, body: body, attempt: attempt + 1)
+        }
+    }
+
+    private static func performRequest(endpoint: String,
+                                       method: HTTPMethod,
+                                       body: Data? = nil) async throws -> Data {
         guard let baseURL = URL(string: Constants.address),
               let url = URL(string: endpoint, relativeTo: baseURL)?.absoluteURL else {
             throw NetworkError.invalidURL
@@ -160,4 +169,24 @@ private struct AuthSignUpBody: Encodable {
 private struct AuthSignInBody: Encodable {
     let email: String
     let password: String
+}
+
+enum NetworkError: LocalizedError {
+    case invalidURL
+    case invalidResponse
+    case apiError(message: String)
+    case decodingError
+    case userAlreadyExists
+    case incorrentSignInCredentials
+
+    var errorDescription: String? {
+        switch self {
+            case .invalidURL: return "Некорректный URL"
+            case .invalidResponse: return "Некорректный ответ от сервера"
+            case .apiError(let msg): return "Ошибка сервера: \(msg)"
+            case .decodingError: return "Ошибка декодирования"
+            case .userAlreadyExists: return "Пользователь уже зарегистрирован"
+            case .incorrentSignInCredentials: return "Неправильный логин или пароль"
+        }
+    }
 }

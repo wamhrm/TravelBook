@@ -16,7 +16,7 @@ struct CategoriesView: View {
             Components.backgroundColor()
 
             ScrollView {
-                VStack(alignment: .leading, spacing: Components.isProMax(10, 8)) {
+                LazyVStack(alignment: .leading, spacing: Components.displaySize(8, 8, 10)) {
                     ForEach(categories) { category in
                         CategoriesCellView(category: category,
                                            categoryCellsCount: category.cells.count) {
@@ -25,9 +25,9 @@ struct CategoriesView: View {
                     }
                 }
                 .padding(.horizontal)
+                .bottomAreaPadding(15)
             }
             .navigationTitle("Категории")
-            .bottomAreaPadding()
         }
     }
 }

@@ -19,40 +19,43 @@ struct FavoritesView: View {
             ZStack {
                 Components.backgroundColor()
 
-                if vm.favoriteCells.isEmpty {
+                if vm.isSignedOut {
                     ContentUnavailableView {
-                        Label("Нет избранного", systemImage: "heart")
+                        Label("Войдите, чтобы добавлять в избранное", systemImage: "")
                     }
                 } else {
-                    ScrollView {
-                        LazyVStack(spacing: Components.isProMax(12, 10)) {
-                            ForEach(vm.favoriteCells) { cell in
-                                CompactCellView(cell: cell) {
-                                    vm.favoritesRoutes.append(.cellDetails(cell))
-                                }
-                                .contextMenu {
-                                    Button {
-                                        withAnimation(.spring) {
-                                            vm.removeFromFavorites(cell: cell)
-                                        }
-                                    } label: {
-                                        Text("Удалить")
+                    if vm.favoriteCells.isEmpty {
+                        ContentUnavailableView {
+                            Label("Нет избранного", systemImage: "heart")
+                        }
+                    } else {
+                        ScrollView {
+                            LazyVStack(spacing: Components.displaySize(10, 10, 12)) {
+                                ForEach(vm.favoriteCells) { cell in
+                                    CompactCellView(cell: cell) {
+                                        vm.favoritesRoutes.append(.cellDetails(cell))
+                                    }
+                                    .contextMenu {
+                                        contextView(cell)
                                     }
                                 }
                             }
+                            .padding(.horizontal)
+                            .bottomAreaPadding(15)
                         }
-                        .padding(.horizontal)
                     }
                 }
             }
             .navigationTitle("Избранное")
             .navigationBarTitleDisplayMode(.inline)
-            .bottomAreaPadding()
             .navigationDestination(for: FavoritesRoutes.self) { destination in
                 destinationView(destination)
             }
             .refreshable {
-                vm.fetchFavorites()
+                await vm.fetchFavorites()
+            }
+            .alert(vm.alertMessage, isPresented: $vm.showAlert) {
+                Button("OK", role: .cancel) {}
             }
         }
     }
@@ -64,8 +67,18 @@ extension FavoritesView {
         switch route {
             case .cellDetails(let cell):
                 CellDetailsView(cell: cell,
-                                authService: vm.cellDetailsAuthService,
-                                favoritesService: vm.cellDetailsFavoritesService)
+                                authService: vm.authService,
+                                favoritesService: vm.favoritesService)
+        }
+    }
+    
+    private func contextView(_ cell: CellModel) -> some View {
+        Button {
+            withAnimation(.spring) {
+                vm.removeFromFavorites(cell: cell)
+            }
+        } label: {
+            Text("Удалить")
         }
     }
 }

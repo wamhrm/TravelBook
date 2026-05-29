@@ -7,7 +7,6 @@
 
 import SwiftUI
 import Kingfisher
-import UIKit
 
 struct FeedHeadView: View {
     @Environment(\.colorScheme) var colorScheme
@@ -15,7 +14,7 @@ struct FeedHeadView: View {
     let onTapHandler: () -> Void
     
     private var isMock: Bool {
-        cell.image.isEmpty
+        return cell.image.isEmpty
     }
     
     var body: some View {
@@ -39,16 +38,16 @@ struct FeedHeadView: View {
                 VStack(alignment: .leading) {
                     VStack(alignment: .leading, spacing: 15) {
                         Text("УЧЕБНИК")
-                            .font(Components.isProMax(.caption, .caption2))
+                            .font(Components.displaySize(.caption2, .caption, .caption))
                             .foregroundStyle(.white)
                             .bold()
-                            .padding(Components.isProMax(7, 6))
-                            .padding(.horizontal, Components.isProMax(4, 3))
+                            .padding(Components.displaySize(6, 6, 7))
+                            .padding(.horizontal, Components.displaySize(3, 3, 4))
                             .background(.feedBigPopular.opacity(colorScheme == .light ? 0.75 : 0.5))
                             .clipShape(RoundedRectangle(cornerRadius: 8))
                         
                         Text(cell.title)
-                            .font(Components.isProMax(.title2, .title3))
+                            .font(Components.displaySize(.title3, .system(size: 21), .title2))
                             .foregroundStyle(.white)
                             .fontWeight(.bold)
                             .lineLimit(3)
@@ -61,7 +60,7 @@ struct FeedHeadView: View {
                 }
                 .padding(20)
             }
-            .frame(width: Components.isProMax(407, 370), height: Components.isProMax(252, 215))
+            .frame(width: Components.displaySize(370, 391, 407), height: Components.displaySize(215, 227, 252))
             .clipShape(RoundedRectangle(cornerRadius: 15))
         }
     }

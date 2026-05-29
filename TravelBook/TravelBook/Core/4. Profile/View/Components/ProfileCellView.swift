@@ -10,11 +10,16 @@ import SwiftUI
 struct ProfileCellView: View {
     private let user: UserModel?
     let type: ProfileCellType
+    var isLoading = false
     let onTapHandler: () -> Void
-    
-    init(user: UserModel? = nil, type: ProfileCellType, onTapHandler: @escaping () -> Void) {
+
+    init(user: UserModel? = nil,
+         type: ProfileCellType,
+         isLoading: Bool = false,
+         onTapHandler: @escaping () -> Void) {
         self.user = user
         self.type = type
+        self.isLoading = isLoading
         self.onTapHandler = onTapHandler
     }
     
@@ -33,7 +38,7 @@ struct ProfileCellView: View {
                 }
                 
                 Text(type.rawValue)
-                    .font(Components.isProMax(.callout, .system(size: 14)))
+                    .font(Components.displaySize(.system(size: 14), .system(size: 15), .callout))
                     .foregroundStyle(.blackAndWhite)
                     .fontWeight(.medium)
                 
@@ -46,6 +51,7 @@ struct ProfileCellView: View {
             .padding(15)
             .backgroundWithShape(10)
         }
+        .disabled(isLoading && type == .logOut)
     }
 }
 

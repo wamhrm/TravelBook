@@ -5,9 +5,9 @@
 //  Created by ddorsat on 03.01.2026.
 //
 
+import Combine
 import Foundation
 import SwiftUI
-import Combine
 
 enum ProfileRoutes: Hashable {
     case appearance, aboutApp
@@ -21,23 +21,22 @@ private enum AuthInput {
 
 @MainActor
 final class ProfileViewModel: ObservableObject {
+    @Published var profileRoutes: [ProfileRoutes] = []
+    @Published private(set) var authState = AuthState.signedOut
+    
     @Published var name = ""
     @Published var email = ""
     @Published var password = ""
 
-    @Published var profileRoutes: [ProfileRoutes] = []
-    @Published private(set) var authState = AuthState.signedOut
+    @Published var showAlert = false
+    @Published private(set) var alertMessage = ""
     @Published private(set) var isLoading = false
 
-    @Published var showError = false
-    @Published private(set) var errorMessage = ""
-
-    private var authService: any AuthServiceProtocol
+    private let authService: any AuthServiceProtocol
     private var cancellables = Set<AnyCancellable>()
 
     init(authService: any AuthServiceProtocol) {
         self.authService = authService
-
         setupSubscriptions()
     }
 
@@ -75,7 +74,7 @@ final class ProfileViewModel: ObservableObject {
                 try await authService.createAccount(name: trimmedName, email: trimmedEmail, password: password)
 
                 profileRoutes = []
-                clearFields()
+                clearTextFields()
             } catch {
                 showError(error.localizedDescription)
             }
@@ -102,7 +101,7 @@ final class ProfileViewModel: ObservableObject {
                 try await authService.signIn(email: trimmedEmail, password: password)
 
                 profileRoutes = []
-                clearFields()
+                clearTextFields()
             } catch {
                 showError(error.localizedDescription)
             }
@@ -120,19 +119,20 @@ final class ProfileViewModel: ObservableObject {
             try? await Task.sleep(for: AuthInput.authActionDelay)
             authService.signOut()
             profileRoutes = []
-            isLoading = false
         }
+        
+        isLoading = false
     }
 
-    private func clearFields() {
+    func clearTextFields() {
         name = ""
         email = ""
         password = ""
     }
 
     private func showError(_ message: String) {
-        showError = true
-        errorMessage = message
+        showAlert = true
+        alertMessage = message
     }
 
     private func validateSignIn(email: String, password: String) -> String? {

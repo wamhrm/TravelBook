@@ -5,10 +5,9 @@
 //  Created by ddorsat on 02.01.2026.
 //
 
-import SwiftUI
 import Combine
+import SwiftUI
 import Kingfisher
-import UIKit
 
 struct CellDetailsView: View {
     @StateObject private var vm: CellDetailsViewModel
@@ -17,7 +16,7 @@ struct CellDetailsView: View {
     let authService: any AuthServiceProtocol
 
     private var isMock: Bool {
-        cell.image.isEmpty
+        return cell.image.isEmpty
     }
 
     init(cell: CellModel,
@@ -75,17 +74,17 @@ struct CellDetailsView: View {
                             }
                         }
                     }
-                    .frame(height: Components.isProMax(262, 225))
+                    .frame(height: Components.displaySize(225, 237, 262))
                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .automatic))
                     .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .never))
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     .padding(.horizontal, 20)
                 }
-                .bottomAreaPadding()
+                .bottomAreaPadding(50)
                 .alert("Пожалуйста, авторизуйтесь или зарегистрируйтесь", isPresented: $showAuthAlert) {
                     Button("OK", role: .cancel) {}
                 }
-                .padding(.top, Components.isProMax(-153, -116))
+                .padding(.top, Components.displaySize(-116, -129, -153))
             }
         }
     }

@@ -5,15 +5,8 @@
 //  Created by ddorsat on 05.01.2026.
 //
 
-//
-//  FavoritesViewModel.swift
-//  TravelBook
-//
-//  Created by ddorsat on 05.01.2026.
-//
-
-import Foundation
 import Combine
+import Foundation
 
 enum FavoritesRoutes: Hashable {
     case cellDetails(CellModel)
@@ -23,14 +16,18 @@ enum FavoritesRoutes: Hashable {
 final class FavoritesViewModel: ObservableObject {
     @Published var favoritesRoutes: [FavoritesRoutes] = []
     @Published private(set) var favoriteCells: [CellModel] = []
+    
+    @Published var showAlert = false
+    @Published private(set) var alertMessage = ""
 
-    private let authService: any AuthServiceProtocol
-    private let favoritesService: any FavoritesServiceProtocol
-
-    var cellDetailsAuthService: any AuthServiceProtocol { authService }
-    var cellDetailsFavoritesService: any FavoritesServiceProtocol { favoritesService }
+    let authService: any AuthServiceProtocol
+    let favoritesService: any FavoritesServiceProtocol
 
     private var cancellables = Set<AnyCancellable>()
+    
+    var isSignedOut: Bool {
+        return authService.authState.value == .signedOut
+    }
 
     init(authService: any AuthServiceProtocol,
          favoritesService: any FavoritesServiceProtocol) {
@@ -51,7 +48,7 @@ final class FavoritesViewModel: ObservableObject {
             .sink { [weak self] state in
                 switch state {
                     case .signedIn:
-                        Task { await self?.favoritesService.fetchFavorites() }
+                        Task { await self?.fetchFavorites() }
                     case .signedOut:
                         self?.favoritesService.clearFavorites()
                 }
@@ -64,11 +61,26 @@ final class FavoritesViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 
-    func fetchFavorites() {
-        Task { await favoritesService.fetchFavorites() }
+    func fetchFavorites() async {
+        do {
+            try await favoritesService.fetchFavorites()
+        } catch {
+            showAlert(message: error.localizedDescription)
+        }
     }
 
     func removeFromFavorites(cell: CellModel) {
-        favoritesService.toggleFavorite(for: cell)
+        Task {
+            do {
+                try await favoritesService.toggleFavorite(for: cell)
+            } catch {
+                showAlert(message: error.localizedDescription)
+            }
+        }
+    }
+
+    private func showAlert(message: String) {
+        showAlert = true
+        alertMessage = message
     }
 }

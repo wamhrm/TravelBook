@@ -7,14 +7,13 @@
 
 import SwiftUI
 import Kingfisher
-import UIKit
 
 struct FeedPopularCellView: View {
     let cell: CellModel
     let onTapHandler: () -> Void
 
     private var isMock: Bool {
-        cell.image.isEmpty
+        return cell.image.isEmpty
     }
 
     var body: some View {
@@ -26,13 +25,13 @@ struct FeedPopularCellView: View {
                             ProgressView()
                         }
                         .resizable()
-                        .frame(height: Components.isProMax(177, 140))
+                        .frame(height: Components.displaySize(140, 152, 177))
                         .clipped()
                 } else {
                     Image("test")
                         .resizable()
                         .scaledToFill()
-                        .frame(height: Components.isProMax(177, 140))
+                        .frame(height: Components.displaySize(140, 152, 177))
                         .clipped()
                 }
 
@@ -40,7 +39,7 @@ struct FeedPopularCellView: View {
                     Components.categoriesTheme(cell.category, .feed)
 
                     Text(cell.title)
-                        .font(.system(size: Components.isProMax(14, 13)))
+                        .font(.system(size: Components.displaySize(13, 13, 14)))
                         .foregroundStyle(.title)
                         .fontWeight(.semibold)
                         .lineLimit(2)
@@ -50,7 +49,7 @@ struct FeedPopularCellView: View {
 
                 Spacer()
             }
-            .frame(width: Components.isProMax(267, 230), height: Components.isProMax(287, 250))
+            .frame(width: Components.displaySize(230, 242, 267), height: Components.displaySize(250, 262, 287))
             .backgroundWithShape(15)
         }
     }

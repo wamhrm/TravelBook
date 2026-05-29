@@ -20,8 +20,10 @@ struct BigCellView: View {
         self.onFavoriteTapHandler = nil
     }
 
-    init(cell: CellModel, isCellDetails: Bool,
-         isFavorite: Binding<Bool>, onFavoriteTapHandler: (() -> Void)?) {
+    init(cell: CellModel,
+         isCellDetails: Bool,
+         isFavorite: Binding<Bool>,
+         onFavoriteTapHandler: (() -> Void)?) {
         self.cell = cell
         self.isCellDetails = isCellDetails
         self._isFavorite = isFavorite
@@ -29,7 +31,7 @@ struct BigCellView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: isCellDetails ? Components.isProMax(10, 8) : Components.isProMax(8, 6)) {
+        VStack(alignment: .leading, spacing: isCellDetails ? Components.displaySize(8, 8, 10) : Components.displaySize(6, 6, 8)) {
             if !isCellDetails {
                 Components.categoriesTheme(cell.category, .search)
             }
@@ -43,7 +45,7 @@ struct BigCellView: View {
                     .multilineTextAlignment(.leading)
 
                 Text(cell.subtitle)
-                    .font(isCellDetails ? Components.isProMax(.default, .system(size: 14)) : Components.isProMax(.system(size: 14), .footnote))
+                    .font(isCellDetails ? Components.displaySize(.system(size: 14), .system(size: 15), .default) : Components.displaySize(.footnote, .system(size: 13), .system(size: 14)))
                     .foregroundStyle(.subtitle)
                     .lineLimit(isCellDetails ? .max : 2)
                     .multilineTextAlignment(.leading)
@@ -53,14 +55,14 @@ struct BigCellView: View {
 
                     Rectangle()
                         .foregroundStyle(.cellDivider)
-                        .frame(width: 1, height: Components.isProMax(15, 13))
+                        .frame(width: 1, height: Components.displaySize(13, 13, 15))
 
                     Text("\(cell.readingTime) мин")
 
                     if isCellDetails {
                         Rectangle()
                             .foregroundStyle(.cellDivider)
-                            .frame(width: 1, height: Components.isProMax(15, 13))
+                            .frame(width: 1, height: Components.displaySize(13, 13, 15))
 
                         Button {
                             withAnimation {
@@ -75,13 +77,13 @@ struct BigCellView: View {
                         }
                     }
                 }
-                .font(isCellDetails ? Components.isProMax(.system(size: 14), .footnote) : Components.isProMax(.footnote, .caption))
+                .font(isCellDetails ? Components.displaySize(.footnote, .system(size: 13), .system(size: 14)) : Components.displaySize(.caption, .footnote, .footnote))
                 .foregroundStyle(.subtitle)
             }
             .padding(.top, 7)
 
             Text(cell.description)
-                .font(isCellDetails ? Components.isProMax(.callout, .system(size: 14)) : Components.isProMax(.callout, .footnote))
+                .font(isCellDetails ? Components.displaySize(.system(size: 14), .system(size: 15), .callout) : Components.displaySize(.footnote, .system(size: 14), .callout))
                 .foregroundStyle(.description)
                 .lineSpacing(6)
                 .padding(.vertical, 10)

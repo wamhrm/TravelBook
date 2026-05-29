@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct AppearanceView: View {
-    @StateObject private var vm = AppearanceViewModel()
-    
+    @AppStorage(Constants.selectedThemeKey) private var selectedTheme = AppTheme.system
+
     var body: some View {
         ZStack {
             Components.backgroundColor()
@@ -18,7 +18,7 @@ struct AppearanceView: View {
                 Section {
                     ForEach(AppTheme.allCases, id: \.self) { theme in
                         Button {
-                            vm.setTheme(theme)
+                            selectedTheme = theme
                         } label: {
                             HStack {
                                 Text(theme.rawValue)
@@ -26,7 +26,7 @@ struct AppearanceView: View {
                                                             
                                 Spacer()
                                                             
-                                if vm.currentTheme == theme {
+                                if selectedTheme == theme {
                                     Image(systemName: "checkmark")
                                         .resizable()
                                         .foregroundStyle(.blue)

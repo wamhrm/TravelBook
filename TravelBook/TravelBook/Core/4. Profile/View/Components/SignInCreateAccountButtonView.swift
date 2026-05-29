@@ -8,9 +8,14 @@
 import SwiftUI
 
 struct SignInCreateAccountButtonView: View {
-    let type: SignInCreateAccountButtonType
-    let signedOut: Bool
+    let type: SignInCreateAccountButtonTypes
+    let isSignedOut: Bool
+    var isLoading = false
     let onTapHandler: () -> Void
+
+    private var buttonTitle: String {
+        return isLoading ? type.loadingTitle : type.rawValue
+    }
     
     var body: some View {
         Button(action: onTapHandler) {
@@ -26,33 +31,38 @@ struct SignInCreateAccountButtonView: View {
                         .logoModifier()
                 }
                         
-                if !signedOut {
-                    Text(type.rawValue)
-                        .foregroundStyle(type.foregroundColor)
-                    
-                } else {
-                    Text(type.rawValue)
-                        .foregroundStyle(type == .signIn ? .white : .black)
-                }
+                Text(buttonTitle)
+                    .foregroundStyle(isSignedOut ? (type == .signIn ? .white : .black) : type.foregroundColor)
             }
-            .font(Components.isProMax(.callout, .footnote))
+            .font(Components.displaySize(.footnote, .system(size: 14), .callout))
             .bold()
-            .padding(Components.isProMax(18, 16))
+            .padding(Components.displaySize(16, 16, 18))
             .padding(.leading, type == .apple ? -7 : 0)
             .frame(maxWidth: .infinity, alignment: .center)
-            .background(signedOut && type == .createAccount ? .white : type.backgroundColor)
-            .background(signedOut && type == .signIn ? .blue : type.backgroundColor)
+            .background(isSignedOut && type == .createAccount ? .white : type.backgroundColor)
             .overlay(RoundedRectangle(cornerRadius: 10) .stroke(.black, lineWidth: type == .google ? 0.3 : 0.3))
             .clipShape(RoundedRectangle(cornerRadius: 10))
         }
+        .disabled(isLoading)
     }
 }
 
-enum SignInCreateAccountButtonType: String {
+enum SignInCreateAccountButtonTypes: String {
     case signIn = "Войти"
     case createAccount = "Создать аккаунт"
     case apple = "Apple"
     case google = "Google"
+
+    var loadingTitle: String {
+        switch self {
+            case .signIn:
+                return "Входим..."
+            case .createAccount:
+                return "Создаем аккаунт..."
+            case .apple, .google:
+                return rawValue
+        }
+    }
     
     var backgroundColor: Color {
         switch self {
@@ -76,7 +86,7 @@ enum SignInCreateAccountButtonType: String {
 }
 
 #Preview {
-    SignInCreateAccountButtonView(type: .google, signedOut: false) {
+    SignInCreateAccountButtonView(type: .google, isSignedOut: false) {
         
     }
 }

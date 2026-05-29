@@ -7,7 +7,6 @@
 
 import SwiftUI
 import Kingfisher
-import UIKit
 
 struct CompactCellView: View {
     let cell: CellModel
@@ -15,7 +14,7 @@ struct CompactCellView: View {
 
     var body: some View {
         Button(action: onTapHandler) {
-            VStack(alignment: .leading, spacing: Components.isProMax(17, 15)) {
+            VStack(alignment: .leading, spacing: Components.displaySize(15, 15, 17)) {
                 Components.categoriesTheme(cell.category, .feed)
 
                 Text(cell.title)
@@ -25,7 +24,7 @@ struct CompactCellView: View {
                     .multilineTextAlignment(.leading)
 
                 Text(cell.description)
-                    .font(Components.isProMax(.system(size: 14), .footnote))
+                    .font(Components.displaySize(.footnote, .system(size: 13), .system(size: 14)))
                     .foregroundStyle(.deepGray)
                     .lineLimit(3)
                     .multilineTextAlignment(.leading)
@@ -33,7 +32,7 @@ struct CompactCellView: View {
                 Components.readingTime(cell, false)
             }
             .padding(15)
-            .frame(maxWidth: .infinity, maxHeight: Components.isProMax(262, 225))
+            .frame(maxWidth: .infinity, maxHeight: Components.displaySize(225, 237, 262))
             .backgroundWithShape(15)
         }
     }

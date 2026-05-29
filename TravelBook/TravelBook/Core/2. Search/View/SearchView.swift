@@ -28,7 +28,7 @@ struct SearchView: View {
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 25) {
-                        VStack(alignment: .leading, spacing: Components.isProMax(14, 12)) {
+                        VStack(alignment: .leading, spacing: Components.displaySize(12, 12, 14)) {
                             Components.headerView("Популярные запросы")
 
                             FlowLayout(spacing: 5) {
@@ -42,7 +42,7 @@ struct SearchView: View {
                         .padding(.top, 5)
                         .padding(.horizontal)
 
-                        VStack(alignment: .leading, spacing: Components.isProMax(12, 10)) {
+                        VStack(alignment: .leading, spacing: Components.displaySize(10, 10, 12)) {
                             HStack {
                                 Components.headerView("Категории")
 
@@ -56,7 +56,7 @@ struct SearchView: View {
                                 }
                             }
 
-                            VStack(alignment: .leading, spacing: Components.isProMax(8, 7)) {
+                            VStack(alignment: .leading, spacing: Components.displaySize(7, 7, 8)) {
                                 ForEach(vm.displayCategories.prefix(3)) { category in
                                     CategoriesCellView(category: category,
                                                        categoryCellsCount: category.cells.count) {
@@ -67,10 +67,10 @@ struct SearchView: View {
                         }
                         .padding(.horizontal)
 
-                        VStack(alignment: .leading, spacing: Components.isProMax(12, 10)) {
+                        VStack(alignment: .leading, spacing: Components.displaySize(10, 10, 12)) {
                             Components.headerView("Посты")
 
-                            LazyVStack(alignment: .leading, spacing: Components.isProMax(12, 10)) {
+                            LazyVStack(alignment: .leading, spacing: Components.displaySize(10, 10, 12)) {
                                 ForEach(vm.displayCells) { cell in
                                     BigCellView(cell: cell, isCellDetails: false)
                                         .padding()
@@ -90,22 +90,24 @@ struct SearchView: View {
                             }
                         }
                         .padding(.horizontal)
+                        .bottomAreaPadding(15)
                     }
                 }
             }
             .navigationTitle("Поиск")
             .navigationBarTitleDisplayMode(.inline)
-            .bottomAreaPadding()
-            .scrollIndicators(.hidden)
+            .navigationDestination(for: SearchRoutes.self, destination: destinationView)
             .searchable(text: $vm.searchText,
                         placement: .navigationBarDrawer(displayMode: .automatic),
                         prompt: "Поиск")
             .onSubmit(of: .search) {
                 Task { await vm.searchData() }
             }
-            .navigationDestination(for: SearchRoutes.self, destination: destinationView)
             .refreshable {
                 vm.refreshData()
+            }
+            .alert(vm.alertMessage, isPresented: $vm.showAlert) {
+                Button("OK", role: .cancel) {}
             }
         }
     }

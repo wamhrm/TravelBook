@@ -17,10 +17,11 @@ protocol ContentServiceProtocol: ObservableObject {
     var canLoadMoreFeed: CurrentValueSubject<Bool, Never> { get }
     var canLoadMoreSearch: CurrentValueSubject<Bool, Never> { get }
 
-    func fetchData() async
-    func fetchMoreFeedCells() async
-    func fetchSearchCells() async
-    func fetchMoreSearchCells() async
+    func fetchData() async throws
+    func fetchMoreFeedCells() async throws
+    func fetchSearchCells() async throws
+    func fetchMoreSearchCells() async throws
+    func fetchSearchResults(term: String) async throws -> [CellModel]
 }
 
 final class ContentService: ContentServiceProtocol {
@@ -44,19 +45,20 @@ final class ContentService: ContentServiceProtocol {
 
     init() {}
 
-    func fetchData() async {
+    func fetchData() async throws {
         feedPage = 1
         canLoadMoreFeed.send(false)
         canLoadMoreSearch.send(false)
 
-        await withTaskGroup(of: Void.self) { group in
-            group.addTask { await self.refreshFeedAndPopularCells() }
-            group.addTask { await self.fetchSearchCells() }
-            group.addTask { await self.fetchCategories() }
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            group.addTask { try await self.refreshFeedAndPopularCells() }
+            group.addTask { try await self.fetchSearchCells() }
+            group.addTask { try await self.fetchCategories() }
+            try await group.waitForAll()
         }
     }
 
-    private func refreshFeedAndPopularCells() async {
+    private func refreshFeedAndPopularCells() async throws {
         isFeedLoading = true
         feedPage = 1
         currentFeedSeed = UUID().uuidString
@@ -78,11 +80,11 @@ final class ContentService: ContentServiceProtocol {
                 self.isFeedLoading = false
             }
         } catch {
-            print("ContentService - Ошибка fetchCells или popularCells")
             await MainActor.run {
                 self.isFeedLoading = false
                 self.canLoadMoreFeed.send(false)
             }
+            throw ContentServiceErrors.failedToRefreshFeedAndPopularCells
         }
     }
 
@@ -95,28 +97,28 @@ final class ContentService: ContentServiceProtocol {
         return cells.shuffled()
     }
 
-    func fetchMoreFeedCells() async {
+    func fetchMoreFeedCells() async throws {
         guard canLoadMoreFeed.value, !isFeedLoading else { return }
 
-        await fetchCells(pagePath: \.feedPage,
+        try await fetchCells(pagePath: \.feedPage,
                          loadingPath: \.isFeedLoading,
                          canLoadSubjectPath: \.canLoadMoreFeed,
                          cellsSubjectPath: \.feedCells,
                          isRefreshing: false)
     }
 
-    func fetchSearchCells() async {
-        await fetchCells(pagePath: \.searchPage,
+    func fetchSearchCells() async throws {
+        try await fetchCells(pagePath: \.searchPage,
                          loadingPath: \.isSearchLoading,
                          canLoadSubjectPath: \.canLoadMoreSearch,
                          cellsSubjectPath: \.searchCells,
                          isRefreshing: true)
     }
 
-    func fetchMoreSearchCells() async {
+    func fetchMoreSearchCells() async throws {
         guard canLoadMoreSearch.value, !isSearchLoading else { return }
 
-        await fetchCells(pagePath: \.searchPage,
+        try await fetchCells(pagePath: \.searchPage,
                          loadingPath: \.isSearchLoading,
                          canLoadSubjectPath: \.canLoadMoreSearch,
                          cellsSubjectPath: \.searchCells,
@@ -127,7 +129,7 @@ final class ContentService: ContentServiceProtocol {
                             loadingPath: ReferenceWritableKeyPath<ContentService, Bool>,
                             canLoadSubjectPath: KeyPath<ContentService, CurrentValueSubject<Bool, Never>>,
                             cellsSubjectPath: KeyPath<ContentService, CurrentValueSubject<[CellModel], Never>>,
-                            isRefreshing: Bool) async {
+                            isRefreshing: Bool) async throws {
         if isRefreshing {
             self[keyPath: pagePath] = 1
 
@@ -168,20 +170,41 @@ final class ContentService: ContentServiceProtocol {
                 self[keyPath: loadingPath] = false
             }
         } catch {
-            print("ContentService - Ошибка fetchCells")
             await MainActor.run {
                 self[keyPath: loadingPath] = false
                 self[keyPath: canLoadSubjectPath].send(false)
             }
+            throw ContentServiceErrors.failedToFetchCells
         }
     }
 
-    private func fetchCategories() async {
+    private func fetchCategories() async throws {
         do {
             let loadedCategories = try await NetworkHelper.fetchCategories()
             await MainActor.run { self.allCategories.send(loadedCategories) }
         } catch {
-            print("ContentService - Ошибка fetch categories")
+            throw ContentServiceErrors.failedToFetchCategories
+        }
+    }
+
+    func fetchSearchResults(term: String) async throws -> [CellModel] {
+        try await NetworkHelper.fetchSearchResults(term: term)
+    }
+}
+
+enum ContentServiceErrors: LocalizedError {
+    case failedToRefreshFeedAndPopularCells
+    case failedToFetchCells
+    case failedToFetchCategories
+    
+    var errorDescription: String? {
+        switch self {
+            case .failedToRefreshFeedAndPopularCells:
+                return "Ошибка загрузки основных и популярных ячеек"
+            case .failedToFetchCells:
+                return "Ошибка загрузки основных ячеек"
+            case .failedToFetchCategories:
+                return "Ошибка загрузки категорий"
         }
     }
 }

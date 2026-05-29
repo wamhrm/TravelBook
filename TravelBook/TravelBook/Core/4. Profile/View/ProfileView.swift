@@ -26,11 +26,6 @@ struct ProfileView: View {
             .navigationDestination(for: ProfileRoutes.self) { destination in
                 destinationView(destination)
             }
-            .overlay {
-                if vm.isLoading {
-                    ProgressView()
-                }
-            }
         }
     }
 }

@@ -8,15 +8,15 @@
 import SwiftUI
 
 struct MainTabView: View {
-    private let authService: AuthService
-    private let favoritesService: FavoritesService
-
     @StateObject private var feedViewModel: FeedViewModel
     @StateObject private var searchViewModel: SearchViewModel
     @StateObject private var favoritesViewModel: FavoritesViewModel
     @StateObject private var profileViewModel: ProfileViewModel
 
     @State private var selectedTab: Tabs = .feed
+    
+    private let authService: AuthService
+    private let favoritesService: FavoritesService
 
     init(authService: AuthService,
          contentService: ContentService,

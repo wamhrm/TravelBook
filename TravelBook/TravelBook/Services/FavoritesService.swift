@@ -12,8 +12,8 @@ protocol FavoritesServiceProtocol: ObservableObject {
     var favoriteCells: CurrentValueSubject<[CellModel], Never> { get }
     var likedIDs: CurrentValueSubject<Set<UUID>, Never> { get }
     
-    func fetchFavorites() async
-    func toggleFavorite(for cell: CellModel)
+    func fetchFavorites() async throws
+    func toggleFavorite(for cell: CellModel) async throws
     func clearFavorites()
 }
 
@@ -34,7 +34,7 @@ final class FavoritesService: FavoritesServiceProtocol {
         cancellables.removeAll()
     }
     
-    func fetchFavorites() async {
+    func fetchFavorites() async throws {
         guard authService.authState.value != .signedOut else { return }
 
         do {
@@ -44,11 +44,11 @@ final class FavoritesService: FavoritesServiceProtocol {
             let ids = Set(cells.compactMap { $0.id })
             self.likedIDs.send(ids)
         } catch {
-            print("Ошибка загрузки избранного: \(error)")
+            throw FavoritesServiceError.failedToFetchFavorites
         }
     }
     
-    func toggleFavorite(for cell: CellModel) {
+    func toggleFavorite(for cell: CellModel) async throws {
         guard let id = cell.id else { return }
         
         let isCurrentlyLiked = likedIDs.value.contains(id)
@@ -59,21 +59,19 @@ final class FavoritesService: FavoritesServiceProtocol {
             addToLocalState(cell: cell)
         }
         
-        Task {
-            do {
-                if isCurrentlyLiked {
-                    try await NetworkHelper.removeFavorite(id: id)
-                } else {
-                    try await NetworkHelper.addFavorite(id: id)
-                }
-            } catch {
-                print("Ошибка синхронизации лайка: \(error)")
-                if isCurrentlyLiked {
-                    addToLocalState(cell: cell)
-                } else {
-                    removeFromLocalState(id: id)
-                }
+        do {
+            if isCurrentlyLiked {
+                try await NetworkHelper.removeFavorite(id: id)
+            } else {
+                try await NetworkHelper.addFavorite(id: id)
             }
+        } catch {
+            if isCurrentlyLiked {
+                addToLocalState(cell: cell)
+            } else {
+                removeFromLocalState(id: id)
+            }
+            throw FavoritesServiceError.failedToToggle
         }
     }
     
@@ -105,6 +103,20 @@ final class FavoritesService: FavoritesServiceProtocol {
             
             favoriteCells.send(currentItems)
             likedIDs.send(currentIDs)
+        }
+    }
+}
+
+enum FavoritesServiceError: LocalizedError {
+    case failedToFetchFavorites
+    case failedToToggle
+    
+    var errorDescription: String? {
+        switch self {
+            case .failedToFetchFavorites:
+                return "Ошибка загрузки избранного"
+            case .failedToToggle:
+                return "Ошибка синхронизации лайка"
         }
     }
 }
