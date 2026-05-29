@@ -45,16 +45,6 @@ extension View {
             .clipShape(RoundedRectangle(cornerRadius: amount))
     }
 
-    func signInTextFieldModifier() -> some View {
-        self
-            .font(Components.displaySize(.footnote, .system(size: 14), .callout))
-            .frame(maxWidth: .infinity)
-            .frame(height: Components.displaySize(20, 20, 22))
-            .padding(15)
-            .background(.signInTextField)
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-    }
-    
     func logoModifier() -> some View {
         self
             .scaledToFit()
@@ -62,5 +52,16 @@ extension View {
                    height: Components.displaySize(18, 18, 20),
                    alignment: .leading)
             .clipped()
+    }
+    
+    func dismissKeyboardOnTap() -> some View {
+        simultaneousGesture(TapGesture().onEnded { _ in
+            UIApplication.shared.sendAction(
+                #selector(UIResponder.resignFirstResponder),
+                to: nil,
+                from: nil,
+                for: nil)
+            }
+        )
     }
 }
