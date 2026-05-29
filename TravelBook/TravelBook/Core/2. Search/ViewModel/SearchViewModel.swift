@@ -5,9 +5,8 @@
 //  Created by ddorsat on 04.01.2026.
 //
 
-import Foundation
 import Combine
-import SwiftUI
+import Foundation
 
 enum SearchRoutes: Hashable {
     case searchResults
@@ -21,24 +20,30 @@ enum SearchRoutes: Hashable {
 @MainActor
 final class SearchViewModel: ObservableObject {
     @Published var searchRoutes: [SearchRoutes] = []
-    @Published var searchText = ""
-    @Published private(set) var searchResults: [CellModel] = []
-    @Published private(set) var categoryResults: [CellModel] = []
-    @Published private(set) var selectedCategory: Categories? = nil
+    
     @Published private(set) var cells: [CellModel] = []
     @Published private(set) var categories: [CategoryModel] = []
+    @Published private(set) var selectedCategory: Categories? = nil
+    @Published private(set) var categoryResults: [CellModel] = []
+    
+    @Published var searchText = ""
+    @Published private(set) var searchResults: [CellModel] = []
+    
+    @Published private(set) var isFetchingMore = false
     @Published private(set) var canLoadMore = false
+    @Published var showAlert = false
+    @Published private(set) var alertMessage = ""
 
     private let contentService: any ContentServiceProtocol
 
     private var cancellables = Set<AnyCancellable>()
 
     var displayCells: [CellModel] {
-        !cells.isEmpty ? cells : CellModel.mockArray
+        return !cells.isEmpty ? cells : CellModel.mockArray
     }
 
     var displayCategories: [CategoryModel] {
-        !categories.isEmpty ? categories : CategoryModel.mockArray
+        return !categories.isEmpty ? categories : CategoryModel.mockArray
     }
 
     var displayCategoryResults: [CellModel] {
@@ -86,47 +91,16 @@ final class SearchViewModel: ObservableObject {
 
     func searchData(searchTerm: String? = nil) async {
         let term = (searchTerm ?? searchText).trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !term.isEmpty else { return }
 
-        var urlComponents = URLComponents(string: "\(Constants.address)/search")
-        var queryItems: [URLQueryItem] = []
-
-        if !term.isEmpty {
-            queryItems.append(URLQueryItem(name: "search", value: term))
-            selectedCategory = nil
-        }
-
-        guard !queryItems.isEmpty else { return }
-
-        urlComponents?.queryItems = queryItems
-
-        guard let url = urlComponents?.url else { return }
+        selectedCategory = nil
 
         do {
-            let (data, response) = try await URLSession.shared.data(from: url)
-
-            guard let httpResponse = response as? HTTPURLResponse else {
-                throw NetworkError.invalidResponse
-            }
-
-            switch httpResponse.statusCode {
-                case 200...299:
-                    let decoder = JSONDecoder()
-                    decoder.dateDecodingStrategy = .iso8601
-                    let items = try decoder.decode([CellModel].self, from: data)
-
-                    self.searchResults = items
-                    if !term.isEmpty {
-                        searchRoutes.append(.searchResults)
-                    }
-                case 401:
-                    throw NetworkError.incorrentSignInCredentials
-                case 409:
-                    throw NetworkError.userAlreadyExists
-                default:
-                    throw NetworkError.apiError(message: "Status: \(httpResponse.statusCode)")
-            }
+            let items = try await contentService.fetchSearchResults(term: term)
+            searchResults = items
+            searchRoutes.append(.searchResults)
         } catch {
-            print("Ошибка поиска - \(error.localizedDescription)")
+            showAlert(message: error.localizedDescription)
         }
     }
 
@@ -142,11 +116,34 @@ final class SearchViewModel: ObservableObject {
     }
 
     func fetchMoreCells() {
-        Task { await contentService.fetchMoreSearchCells() }
+        guard !isFetchingMore else { return }
+        
+        isFetchingMore = true
+        
+        Task {
+            do {
+                try await contentService.fetchMoreSearchCells()
+            } catch {
+                showAlert(message: error.localizedDescription)
+            }
+            
+            await MainActor.run { isFetchingMore = false }
+        }
     }
 
     func refreshData() {
-        Task { await contentService.fetchData() }
+        Task {
+            do {
+                try await contentService.fetchData()
+            } catch {
+                showAlert(message: error.localizedDescription)
+            }
+        }
+    }
+    
+    private func showAlert(message: String) {
+        showAlert = true
+        alertMessage = message
     }
 }
 

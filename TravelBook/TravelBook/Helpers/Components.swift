@@ -5,7 +5,6 @@
 //  Created by ddorsat on 02.01.2026.
 //
 
-import Foundation
 import SwiftUI
 
 struct Components {
@@ -41,7 +40,7 @@ struct Components {
     }
 
     static func backgroundColor() -> some View {
-        Color(uiColor: .background).ignoresSafeArea()
+        return Color(uiColor: .background).ignoresSafeArea()
     }
 
     static func readingTime(_ cell: CellModel, _ isFeed: Bool) -> some View {
@@ -50,13 +49,22 @@ struct Components {
 
             Text("\(cell.readingTime) мин чтения")
         }
-        .font(isProMax(isFeed ? .footnote : .caption, isFeed ? .footnote : .caption2))
+        .font(displaySize(isFeed ? .footnote : .caption,
+                        isFeed ? .footnote : .caption,
+                        isFeed ? .footnote : .caption2))
         .fontWeight(.semibold)
         .foregroundStyle(isFeed ? .readingTimeTrue : .readingTimeFalse)
     }
-    
-    static func isProMax<T>(_ proMax: T, _ regular: T) -> T {
-        UIDevice.isProMax ? proMax : regular
+
+    static func displaySize<T>(_ base: T, _ air: T, _ plus: T) -> T {
+        switch UIDevice.screenSizeClass {
+            case .base:
+                return base
+            case .air:
+                return air
+            case .plus:
+                return plus
+        }
     }
 }
 

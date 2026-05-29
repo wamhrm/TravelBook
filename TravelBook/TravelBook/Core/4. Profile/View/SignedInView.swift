@@ -17,7 +17,7 @@ struct SignedInView: View {
             Components.backgroundColor()
 
             ScrollView {
-                VStack(alignment: .leading, spacing: Components.isProMax(16, 14)) {
+                VStack(alignment: .leading, spacing: Components.displaySize(14, 14, 16)) {
                     VStack(spacing: 15) {
                         Text(user.name.prefix(2).uppercased())
                             .font(.title)
@@ -52,7 +52,7 @@ struct SignedInView: View {
                         Text("""
                              "Путешествия - это не только места, которые вы посещаете, но и моменты, которые остаются с вами навсегда."
                              """)
-                        .font(Components.isProMax(.callout, .footnote))
+                        .font(Components.displaySize(.footnote, .system(size: 14), .callout))
                         .italic()
                         .fontWeight(.medium)
                     }
@@ -66,7 +66,7 @@ struct SignedInView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 15))
 
 
-                    VStack(alignment: .leading, spacing: Components.isProMax(12, 10)) {
+                    VStack(alignment: .leading, spacing: Components.displaySize(10, 10, 12)) {
                         ProfileCellView(type: .appearance) {
                             vm.profileRoutes.append(.appearance)
                         }
@@ -75,7 +75,7 @@ struct SignedInView: View {
                             vm.profileRoutes.append(.aboutApp)
                         }
 
-                        ProfileCellView(type: .logOut) {
+                        ProfileCellView(type: .logOut, isLoading: vm.isLoading) {
                             showSignOutConfirmation = true
                         }
                     }
@@ -86,12 +86,20 @@ struct SignedInView: View {
             .padding(.horizontal)
             .scrollContentBackground(.hidden)
             .alert("Выйти из аккаунта?", isPresented: $showSignOutConfirmation) {
-                Button("Отмена", role: .cancel) {}
-                Button("Выйти", role: .destructive) {
-                    vm.signOut()
-                }
+                alertView()
             }
         }
+    }
+}
+
+extension SignedInView {
+    @ViewBuilder
+    private func alertView() -> some View {
+        Button("Отмена", role: .cancel) {}
+        Button(vm.isLoading ? "Выходим..." : "Выйти", role: .destructive) {
+            vm.signOut()
+        }
+        .disabled(vm.isLoading)
     }
 }
 

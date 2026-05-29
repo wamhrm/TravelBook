@@ -79,6 +79,6 @@ final class AuthService: AuthServiceProtocol {
     }
 
     private func normalizeEmail(_ email: String) -> String {
-        email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        return email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
     }
 }

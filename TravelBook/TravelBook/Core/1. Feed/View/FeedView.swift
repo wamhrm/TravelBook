@@ -41,12 +41,13 @@ struct FeedView: View {
                             .bold()
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 55)
+                            .animation(.easeInOut(duration: 0.25), value: vm.isServerWakingUp)
                         }
                     }
                 } else {
                     ScrollView {
-                        VStack(alignment: .leading, spacing: Components.isProMax(32, 30)) {
-                            VStack(alignment: .leading, spacing: Components.isProMax(12, 10)) {
+                        VStack(alignment: .leading, spacing: Components.displaySize(30, 30, 32)) {
+                            VStack(alignment: .leading, spacing: Components.displaySize(10, 10, 12)) {
                                 HStack(spacing: 10) {
                                     Image("logo")
                                         .resizable()
@@ -58,7 +59,7 @@ struct FeedView: View {
                                         Text("УЧЕБНИК")
                                         Text("ПУТЕШЕСТВИЙ")
                                     }
-                                    .font(Components.isProMax(.system(size: 14), .footnote))
+                                    .font(Components.displaySize(.footnote, .system(size: 13), .system(size: 14)))
                                     .fontDesign(.monospaced)
                                     .fontWeight(.heavy)
 
@@ -71,7 +72,7 @@ struct FeedView: View {
                             }
                             .padding(.horizontal)
 
-                            VStack(alignment: .leading, spacing: Components.isProMax(12, 10)) {
+                            VStack(alignment: .leading, spacing: Components.displaySize(10, 10, 12)) {
                                 HStack {
                                     Components.headerView("Популярное")
 
@@ -87,7 +88,7 @@ struct FeedView: View {
                                 .padding(.horizontal)
 
                                 ScrollView(.horizontal) {
-                                    HStack(spacing: Components.isProMax(12, 10)) {
+                                    HStack(spacing: Components.displaySize(10, 10, 12)) {
                                         ForEach(vm.displayPopularCells.prefix(5)) { cell in
                                             FeedPopularCellView(cell: cell) {
                                                 vm.feedRoutes.append(.bigCell(cell))
@@ -98,7 +99,7 @@ struct FeedView: View {
                                 }
                             }
 
-                            VStack(alignment: .leading, spacing: Components.isProMax(12, 10)) {
+                            VStack(alignment: .leading, spacing: Components.displaySize(10, 10, 12)) {
                                 Components.headerView("Лента")
 
                                 LazyVStack(alignment: .leading, spacing: 12) {
@@ -119,19 +120,22 @@ struct FeedView: View {
                                 }
                             }
                             .padding(.horizontal)
+                            .bottomAreaPadding(15)
                         }
                     }
                 }
             }
             .navigationTitle("Лента")
             .navigationBarTitleDisplayMode(.inline)
-            .scrollIndicators(.hidden)
-            .bottomAreaPadding()
             .navigationDestination(for: FeedRoutes.self) { destination in
                 destinationView(destination)
             }
+            .animation(.easeInOut(duration: 0.25), value: vm.feedCells.isEmpty || vm.isServerWakingUp)
             .refreshable {
                 await vm.fetchData()
+            }
+            .alert(vm.alertMessage, isPresented: $vm.showAlert) {
+                Button("OK", role: .cancel) {}
             }
         }
     }

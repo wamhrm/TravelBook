@@ -27,13 +27,15 @@ struct SignedOutView: View {
                 }
 
                 VStack(spacing: 12) {
-                    SignInCreateAccountButtonView(type: .signIn, signedOut: true) {
+                    SignInCreateAccountButtonView(type: .signIn,
+                                                  isSignedOut: true) {
                         withAnimation(.spring) {
                             showSignIn.toggle()
                         }
                     }
 
-                    SignInCreateAccountButtonView(type: .createAccount, signedOut: true) {
+                    SignInCreateAccountButtonView(type: .createAccount,
+                                                  isSignedOut: true) {
                         withAnimation(.spring) {
                             showCreateAccount.toggle()
                         }
@@ -46,21 +48,28 @@ struct SignedOutView: View {
         .navigationTitle("Профиль")
         .navigationBarTitleDisplayMode(.inline)
         .overlay {
-            if showSignIn {
-                SignInCreateAccountView(vm: vm, type: .signIn, showSignInCreate: $showSignIn) {
-                    showSignIn = false
-                    showCreateAccount = true
-                }
-            } else if showCreateAccount {
-                SignInCreateAccountView(vm: vm, type: .createAccount, showSignInCreate: $showCreateAccount) {
-                    showCreateAccount = false
-                    showSignIn = true
-                }
-            }
+            overlayView()
         }
         .ignoresSafeArea(.keyboard)
-        .alert(vm.errorMessage, isPresented: $vm.showError) {
+        .alert(vm.alertMessage, isPresented: $vm.showAlert) {
             Button("OK", role: .cancel) {}
+        }
+    }
+}
+
+extension SignedOutView {
+    @ViewBuilder
+    private func overlayView() -> some View {
+        if showSignIn {
+            SignInCreateAccountView(vm: vm, type: .signIn, showSignInCreate: $showSignIn) {
+                showSignIn = false
+                showCreateAccount = true
+            }
+        } else if showCreateAccount {
+            SignInCreateAccountView(vm: vm, type: .createAccount, showSignInCreate: $showCreateAccount) {
+                showCreateAccount = false
+                showSignIn = true
+            }
         }
     }
 }

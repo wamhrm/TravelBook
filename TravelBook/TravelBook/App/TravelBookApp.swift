@@ -13,7 +13,7 @@ struct TravelBookApp: App {
     @StateObject private var contentService = ContentService()
     @StateObject private var favoritesService: FavoritesService
 
-    @AppStorage("selectedTheme") private var selectedTheme: AppTheme = .system
+    @AppStorage(Constants.selectedThemeKey) private var selectedTheme: AppTheme = .system
 
     init() {
         let authService = AuthService()

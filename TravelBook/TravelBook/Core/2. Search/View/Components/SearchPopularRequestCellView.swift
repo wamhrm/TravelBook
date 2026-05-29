@@ -17,7 +17,7 @@ struct SearchPopularRequestCellView: View {
         } label: {
             Text(request)
                 .foregroundStyle(.blackAndWhite)
-                .font(Components.isProMax(.footnote, .caption))
+                .font(Components.displaySize(.caption, .footnote, .footnote))
                 .fontWeight(.medium)
                 .padding(.vertical, 10)
                 .padding(.horizontal, 12)

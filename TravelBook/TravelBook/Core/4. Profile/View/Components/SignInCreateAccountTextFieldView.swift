@@ -14,7 +14,7 @@ struct SignInCreateAccountTextFieldView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text(type.rawValue)
-                .font(Components.isProMax(.callout, .footnote))
+                .font(Components.displaySize(.footnote, .system(size: 14), .callout))
                 .foregroundStyle(.blackAndWhite)
                 .fontWeight(.semibold)
                 

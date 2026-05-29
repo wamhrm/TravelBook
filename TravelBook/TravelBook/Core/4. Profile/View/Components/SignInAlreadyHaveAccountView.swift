@@ -29,7 +29,7 @@ struct SignInAlreadyHaveAccountView: View {
             
             Spacer()
         }
-        .font(Components.isProMax(.callout, .footnote))
+        .font(Components.displaySize(.footnote, .system(size: 14), .callout))
     }
 }
 

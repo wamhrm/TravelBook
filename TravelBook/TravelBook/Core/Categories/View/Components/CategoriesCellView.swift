@@ -14,7 +14,7 @@ struct CategoriesCellView: View {
     let onTapHandler: () -> Void
     
     private var displayCategories: Bool {
-        category.image.isEmpty
+        return category.image.isEmpty
     }
 
     var body: some View {
@@ -36,7 +36,7 @@ struct CategoriesCellView: View {
                 VStack(alignment: .leading, spacing: 7) {
                     Text(category.type.title)
                         .foregroundStyle(.blackAndWhite)
-                        .font(Components.isProMax(.callout, .footnote))
+                        .font(Components.displaySize(.footnote, .system(size: 14), .callout))
                         .bold()
                     
                     if categoryCellsCount == 0 {
@@ -45,7 +45,7 @@ struct CategoriesCellView: View {
                             .foregroundStyle(.gray)
                     } else {
                         Text(articlesCountLabel)
-                            .font(Components.isProMax(.caption, .caption2))
+                            .font(Components.displaySize(.caption2, .caption, .caption))
                             .foregroundStyle(.gray)
                             .fontWeight(.medium)
                     }
@@ -55,10 +55,10 @@ struct CategoriesCellView: View {
                 
                 Text("Перейти")
                     .foregroundStyle(.title)
-                    .font(.system(size: Components.isProMax(14, 12)))
+                    .font(.system(size: Components.displaySize(12, 12, 14)))
                     .fontWeight(.semibold)
-                    .padding(.vertical, Components.isProMax(8, 6))
-                    .padding(.horizontal, Components.isProMax(12, 10))
+                    .padding(.vertical, Components.displaySize(6, 6, 8))
+                    .padding(.horizontal, Components.displaySize(10, 10, 12))
                     .background(.categoriesCellBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 5))
             }

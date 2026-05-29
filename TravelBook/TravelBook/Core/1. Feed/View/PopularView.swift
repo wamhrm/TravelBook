@@ -12,7 +12,7 @@ struct PopularView: View {
     let onTapHandler: (CellModel) -> Void
     
     private var displayCells: [CellModel] {
-        !cells.isEmpty ? cells : CellModel.mockArray
+        return !cells.isEmpty ? cells : CellModel.mockArray
     }
     
     var body: some View {
@@ -20,7 +20,7 @@ struct PopularView: View {
             Components.backgroundColor()
             
             ScrollView {
-                LazyVStack(alignment: .leading, spacing: Components.isProMax(12, 10)) {
+                LazyVStack(alignment: .leading, spacing: Components.displaySize(10, 10, 12)) {
                     ForEach(displayCells) { cell in
                         CompactCellView(cell: cell) {
                             onTapHandler(cell)
@@ -28,11 +28,11 @@ struct PopularView: View {
                     }
                 }
                 .padding(.horizontal)
+                .bottomAreaPadding(15)
             }
         }
         .navigationTitle("Популярное")
         .navigationBarTitleDisplayMode(.inline)
-        .bottomAreaPadding()
     }
 }
 
