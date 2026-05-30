@@ -4,10 +4,10 @@
 |-------------------------|------------------------------------------------------|
 | Языки                   | Swift (Front-end & Back-end)                         |
 | Фреймворки              | SwiftUI, Vapor                                       |
-| Облачная База Данных    | PostgreSQL                                           |
-| Локальная База Данных   | UserDefaults, Keychain                               |
+| Облачная база данных    | PostgreSQL                                           |
+| Локальное хранение      | UserDefaults, Keychain                               |
 | Хранилище               | S3 Storage                                           |
-| Инфраструктура          | Render (Deployment), Docker                          |
+| Инфраструктура          | Render, Docker                                       |
 | Работа с сетью          | URLSession (Async/Await), REST API                   |
 | Многопоточность         | Async/await, Combine                                 |
 | Архитектура             | MVVM, SOLID                                          |
