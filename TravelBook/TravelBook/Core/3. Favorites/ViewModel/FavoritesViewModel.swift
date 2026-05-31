@@ -44,7 +44,7 @@ final class FavoritesViewModel: ObservableObject {
 
     private func setupSubscriptions() {
         authService.authState
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
                 switch state {
                     case .signedIn:
@@ -56,7 +56,7 @@ final class FavoritesViewModel: ObservableObject {
             .store(in: &cancellables)
 
         favoritesService.favoriteCells
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .assign(to: \.favoriteCells, on: self)
             .store(in: &cancellables)
     }

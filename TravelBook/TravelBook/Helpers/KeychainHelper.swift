@@ -8,7 +8,7 @@
 import Foundation
 import Security
 
-final class KeychainHelper {
+nonisolated final class KeychainHelper: @unchecked Sendable {
     static let standard = KeychainHelper()
     
     private init() {}

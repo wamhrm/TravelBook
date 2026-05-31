@@ -15,7 +15,7 @@ enum ScreenSizeClass {
 }
 
 extension UIDevice {
-    static var screenSizeClass: ScreenSizeClass {
+    static let screenSizeClass: ScreenSizeClass = {
         guard let screen = UIApplication.shared.connectedScenes
             .compactMap({ $0 as? UIWindowScene })
             .first?.screen
@@ -36,5 +36,5 @@ extension UIDevice {
         }
 
         return .base
-    }
+    }()
 }

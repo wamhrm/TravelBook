@@ -46,7 +46,7 @@ final class ProfileViewModel: ObservableObject {
 
     private func setupSubscriptions() {
         authService.authState
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] authState in
                 withAnimation(.easeInOut(duration: 0.25)) {
                     self?.authState = authState

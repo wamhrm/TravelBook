@@ -1,16 +1,21 @@
 ## Full-stack iOS приложение (TravelBook)
 
+Full-stack iOS приложение с гидом по странам: лента, поиск,
+избранное и профиль. Клиент на SwiftUI, собственный backend на Vapor.
+
 | Категория               | Технологии                                           |
 |-------------------------|------------------------------------------------------|
-| Языки                   | Swift (Front-end & Back-end)                         |
+| Язык                    | Swift 6 (Front-end & Back-end)                       |
 | Фреймворки              | SwiftUI, Vapor                                       |
-| Облачная база данных    | PostgreSQL                                           |
+| ORM                     | Fluent                                               |
+| Облачная база данных    | PostgreSQL (Timeweb Cloud)                           |
+| Облачное хранилище      | S3 (Timeweb Cloud)                                   |
 | Локальное хранение      | UserDefaults, Keychain                               |
-| Хранилище               | S3 Storage                                           |
 | Инфраструктура          | Render, Docker                                       |
-| Работа с сетью          | URLSession (Async/Await), REST API                   |
-| Многопоточность         | Async/await, Combine                                 |
-| Архитектура             | MVVM, SOLID                                          |
+| Сетевое взаимодействие  | URLSession (Async/await), REST API                   |
+| Concurrency             | Async/await, Structured Concurrency                  |
+| Реактивность            | Combine                                              |
+| Архитектура             | MVVM, DI, SOLID                                      |
 | Инструменты             | Git, Swift Package Manager                           |
 
 
