@@ -48,66 +48,36 @@ nonisolated final class NetworkService: NetworkServiceProtocol {
 
     func createAccount(name: String, email: String, password: String) async throws {
         let body = try JSONEncoder().encode(AuthSignUpBody(name: name, email: email, password: password))
-        _ = try await request(endpoint: "/auth/createAccount", method: .post, body: body)
+        _ = try await send(endpoint: "/auth/createAccount", method: .post, body: body)
     }
 
     func signIn(email: String, password: String) async throws -> AuthTokenResponse {
         let body = try JSONEncoder().encode(AuthSignInBody(email: email, password: password))
-        let data = try await request(endpoint: "/auth/signIn", method: .post, body: body)
-
-        do {
-            return try decoder().decode(AuthTokenResponse.self, from: data)
-        } catch {
-            throw NetworkError.decodingError
-        }
+        return try await fetch(endpoint: "/auth/signIn", method: .post, body: body)
     }
 
     func fetchFavorites() async throws -> [CellModel] {
-        let data = try await request(endpoint: "/favorites", method: .get)
-
-        do {
-            return try decoder().decode([CellModel].self, from: data)
-        } catch {
-            throw NetworkError.decodingError
-        }
+        try await fetch(endpoint: "/favorites", method: .get)
     }
 
     func addFavorite(id: UUID) async throws {
-        _ = try await request(endpoint: "/favorites/\(id.uuidString)", method: .post)
+        _ = try await send(endpoint: "/favorites/\(id.uuidString)", method: .post)
     }
 
     func removeFavorite(id: UUID) async throws {
-        _ = try await request(endpoint: "/favorites/\(id.uuidString)", method: .delete)
+        _ = try await send(endpoint: "/favorites/\(id.uuidString)", method: .delete)
     }
 
     func fetchCells(page: Int, limit: Int, seed: String) async throws -> [CellModel] {
-        let data = try await request(endpoint: "/cells?page=\(page)&limit=\(limit)&seed=\(seed)", method: .get)
-
-        do {
-            return try decoder().decode([CellModel].self, from: data)
-        } catch {
-            throw NetworkError.decodingError
-        }
+        try await fetch(endpoint: "/cells?page=\(page)&limit=\(limit)&seed=\(seed)", method: .get)
     }
 
     func fetchPopularCells() async throws -> [CellModel] {
-        let data = try await request(endpoint: "/popular", method: .get)
-
-        do {
-            return try decoder().decode([CellModel].self, from: data)
-        } catch {
-            throw NetworkError.decodingError
-        }
+        try await fetch(endpoint: "/popular", method: .get)
     }
 
     func fetchCategories() async throws -> [CategoryModel] {
-        let data = try await request(endpoint: "/categories", method: .get)
-
-        do {
-            return try decoder().decode([CategoryModel].self, from: data)
-        } catch {
-            throw NetworkError.decodingError
-        }
+        try await fetch(endpoint: "/categories", method: .get)
     }
 
     func fetchSearchResults(term: String) async throws -> [CellModel] {
@@ -118,52 +88,38 @@ nonisolated final class NetworkService: NetworkServiceProtocol {
             throw NetworkError.invalidURL
         }
 
-        let data = try await request(endpoint: "/search?\(query)", method: .get)
+        return try await fetch(endpoint: "/search?\(query)", method: .get)
+    }
+
+    private func fetch<T: Decodable>(endpoint: String,
+                                     method: HTTPMethod,
+                                     body: Data? = nil) async throws -> T {
+        let data = try await send(endpoint: endpoint, method: method, body: body)
 
         do {
-            return try decoder().decode([CellModel].self, from: data)
+            return try decoder().decode(T.self, from: data)
         } catch {
             throw NetworkError.decodingError
         }
     }
 
-    private func request(endpoint: String,
-                         method: HTTPMethod,
-                         body: Data? = nil,
-                         attempt: Int = 0) async throws -> Data {
+    private func send(endpoint: String,
+                      method: HTTPMethod,
+                      body: Data? = nil,
+                      attempt: Int = 0) async throws -> Data {
         do {
             return try await performRequest(endpoint: endpoint, method: method, body: body)
-        } catch let urlError as URLError where Self.isRetryable(urlError) && attempt < 2 {
+        } catch let error as NetworkError where error.isRetryable && attempt < 2 {
             try await Task.sleep(for: Self.retryDelay(for: attempt))
-            return try await request(endpoint: endpoint, method: method, body: body, attempt: attempt + 1)
-        } catch let urlError as URLError {
-            throw NetworkError(urlError: urlError)
+            return try await send(endpoint: endpoint, method: method, body: body, attempt: attempt + 1)
         }
-    }
-
-    private static func isRetryable(_ error: URLError) -> Bool {
-        switch error.code {
-            case .timedOut,
-                 .networkConnectionLost,
-                 .cannotConnectToHost,
-                 .cannotFindHost,
-                 .dnsLookupFailed,
-                 .notConnectedToInternet:
-                return true
-            default:
-                return false
-        }
-    }
-
-    private static func retryDelay(for attempt: Int) -> Duration {
-        .seconds(Double(attempt) + 0.5)
     }
 
     private func performRequest(endpoint: String,
                                 method: HTTPMethod,
                                 body: Data? = nil) async throws -> Data {
-        guard let baseURL = URL(string: baseURL),
-              let url = URL(string: endpoint, relativeTo: baseURL)?.absoluteURL else {
+        guard let base = URL(string: baseURL),
+              let url = URL(string: endpoint, relativeTo: base)?.absoluteURL else {
             throw NetworkError.invalidURL
         }
 
@@ -177,7 +133,14 @@ nonisolated final class NetworkService: NetworkServiceProtocol {
             urlRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
 
-        let (data, response) = try await session.data(for: urlRequest)
+        let data: Data
+        let response: URLResponse
+
+        do {
+            (data, response) = try await session.data(for: urlRequest)
+        } catch let urlError as URLError {
+            throw NetworkError(urlError: urlError)
+        }
 
         guard let httpResponse = response as? HTTPURLResponse else {
             throw NetworkError.invalidResponse
@@ -186,15 +149,19 @@ nonisolated final class NetworkService: NetworkServiceProtocol {
         switch httpResponse.statusCode {
             case 200...299:
                 return data
-            case 400:
-                throw NetworkError.apiError(message: "Status: \(httpResponse.statusCode)")
             case 401:
-                throw NetworkError.incorrentSignInCredentials
+                throw NetworkError.incorrectSignInCredentials
             case 409:
                 throw NetworkError.userAlreadyExists
+            case 408, 429, 500...599:
+                throw NetworkError.serverUnavailable
             default:
                 throw NetworkError.apiError(message: "Status: \(httpResponse.statusCode)")
         }
+    }
+
+    private static func retryDelay(for attempt: Int) -> Duration {
+        .seconds(Double(attempt) + 0.5)
     }
 
     private func decoder() -> JSONDecoder {
@@ -226,10 +193,11 @@ enum NetworkError: LocalizedError {
     case apiError(message: String)
     case decodingError
     case userAlreadyExists
-    case incorrentSignInCredentials
+    case incorrectSignInCredentials
     case timedOut
     case noConnection
     case cannotReachServer
+    case serverUnavailable
 
     init(urlError: URLError) {
         switch urlError.code {
@@ -244,6 +212,15 @@ enum NetworkError: LocalizedError {
         }
     }
 
+    var isRetryable: Bool {
+        switch self {
+            case .timedOut, .noConnection, .cannotReachServer, .serverUnavailable:
+                return true
+            default:
+                return false
+        }
+    }
+
     var errorDescription: String? {
         switch self {
             case .invalidURL: return "Некорректный URL"
@@ -251,10 +228,11 @@ enum NetworkError: LocalizedError {
             case .apiError(let msg): return "Ошибка сервера: \(msg)"
             case .decodingError: return "Ошибка декодирования"
             case .userAlreadyExists: return "Пользователь уже зарегистрирован"
-            case .incorrentSignInCredentials: return "Неправильный логин или пароль"
+            case .incorrectSignInCredentials: return "Неправильный логин или пароль"
             case .timedOut: return "Сервер просыпается дольше обычного. Попробуйте ещё раз через минуту"
             case .noConnection: return "Нет подключения к интернету"
             case .cannotReachServer: return "Не удалось связаться с сервером. Попробуйте позже"
+            case .serverUnavailable: return "Сервер временно недоступен. Попробуйте позже"
         }
     }
 }

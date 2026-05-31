@@ -46,10 +46,7 @@ final class AuthService: AuthServiceProtocol {
 
         saveToken(response.token)
         saveUserLocally(response.user)
-
-        await MainActor.run {
-            authState.send(.signedIn(response.user))
-        }
+        authState.send(.signedIn(response.user))
     }
 
     func signOut() {
@@ -59,7 +56,7 @@ final class AuthService: AuthServiceProtocol {
     }
 
     private func autoSignIn() {
-        if let _ = KeychainHelper.standard.read(path: tokenPath, key: tokenKey),
+        if KeychainHelper.standard.read(path: tokenPath, key: tokenKey) != nil,
            let userData = UserDefaults.standard.data(forKey: userKey),
            let user = try? JSONDecoder().decode(UserModel.self, from: userData) {
             authState.send(.signedIn(user))

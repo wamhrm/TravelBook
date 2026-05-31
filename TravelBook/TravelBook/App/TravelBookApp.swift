@@ -10,15 +10,19 @@ import SwiftUI
 @main
 struct TravelBookApp: App {
     @StateObject private var authService: AuthService
-    @StateObject private var contentService = ContentService()
+    @StateObject private var contentService: ContentService
     @StateObject private var favoritesService: FavoritesService
 
     @AppStorage(Constants.selectedThemeKey) private var selectedTheme: AppTheme = .system
 
     init() {
-        let authService = AuthService()
+        let networkService = NetworkService()
+        let authService = AuthService(networkService: networkService)
+
         _authService = StateObject(wrappedValue: authService)
-        _favoritesService = StateObject(wrappedValue: FavoritesService(authService: authService))
+        _contentService = StateObject(wrappedValue: ContentService(networkService: networkService))
+        _favoritesService = StateObject(wrappedValue: FavoritesService(authService: authService,
+                                                                       networkService: networkService))
     }
 
     var body: some Scene {
