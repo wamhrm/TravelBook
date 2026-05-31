@@ -17,26 +17,19 @@ protocol FavoritesServiceProtocol: ObservableObject {
     func clearFavorites()
 }
 
-@MainActor
 final class FavoritesService: FavoritesServiceProtocol {
-    var favoriteCells = CurrentValueSubject<[CellModel], Never>([])
-    var likedIDs = CurrentValueSubject<Set<UUID>, Never>([])
-    
+    let favoriteCells = CurrentValueSubject<[CellModel], Never>([])
+    let likedIDs = CurrentValueSubject<Set<UUID>, Never>([])
+
     private let authService: any AuthServiceProtocol
     private let networkService: any NetworkServiceProtocol
-
-    private var cancellables = Set<AnyCancellable>()
 
     init(authService: any AuthServiceProtocol,
          networkService: any NetworkServiceProtocol = NetworkService()) {
         self.authService = authService
         self.networkService = networkService
     }
-    
-    deinit {
-        cancellables.removeAll()
-    }
-    
+
     func fetchFavorites() async throws {
         guard authService.authState.value != .signedOut else { return }
 
@@ -84,29 +77,17 @@ final class FavoritesService: FavoritesServiceProtocol {
     }
     
     private func addToLocalState(cell: CellModel) {
-        var currentItems = favoriteCells.value
-        var currentIDs = likedIDs.value
-        
-        if !currentIDs.contains(cell.id!) {
-            currentItems.append(cell)
-            currentIDs.insert(cell.id!)
-            
-            favoriteCells.send(currentItems)
-            likedIDs.send(currentIDs)
-        }
+        guard let id = cell.id, !likedIDs.value.contains(id) else { return }
+
+        favoriteCells.send(favoriteCells.value + [cell])
+        likedIDs.send(likedIDs.value.union([id]))
     }
     
     private func removeFromLocalState(id: UUID) {
-        var currentItems = favoriteCells.value
-        var currentIDs = likedIDs.value
-        
-        if currentIDs.contains(id) {
-            currentItems.removeAll { $0.id == id }
-            currentIDs.remove(id)
-            
-            favoriteCells.send(currentItems)
-            likedIDs.send(currentIDs)
-        }
+        guard likedIDs.value.contains(id) else { return }
+
+        favoriteCells.send(favoriteCells.value.filter { $0.id != id })
+        likedIDs.send(likedIDs.value.subtracting([id]))
     }
 }
 
