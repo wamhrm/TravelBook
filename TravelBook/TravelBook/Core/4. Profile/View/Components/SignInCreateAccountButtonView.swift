@@ -10,11 +10,22 @@ import SwiftUI
 struct SignInCreateAccountButtonView: View {
     let type: SignInCreateAccountButtonTypes
     let isSignedOut: Bool
-    var isLoading = false
+    let isLoading: Bool
     let onTapHandler: () -> Void
+    
+    init(type: SignInCreateAccountButtonTypes,
+         isSignedOut: Bool,
+         isLoading: Bool,
+         onTapHandler: @escaping () -> Void) {
+        self.type = type
+        self.isSignedOut = isSignedOut
+        self.isLoading = isLoading
+        self.onTapHandler = onTapHandler
+    }
+    
 
     private var buttonTitle: String {
-        return isLoading ? type.loadingTitle : type.rawValue
+        isLoading ? type.loadingTitle : type.rawValue
     }
     
     var body: some View {
@@ -34,13 +45,13 @@ struct SignInCreateAccountButtonView: View {
                 Text(buttonTitle)
                     .foregroundStyle(isSignedOut ? (type == .signIn ? .white : .black) : type.foregroundColor)
             }
-            .font(Components.displaySize(.footnote, .system(size: 14), .callout))
+            .font(Adaptive.size(.footnote, .system(size: 14), .callout))
             .bold()
-            .padding(Components.displaySize(16, 16, 18))
+            .padding(Adaptive.size(16, 16, 18))
             .padding(.leading, type == .apple ? -7 : 0)
             .frame(maxWidth: .infinity, alignment: .center)
             .background(isSignedOut && type == .createAccount ? .white : type.backgroundColor)
-            .overlay(RoundedRectangle(cornerRadius: 10) .stroke(.black, lineWidth: type == .google ? 0.3 : 0.3))
+            .overlay(RoundedRectangle(cornerRadius: 10).stroke(.black, lineWidth: 0.3))
             .clipShape(RoundedRectangle(cornerRadius: 10))
         }
         .disabled(isLoading)
@@ -55,38 +66,30 @@ enum SignInCreateAccountButtonTypes: String {
 
     var loadingTitle: String {
         switch self {
-            case .signIn:
-                return "Входим..."
-            case .createAccount:
-                return "Создаем аккаунт..."
-            case .apple, .google:
-                return rawValue
+            case .signIn: "Входим..."
+            case .createAccount: "Создаем аккаунт..."
+            case .apple, .google: rawValue
         }
     }
-    
+
     var backgroundColor: Color {
         switch self {
-            case .signIn, .createAccount:
-                return .blue
-            case .apple:
-                return .black
-            case .google:
-                return .white
+            case .signIn, .createAccount: .blue
+            case .apple: .black
+            case .google: .white
         }
     }
-    
+
     var foregroundColor: Color {
         switch self {
-            case .signIn, .createAccount, .apple:
-                return .white
-            case .google:
-                return .black
+            case .signIn, .createAccount, .apple: .white
+            case .google: .black
         }
     }
 }
 
 #Preview {
-    SignInCreateAccountButtonView(type: .google, isSignedOut: false) {
+    SignInCreateAccountButtonView(type: .google, isSignedOut: false, isLoading: false) {
         
     }
 }

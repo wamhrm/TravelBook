@@ -9,13 +9,13 @@ import SwiftUI
 import UIKit
 
 struct SignInCreateAccountTextFieldView: View {
-    let type: SignInCreateAccountFieldType
+    let type: SignInCreateAccountFieldTypes
     @Binding var field: String
     
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text(type.rawValue)
-                .font(Components.displaySize(.footnote, .system(size: 14), .callout))
+                .font(Adaptive.size(.footnote, .system(size: 14), .callout))
                 .foregroundStyle(.blackAndWhite)
                 .fontWeight(.semibold)
                 
@@ -29,9 +29,9 @@ struct SignInCreateAccountTextFieldView: View {
                         .textInputAutocapitalization(.never)
                 }
             }
-            .font(Components.displaySize(.footnote, .system(size: 14), .callout))
+            .font(Adaptive.size(.footnote, .system(size: 14), .callout))
             .frame(maxWidth: .infinity)
-            .frame(height: Components.displaySize(20, 20, 22))
+            .frame(height: Adaptive.size(20, 20, 22))
             .padding(15)
             .background(.signInTextField)
             .clipShape(RoundedRectangle(cornerRadius: 10))
@@ -40,19 +40,16 @@ struct SignInCreateAccountTextFieldView: View {
     }
 }
 
-enum SignInCreateAccountFieldType: String {
+enum SignInCreateAccountFieldTypes: String {
     case name = "Имя"
     case email = "Почта"
     case password = "Пароль"
     
     var textField: String {
         switch self {
-            case .name: 
-                return "Введите ваше имя"
-            case .email: 
-                return "Введите вашу почту"
-            case .password: 
-                return "Введите ваш пароль"
+            case .name: "Введите ваше имя"
+            case .email: "Введите вашу почту"
+            case .password: "Введите ваш пароль"
         }
     }
 }

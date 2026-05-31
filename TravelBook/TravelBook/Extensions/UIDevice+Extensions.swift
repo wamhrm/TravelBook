@@ -14,6 +14,16 @@ enum ScreenSizeClass {
     case plus
 }
 
+struct Adaptive {
+    static func size<T>(_ base: T, _ air: T, _ plus: T) -> T {
+        switch UIDevice.screenSizeClass {
+            case .base: base
+            case .air: air
+            case .plus: plus
+        }
+    }
+}
+
 extension UIDevice {
     static let screenSizeClass: ScreenSizeClass = {
         guard let screen = UIApplication.shared.connectedScenes

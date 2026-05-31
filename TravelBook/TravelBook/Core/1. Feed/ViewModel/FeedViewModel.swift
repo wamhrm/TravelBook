@@ -17,9 +17,9 @@ enum FeedRoutes: Hashable {
     case cellDetails(CellModel)
 }
 
-final class FeedViewModel: ObservableObject {
+final class FeedViewModel: ObservableObject, AlertPresentable {
     @Published var feedRoutes: [FeedRoutes] = []
-    
+
     @Published private(set) var feedCells: [CellModel] = []
     @Published private(set) var popularCells: [CellModel] = []
     @Published private(set) var headCell: CellModel?
@@ -28,24 +28,12 @@ final class FeedViewModel: ObservableObject {
     @Published private(set) var canLoadMore = false
     @Published private(set) var isServerWakingUp = false
     @Published var showAlert = false
-    @Published private(set) var alertMessage = ""
+    @Published var alertMessage = ""
 
     private let contentService: any ContentServiceProtocol
     private let favoritesService: any FavoritesServiceProtocol
 
     private var cancellables = Set<AnyCancellable>()
-
-    var displayHeadCell: CellModel {
-        return headCell ?? CellModel.mock
-    }
-
-    var displayFeedCells: [CellModel] {
-        return !feedCells.isEmpty ? feedCells : CellModel.mockArray
-    }
-
-    var displayPopularCells: [CellModel] {
-        return !popularCells.isEmpty ? popularCells : CellModel.mockArray
-    }
 
     init(contentService: any ContentServiceProtocol,
          favoritesService: any FavoritesServiceProtocol) {
@@ -55,12 +43,7 @@ final class FeedViewModel: ObservableObject {
         self.popularCells = contentService.popularCells.value
 
         setupSubscriptions()
-
         Task { await fetchData() }
-    }
-
-    deinit {
-        cancellables.removeAll()
     }
 
     private func setupSubscriptions() {
@@ -87,53 +70,39 @@ final class FeedViewModel: ObservableObject {
 
     func fetchData() async {
         let loadedTask = Task {
-            try? await Task.sleep(for: .seconds(3))
-            
+            try? await Task.sleep(for: .seconds(4))
+
             if !Task.isCancelled {
-                await MainActor.run {
-                    withAnimation {
-                        self.isServerWakingUp = true
-                    }
-                }
+                withAnimation { self.isServerWakingUp = true }
             }
         }
-        
+
         do {
             try await contentService.fetchData()
         } catch {
-            showAlert(message: error.localizedDescription)
+            presentAlert(error.localizedDescription)
         }
 
         loadedTask.cancel()
-
-        await MainActor.run {
-            withAnimation {
-                self.isServerWakingUp = false
-            }
-        }
+        withAnimation { isServerWakingUp = false }
     }
 
     func fetchMoreCells() {
         guard !isFetchingMore else { return }
-        
+
         isFetchingMore = true
-        
+
         Task {
             do {
                 try await contentService.fetchMoreFeedCells()
             } catch {
-                showAlert(message: error.localizedDescription)
+                presentAlert(error.localizedDescription)
             }
-            
-            await MainActor.run { isFetchingMore = false }
+
+            isFetchingMore = false
         }
     }
 
-    private func showAlert(message: String) {
-        showAlert = true
-        alertMessage = message
-    }
-    
     private func fetchHeadCell(_ newCells: [CellModel]) {
         if headCell == nil && !newCells.isEmpty {
             headCell = newCells.first(where: { $0.isHeadCell }) ?? newCells.first!

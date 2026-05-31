@@ -8,19 +8,20 @@
 import SwiftUI
 
 struct ProfileCellView: View {
-    private let user: UserModel?
-    let type: ProfileCellType
-    var isLoading = false
+    let type: ProfileCellTypes
+    let isLoading: Bool?
     let onTapHandler: () -> Void
 
-    init(user: UserModel? = nil,
-         type: ProfileCellType,
-         isLoading: Bool = false,
+    init(type: ProfileCellTypes,
+         isLoading: Bool? = nil,
          onTapHandler: @escaping () -> Void) {
-        self.user = user
         self.type = type
         self.isLoading = isLoading
         self.onTapHandler = onTapHandler
+    }
+    
+    private var isLoadingHandler: Bool {
+        isLoading ?? false
     }
     
     var body: some View {
@@ -38,7 +39,7 @@ struct ProfileCellView: View {
                 }
                 
                 Text(type.rawValue)
-                    .font(Components.displaySize(.system(size: 14), .system(size: 15), .callout))
+                    .font(Adaptive.size(.system(size: 14), .system(size: 15), .callout))
                     .foregroundStyle(.blackAndWhite)
                     .fontWeight(.medium)
                 
@@ -51,41 +52,35 @@ struct ProfileCellView: View {
             .padding(15)
             .backgroundWithShape(10)
         }
-        .disabled(isLoading && type == .logOut)
+        .disabled(isLoadingHandler && type == .signOut)
     }
 }
 
-enum ProfileCellType: String {
+enum ProfileCellTypes: String {
     case appearance = "Оформление"
     case aboutApp = "О приложении"
-    case logOut = "Выйти"
+    case signOut = "Выйти"
     
     fileprivate var icon: String {
         switch self {
-            case .appearance:  
-                return "paintpalette.fill"
-            case .aboutApp: 
-                return "info.circle.fill"
-            case .logOut: 
-                return "rectangle.portrait.and.arrow.right"
+            case .appearance: "paintpalette.fill"
+            case .aboutApp: "info.circle.fill"
+            case .signOut: "rectangle.portrait.and.arrow.right"
         }
     }
-    
+
     fileprivate var backgroundColor: Color {
         switch self {
-            case .appearance:
-                return .green
-            case .aboutApp:
-                return .gray
-            case .logOut:
-                return .red
+            case .appearance: .green
+            case .aboutApp: .gray
+            case .signOut: .red
         }
     }
 }
 
 #Preview {
     VStack {
-        ProfileCellView(user: .mock, type: .appearance) {
+        ProfileCellView(type: .appearance, isLoading: false) {
             
         }
     }

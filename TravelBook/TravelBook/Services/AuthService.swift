@@ -29,9 +29,12 @@ final class AuthService: AuthServiceProtocol {
     private let userKey = Constants.userKey
 
     private let networkService: any NetworkServiceProtocol
+    private let keychain: any KeychainHelperProtocol
 
-    init(networkService: any NetworkServiceProtocol = NetworkService()) {
+    init(networkService: any NetworkServiceProtocol = NetworkService(),
+         keychain: any KeychainHelperProtocol = KeychainHelper()) {
         self.networkService = networkService
+        self.keychain = keychain
         autoSignIn()
     }
 
@@ -50,13 +53,13 @@ final class AuthService: AuthServiceProtocol {
     }
 
     func signOut() {
-        KeychainHelper.standard.delete(path: tokenPath, key: tokenKey)
+        keychain.delete(path: tokenPath, key: tokenKey)
         UserDefaults.standard.removeObject(forKey: userKey)
         authState.send(.signedOut)
     }
 
     private func autoSignIn() {
-        if KeychainHelper.standard.read(path: tokenPath, key: tokenKey) != nil,
+        if keychain.read(path: tokenPath, key: tokenKey) != nil,
            let userData = UserDefaults.standard.data(forKey: userKey),
            let user = try? JSONDecoder().decode(UserModel.self, from: userData) {
             authState.send(.signedIn(user))
@@ -73,11 +76,11 @@ final class AuthService: AuthServiceProtocol {
 
     private func saveToken(_ token: String) {
         if let data = token.data(using: .utf8) {
-            KeychainHelper.standard.save(data, path: tokenPath, key: tokenKey)
+            keychain.save(data, path: tokenPath, key: tokenKey)
         }
     }
 
     private func normalizeEmail(_ email: String) -> String {
-        return email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
     }
 }

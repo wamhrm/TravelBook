@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct CellModel: Identifiable, Hashable, Codable {
+struct CellModel: Identifiable, Hashable, Codable, Mockable {
     let id: UUID?
     let title: String
     let subtitle: String
@@ -19,14 +19,11 @@ struct CellModel: Identifiable, Hashable, Codable {
     let images: [String]
     let isPopular: Bool
     let isHeadCell: Bool
-    
+
     var dateString: String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ru_RU")
-        formatter.dateFormat = "d MMM yyyy"
-        return formatter.string(from: date)
+        Self.dateFormatter.string(from: date)
     }
-    
+
     private enum CodingKeys: String, CodingKey {
         case id, title, subtitle, description, category, date, image, images
         case readingTime = "reading_time"
@@ -36,13 +33,56 @@ struct CellModel: Identifiable, Hashable, Codable {
 }
 
 extension CellModel {
-    static let mock = CellModel(id: UUID(), title: "Как выбрать чемодан", subtitle: "Гид по комфортным путешествиям", description: "Правильный чемодан — это инвестиция в спокойствие во время поездки. Мы разберем ключевые критерии выбора: что лучше — пластик или ткань, сколько должно быть колес для маневренности и как подобрать идеальный размер под требования авиакомпаний, чтобы ваш багаж всегда долетал в целости и сохранности.", category: .abroad, date: .now, readingTime: 5, image: "", images: ["test", "test", "test"], isPopular: true, isHeadCell: true)
+    private static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ru_RU")
+        formatter.dateFormat = "d MMM yyyy"
+        return formatter
+    }()
     
-    static let mockArray = [
-        CellModel(id: UUID(), title: "Как выбрать чемодан", subtitle: "Гид по комфортным путешествиям", description: "Правильный чемодан — это инвестиция в спокойствие во время поездки. Мы разберем ключевые критерии выбора: что лучше — пластик или ткань, сколько должно быть колес для маневренности и как подобрать идеальный размер под требования авиакомпаний, чтобы ваш багаж всегда долетал в целости и сохранности.", category: .abroad, date: .now, readingTime: 5, image: "", images: ["test", "test", "test"], isPopular: true, isHeadCell: true),
-        CellModel(id: UUID(), title: "Как выбрать чемодан", subtitle: "Гид по комфортным путешествиям", description: "Правильный чемодан — это инвестиция в спокойствие во время поездки. Мы разберем ключевые критерии выбора: что лучше — пластик или ткань, сколько должно быть колес для маневренности и как подобрать идеальный размер под требования авиакомпаний, чтобы ваш багаж всегда долетал в целости и сохранности.", category: .abroad, date: .now, readingTime: 5, image: "", images: ["test", "test", "test"], isPopular: true, isHeadCell: true),
-        CellModel(id: UUID(), title: "Как выбрать чемодан", subtitle: "Гид по комфортным путешествиям", description: "Правильный чемодан — это инвестиция в спокойствие во время поездки. Мы разберем ключевые критерии выбора: что лучше — пластик или ткань, сколько должно быть колес для маневренности и как подобрать идеальный размер под требования авиакомпаний, чтобы ваш багаж всегда долетал в целости и сохранности.", category: .abroad, date: .now, readingTime: 5, image: "", images: ["test", "test", "test"], isPopular: true, isHeadCell: true),
-        CellModel(id: UUID(), title: "Как выбрать чемодан", subtitle: "Гид по комфортным путешествиям", description: "Правильный чемодан — это инвестиция в спокойствие во время поездки. Мы разберем ключевые критерии выбора: что лучше — пластик или ткань, сколько должно быть колес для маневренности и как подобрать идеальный размер под требования авиакомпаний, чтобы ваш багаж всегда долетал в целости и сохранности.", category: .abroad, date: .now, readingTime: 5, image: "", images: ["test", "test", "test"], isPopular: true, isHeadCell: true),
-        CellModel(id: UUID(), title: "Как выбрать чемодан", subtitle: "Гид по комфортным путешествиям", description: "Правильный чемодан — это инвестиция в спокойствие во время поездки. Мы разберем ключевые критерии выбора: что лучше — пластик или ткань, сколько должно быть колес для маневренности и как подобрать идеальный размер под требования авиакомпаний, чтобы ваш багаж всегда долетал в целости и сохранности.", category: .abroad, date: .now, readingTime: 5, image: "", images: ["test", "test", "test"], isPopular: true, isHeadCell: true),
-        CellModel(id: UUID(), title: "Как выбрать чемодан", subtitle: "Гид по комфортным путешествиям", description: "Правильный чемодан — это инвестиция в спокойствие во время поездки. Мы разберем ключевые критерии выбора: что лучше — пластик или ткань, сколько должно быть колес для маневренности и как подобрать идеальный размер под требования авиакомпаний, чтобы ваш багаж всегда долетал в целости и сохранности.", category: .abroad, date: .now, readingTime: 5, image: "", images: ["test", "test", "test"], isPopular: true, isHeadCell: true)]
+    static let mock = CellModel(id: UUID(),
+                                title: "Как выбрать чемодан",
+                                subtitle: "Гид по комфортным путешествиям",
+                                description: "Правильный чемодан — это инвестиция в спокойствие во время поездки. Мы разберем ключевые критерии выбора: что лучше — пластик или ткань, сколько должно быть колес для маневренности и как подобрать идеальный размер под требования авиакомпаний, чтобы ваш багаж всегда долетал в целости и сохранности.",
+                                category: .abroad,
+                                date: .now,
+                                readingTime: 5,
+                                image: "",
+                                images: ["test", "test", "test"],
+                                isPopular: true,
+                                isHeadCell: true)
+
+    static let mockArray = [CellModel(id: UUID(),
+                                       title: "Как выбрать чемодан",
+                                       subtitle: "Гид по комфортным путешествиям",
+                                       description: "Правильный чемодан — это инвестиция в спокойствие во время поездки. Мы разберем ключевые критерии выбора: что лучше — пластик или ткань, сколько должно быть колес для маневренности и как подобрать идеальный размер под требования авиакомпаний, чтобы ваш багаж всегда долетал в целости и сохранности.",
+                                       category: .abroad,
+                                       date: .now,
+                                       readingTime: 5,
+                                       image: "",
+                                       images: ["test", "test", "test"],
+                                       isPopular: true,
+                                       isHeadCell: true),
+                             CellModel(id: UUID(),
+                                       title: "Как выбрать чемодан",
+                                       subtitle: "Гид по комфортным путешествиям",
+                                       description: "Правильный чемодан — это инвестиция в спокойствие во время поездки. Мы разберем ключевые критерии выбора: что лучше — пластик или ткань, сколько должно быть колес для маневренности и как подобрать идеальный размер под требования авиакомпаний, чтобы ваш багаж всегда долетал в целости и сохранности.",
+                                       category: .abroad,
+                                       date: .now,
+                                       readingTime: 5,
+                                       image: "",
+                                       images: ["test", "test", "test"],
+                                       isPopular: true,
+                                       isHeadCell: true),
+                             CellModel(id: UUID(),
+                                       title: "Как выбрать чемодан",
+                                       subtitle: "Гид по комфортным путешествиям",
+                                       description: "Правильный чемодан — это инвестиция в спокойствие во время поездки. Мы разберем ключевые критерии выбора: что лучше — пластик или ткань, сколько должно быть колес для маневренности и как подобрать идеальный размер под требования авиакомпаний, чтобы ваш багаж всегда долетал в целости и сохранности.",
+                                       category: .abroad,
+                                       date: .now,
+                                       readingTime: 5,
+                                       image: "",
+                                       images: ["test", "test", "test"],
+                                       isPopular: true,
+                                       isHeadCell: true)]
 }

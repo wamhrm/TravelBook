@@ -12,15 +12,11 @@ struct CategoriesCellView: View {
     let category: CategoryModel
     let categoryCellsCount: Int
     let onTapHandler: () -> Void
-    
-    private var displayCategories: Bool {
-        return category.image.isEmpty
-    }
 
     var body: some View {
         Button(action: onTapHandler) {
             HStack(alignment: .center, spacing: 15) {
-                if !displayCategories {
+                if !category.isMock {
                     KFImage(URL(string: category.image))
                         .placeholder {
                             ProgressView()
@@ -36,7 +32,7 @@ struct CategoriesCellView: View {
                 VStack(alignment: .leading, spacing: 7) {
                     Text(category.type.title)
                         .foregroundStyle(.blackAndWhite)
-                        .font(Components.displaySize(.footnote, .system(size: 14), .callout))
+                        .font(Adaptive.size(.footnote, .system(size: 14), .callout))
                         .bold()
                     
                     if categoryCellsCount == 0 {
@@ -45,7 +41,7 @@ struct CategoriesCellView: View {
                             .foregroundStyle(.gray)
                     } else {
                         Text(articlesCountLabel)
-                            .font(Components.displaySize(.caption2, .caption, .caption))
+                            .font(Adaptive.size(.caption2, .caption, .caption))
                             .foregroundStyle(.gray)
                             .fontWeight(.medium)
                     }
@@ -55,10 +51,10 @@ struct CategoriesCellView: View {
                 
                 Text("Перейти")
                     .foregroundStyle(.title)
-                    .font(.system(size: Components.displaySize(12, 12, 14)))
+                    .font(.system(size: Adaptive.size(12, 12, 14)))
                     .fontWeight(.semibold)
-                    .padding(.vertical, Components.displaySize(6, 6, 8))
-                    .padding(.horizontal, Components.displaySize(10, 10, 12))
+                    .padding(.vertical, Adaptive.size(6, 6, 8))
+                    .padding(.horizontal, Adaptive.size(10, 10, 12))
                     .background(.categoriesCellBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 5))
             }

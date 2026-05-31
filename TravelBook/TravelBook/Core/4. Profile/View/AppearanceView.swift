@@ -12,7 +12,7 @@ struct AppearanceView: View {
 
     var body: some View {
         ZStack {
-            Components.backgroundColor()
+            BackgroundView()
             
             List {
                 Section {
@@ -48,7 +48,6 @@ struct AppearanceView: View {
             .navigationTitle("Оформление")
             .navigationBarTitleDisplayMode(.inline)
             .foregroundStyle(.black)
-            .scrollContentBackground(.hidden)
         }
     }
 }
@@ -60,12 +59,9 @@ enum AppTheme: String, CaseIterable {
     
     var colorScheme: ColorScheme? {
         switch self {
-            case .light:
-                return .light
-            case .dark:
-                return .dark
-            case .system:
-                return nil
+            case .light: .light
+            case .dark: .dark
+            case .system: nil
         }
     }
 }

@@ -32,10 +32,14 @@ nonisolated final class NetworkService: NetworkServiceProtocol {
     private let tokenPath = Constants.tokenPath
     private let tokenKey = Constants.tokenKey
 
-    init(baseURL: String = Constants.address,
-         session: URLSession = NetworkService.makeSession()) {
+    private let keychain: any KeychainHelperProtocol
+
+    init(baseURL: String = Constants.baseURL,
+         session: URLSession = NetworkService.makeSession(),
+         keychain: any KeychainHelperProtocol = KeychainHelper()) {
         self.baseURL = baseURL
         self.session = session
+        self.keychain = keychain
     }
 
     private static func makeSession() -> URLSession {
@@ -128,7 +132,7 @@ nonisolated final class NetworkService: NetworkServiceProtocol {
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.httpBody = body
 
-        if let tokenData = KeychainHelper.standard.read(path: tokenPath, key: tokenKey),
+        if let tokenData = keychain.read(path: tokenPath, key: tokenKey),
            let token = String(data: tokenData, encoding: .utf8) {
             urlRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
@@ -138,8 +142,8 @@ nonisolated final class NetworkService: NetworkServiceProtocol {
 
         do {
             (data, response) = try await session.data(for: urlRequest)
-        } catch let urlError as URLError {
-            throw NetworkError(urlError: urlError)
+        } catch {
+            throw NetworkError.decodingError
         }
 
         guard let httpResponse = response as? HTTPURLResponse else {
@@ -198,19 +202,6 @@ enum NetworkError: LocalizedError {
     case noConnection
     case cannotReachServer
     case serverUnavailable
-
-    init(urlError: URLError) {
-        switch urlError.code {
-            case .timedOut:
-                self = .timedOut
-            case .notConnectedToInternet, .networkConnectionLost:
-                self = .noConnection
-            case .cannotConnectToHost, .cannotFindHost, .dnsLookupFailed:
-                self = .cannotReachServer
-            default:
-                self = .invalidResponse
-        }
-    }
 
     var isRetryable: Bool {
         switch self {

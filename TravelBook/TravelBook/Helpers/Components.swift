@@ -7,15 +7,23 @@
 
 import SwiftUI
 
-struct Components {
-    static func headerView(_ title: String) -> some View {
+struct HeaderView: View {
+    private let title: String
+
+    init(_ title: String) {
+        self.title = title
+    }
+
+    var body: some View {
         Text(title)
             .font(.title3)
             .fontWeight(.semibold)
             .padding(.leading, 4)
     }
+}
 
-    static func bigLogo() -> some View {
+struct BigLogo: View {
+    var body: some View {
         Image("logo")
             .resizable()
             .scaledToFit()
@@ -27,44 +35,45 @@ struct Components {
                     .foregroundStyle(Color(uiColor: .systemGray3))
             }
     }
+}
 
-    static func categoriesTheme(_ category: Categories, _ size: CategoriesThemeSizes) -> some View {
+struct BackgroundView: View {
+    var body: some View {
+        Color(uiColor: .background).ignoresSafeArea()
+    }
+}
+
+struct CategoryThemeLabel: View {
+    let category: Categories
+    let size: CategoriesThemeSizes
+
+    var body: some View {
         Text(category.title)
             .font(size.font)
             .foregroundStyle(category.color)
             .fontWeight(.medium)
             .padding(5)
             .padding(.horizontal, 5)
-            .background(category.color.opacity(0.120))
+            .background(category.color.opacity(0.12))
             .clipShape(RoundedRectangle(cornerRadius: 6))
     }
+}
 
-    static func backgroundColor() -> some View {
-        return Color(uiColor: .background).ignoresSafeArea()
-    }
+struct ReadingTimeLabel: View {
+    let cell: CellModel
+    let isFeed: Bool
 
-    static func readingTime(_ cell: CellModel, _ isFeed: Bool) -> some View {
+    var body: some View {
         HStack {
             Image(systemName: "clock")
 
             Text("\(cell.readingTime) мин чтения")
         }
-        .font(displaySize(isFeed ? .footnote : .caption,
-                        isFeed ? .footnote : .caption,
-                        isFeed ? .footnote : .caption2))
+        .font(Adaptive.size(isFeed ? .footnote : .caption,
+                            isFeed ? .footnote : .caption,
+                            isFeed ? .footnote : .caption2))
         .fontWeight(.semibold)
         .foregroundStyle(isFeed ? .readingTimeTrue : .readingTimeFalse)
-    }
-
-    static func displaySize<T>(_ base: T, _ air: T, _ plus: T) -> T {
-        switch UIDevice.screenSizeClass {
-            case .base:
-                return base
-            case .air:
-                return air
-            case .plus:
-                return plus
-        }
     }
 }
 
@@ -73,10 +82,8 @@ enum CategoriesThemeSizes {
 
     var font: Font {
         switch self {
-            case .feed:
-                return .caption
-            case .search:
-                return .footnote
+            case .feed: .caption
+            case .search: .footnote
         }
     }
 }

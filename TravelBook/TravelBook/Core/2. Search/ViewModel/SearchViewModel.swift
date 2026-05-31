@@ -18,7 +18,7 @@ enum SearchRoutes: Hashable {
 }
 
 @MainActor
-final class SearchViewModel: ObservableObject {
+final class SearchViewModel: ObservableObject, AlertPresentable {
     @Published var searchRoutes: [SearchRoutes] = []
     
     @Published private(set) var cells: [CellModel] = []
@@ -32,27 +32,15 @@ final class SearchViewModel: ObservableObject {
     @Published private(set) var isFetchingMore = false
     @Published private(set) var canLoadMore = false
     @Published var showAlert = false
-    @Published private(set) var alertMessage = ""
+    @Published var alertMessage = ""
 
     private let contentService: any ContentServiceProtocol
 
     private var cancellables = Set<AnyCancellable>()
 
-    var displayCells: [CellModel] {
-        return !cells.isEmpty ? cells : CellModel.mockArray
-    }
-
-    var displayCategories: [CategoryModel] {
-        return !categories.isEmpty ? categories : CategoryModel.mockArray
-    }
-
-    var displayCategoryResults: [CellModel] {
-        return !categoryResults.isEmpty ? categoryResults : CellModel.mockArray
-    }
-
     var popularRequests: [String] {
-        return ["Храмы", "Лучшие суши", "Как обмануть джетлаг",
-                "Кофе в Италии", "Винные дороги"]
+        ["Храмы", "Лучшие суши", "Как обмануть джетлаг",
+         "Кофе в Италии", "Винные дороги"]
     }
 
     init(contentService: any ContentServiceProtocol) {
@@ -61,10 +49,6 @@ final class SearchViewModel: ObservableObject {
         self.categories = contentService.allCategories.value
 
         setupSubscriptions()
-    }
-
-    deinit {
-        cancellables.removeAll()
     }
 
     private func setupSubscriptions() {
@@ -100,7 +84,7 @@ final class SearchViewModel: ObservableObject {
             searchResults = items
             searchRoutes.append(.searchResults)
         } catch {
-            showAlert(message: error.localizedDescription)
+            presentAlert(error.localizedDescription)
         }
     }
 
@@ -117,17 +101,17 @@ final class SearchViewModel: ObservableObject {
 
     func fetchMoreCells() {
         guard !isFetchingMore else { return }
-        
+
         isFetchingMore = true
-        
+
         Task {
             do {
                 try await contentService.fetchMoreSearchCells()
             } catch {
-                showAlert(message: error.localizedDescription)
+                presentAlert(error.localizedDescription)
             }
-            
-            await MainActor.run { isFetchingMore = false }
+
+            isFetchingMore = false
         }
     }
 
@@ -136,14 +120,9 @@ final class SearchViewModel: ObservableObject {
             do {
                 try await contentService.fetchData()
             } catch {
-                showAlert(message: error.localizedDescription)
+                presentAlert(error.localizedDescription)
             }
         }
-    }
-    
-    private func showAlert(message: String) {
-        showAlert = true
-        alertMessage = message
     }
 }
 

@@ -8,23 +8,23 @@
 import Foundation
 import SwiftUI
 
-struct CategoryModel: Identifiable, Hashable, Codable {
+struct CategoryModel: Identifiable, Hashable, Codable, Mockable {
     let id: UUID
     let title: String
     let type: Categories
     let image: String
     let cells: [CellModel]
 
-    init(id: UUID, title: String, type: Categories, image: String, cells: [CellModel] = []) {
+    init(id: UUID,
+         title: String,
+         type: Categories,
+         image: String,
+         cells: [CellModel] = []) {
         self.id = id
         self.title = title
         self.type = type
         self.image = image
         self.cells = cells
-    }
-
-    private enum CodingKeys: String, CodingKey {
-        case id, title, type, image, cells
     }
 }
 
@@ -33,38 +33,38 @@ enum Categories: String, Codable, CaseIterable {
 
     var title: String {
         switch self {
-            case .abroad: return "Заграница"
-            case .fraud: return "Безопасность"
-            case .leisure: return "Развлечения"
-            case .food: return "Еда"
-            case .tickets: return "Билеты"
-            case .packing: return "Багаж"
-            case .culture: return "Культура"
-            case .health: return "Здоровье"
-            case .family: return "С детьми"
-            case .budget: return "Экономия"
+            case .abroad: "Заграница"
+            case .fraud: "Безопасность"
+            case .leisure: "Развлечения"
+            case .food: "Еда"
+            case .tickets: "Билеты"
+            case .packing: "Багаж"
+            case .culture: "Культура"
+            case .health: "Здоровье"
+            case .family: "С детьми"
+            case .budget: "Экономия"
         }
     }
 
     var color: Color {
         switch self {
-            case .abroad: return .orange
-            case .fraud: return .red
-            case .leisure: return .purple
-            case .food: return .green
-            case .tickets: return .blue
-            case .packing: return .brown
-            case .culture: return .indigo
-            case .health: return .mint
-            case .family: return .yellow
-            case .budget: return .teal
+            case .abroad: .orange
+            case .fraud: .red
+            case .leisure: .purple
+            case .food: .green
+            case .tickets: .blue
+            case .packing: .brown
+            case .culture: .indigo
+            case .health: .mint
+            case .family: .yellow
+            case .budget: .teal
         }
     }
 }
 
 extension CategoryModel {
     static let mock = CategoryModel(id: UUID(), title: "Как не стать жертвой обмана", type: .fraud, image: "")
-
+    
     static let mockArray: [CategoryModel] = [
         CategoryModel(id: UUID(), title: "Главный чек-лист перед выездом", type: .abroad, image: ""),
         CategoryModel(id: UUID(), title: "Как не стать жертвой обмана", type: .fraud, image: ""),

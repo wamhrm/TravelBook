@@ -13,7 +13,7 @@ struct SearchResultsView: View {
 
     var body: some View {
         ZStack {
-            Components.backgroundColor()
+            BackgroundView()
 
             if vm.searchResults.isEmpty {
                 ContentUnavailableView {
@@ -21,7 +21,7 @@ struct SearchResultsView: View {
                 }
             } else {
                 ScrollView {
-                    LazyVStack(alignment: .leading, spacing: Components.displaySize(10, 10, 12)) {
+                    LazyVStack(alignment: .leading, spacing: Adaptive.size(10, 10, 12)) {
                         ForEach(vm.searchResults) { cell in
                             CompactCellView(cell: cell) {
                                 onTapHandler(cell)

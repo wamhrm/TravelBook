@@ -15,16 +15,16 @@ extension View {
     func cellDetailsModifier() -> some View {
         self
             .scaledToFill()
-            .frame(width: Components.displaySize(410, 422, 447),
-                   height: Components.displaySize(285, 297, 322))
+            .frame(width: Adaptive.size(410, 422, 447),
+                   height: Adaptive.size(285, 297, 322))
             .clipped()
     }
 
     func feedHeadCellModifier() -> some View {
         self
             .scaledToFill()
-            .frame(width: Components.displaySize(370, 382, 407),
-                   height: Components.displaySize(215, 227, 252))
+            .frame(width: Adaptive.size(370, 382, 407),
+                   height: Adaptive.size(215, 227, 252))
             .clipped()
             .opacity(0.35)
     }
@@ -32,24 +32,24 @@ extension View {
     func searchSmallCategoriesModifier() -> some View {
         self
             .scaledToFill()
-            .frame(width: Components.displaySize(45, 46, 50),
-                   height: Components.displaySize(45, 46, 50))
+            .frame(width: Adaptive.size(45, 46, 50),
+                   height: Adaptive.size(45, 46, 50))
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .clipped()
     }
 
     func backgroundWithShape(_ amount: CGFloat) -> some View {
         self
-            .background(RoundedRectangle(cornerRadius: amount) .fill(.backgroundWithShape))
-            .overlay(RoundedRectangle(cornerRadius: amount) .stroke(.black, lineWidth: 0.2))
+            .background(RoundedRectangle(cornerRadius: amount).fill(.backgroundWithShape))
+            .overlay(RoundedRectangle(cornerRadius: amount).stroke(.black, lineWidth: 0.2))
             .clipShape(RoundedRectangle(cornerRadius: amount))
     }
 
     func logoModifier() -> some View {
         self
             .scaledToFit()
-            .frame(width: Components.displaySize(18, 18, 20),
-                   height: Components.displaySize(18, 18, 20),
+            .frame(width: Adaptive.size(18, 18, 20),
+                   height: Adaptive.size(18, 18, 20),
                    alignment: .leading)
             .clipped()
     }

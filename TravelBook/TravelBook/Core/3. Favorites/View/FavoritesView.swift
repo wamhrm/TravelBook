@@ -10,14 +10,10 @@ import SwiftUI
 struct FavoritesView: View {
     @ObservedObject var vm: FavoritesViewModel
 
-    init(vm: FavoritesViewModel) {
-        self.vm = vm
-    }
-
     var body: some View {
         NavigationStack(path: $vm.favoritesRoutes) {
             ZStack {
-                Components.backgroundColor()
+                BackgroundView()
 
                 if vm.isSignedOut {
                     ContentUnavailableView {
@@ -30,7 +26,7 @@ struct FavoritesView: View {
                         }
                     } else {
                         ScrollView {
-                            LazyVStack(spacing: Components.displaySize(10, 10, 12)) {
+                            LazyVStack(spacing: Adaptive.size(10, 10, 12)) {
                                 ForEach(vm.favoriteCells) { cell in
                                     CompactCellView(cell: cell) {
                                         vm.favoritesRoutes.append(.cellDetails(cell))

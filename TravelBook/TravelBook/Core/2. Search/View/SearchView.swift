@@ -24,12 +24,12 @@ struct SearchView: View {
     var body: some View {
         NavigationStack(path: $vm.searchRoutes) {
             ZStack {
-                Components.backgroundColor()
+                BackgroundView()
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 25) {
-                        VStack(alignment: .leading, spacing: Components.displaySize(12, 12, 14)) {
-                            Components.headerView("Популярные запросы")
+                        VStack(alignment: .leading, spacing: Adaptive.size(12, 12, 14)) {
+                            HeaderView("Популярные запросы")
 
                             FlowLayout(spacing: 5) {
                                 ForEach(vm.popularRequests, id: \.self) { request in
@@ -42,9 +42,9 @@ struct SearchView: View {
                         .padding(.top, 5)
                         .padding(.horizontal)
 
-                        VStack(alignment: .leading, spacing: Components.displaySize(10, 10, 12)) {
+                        VStack(alignment: .leading, spacing: Adaptive.size(10, 10, 12)) {
                             HStack {
-                                Components.headerView("Категории")
+                                HeaderView("Категории")
 
                                 Spacer()
 
@@ -56,8 +56,8 @@ struct SearchView: View {
                                 }
                             }
 
-                            VStack(alignment: .leading, spacing: Components.displaySize(7, 7, 8)) {
-                                ForEach(vm.displayCategories.prefix(3)) { category in
+                            VStack(alignment: .leading, spacing: Adaptive.size(7, 7, 8)) {
+                                ForEach(vm.categories.prefix(3)) { category in
                                     CategoriesCellView(category: category,
                                                        categoryCellsCount: category.cells.count) {
                                         vm.searchRoutes.append(.categoryCells(category))
@@ -67,11 +67,11 @@ struct SearchView: View {
                         }
                         .padding(.horizontal)
 
-                        VStack(alignment: .leading, spacing: Components.displaySize(10, 10, 12)) {
-                            Components.headerView("Посты")
+                        VStack(alignment: .leading, spacing: Adaptive.size(10, 10, 12)) {
+                            HeaderView("Посты")
 
-                            LazyVStack(alignment: .leading, spacing: Components.displaySize(10, 10, 12)) {
-                                ForEach(vm.displayCells) { cell in
+                            LazyVStack(alignment: .leading, spacing: Adaptive.size(10, 10, 12)) {
+                                ForEach(vm.cells) { cell in
                                     BigCellView(cell: cell, isCellDetails: false)
                                         .padding()
                                         .backgroundWithShape(20)
@@ -121,26 +121,20 @@ extension SearchView {
                 SearchResultsView(vm: vm) { cell in
                     vm.searchRoutes.append(.searchResultsCellDetails(cell))
                 }
-            case .searchResultsCellDetails(let cell):
-                CellDetailsView(cell: cell,
-                                authService: authService,
-                                favoritesService: favoritesService)
-            case .searchFeedCellDetails(let cell):
+            case .searchResultsCellDetails(let cell),
+                 .searchFeedCellDetails(let cell),
+                 .categoryCellDetails(let cell):
                 CellDetailsView(cell: cell,
                                 authService: authService,
                                 favoritesService: favoritesService)
             case .categories:
-                CategoriesView(categories: vm.displayCategories) { category in
+                CategoriesView(categories: vm.categories) { category in
                     vm.searchRoutes.append(.categoryCells(category))
                 }
             case .categoryCells(let category):
                 CategoryCellsView(vm: vm, category: category) { cell in
                     vm.searchRoutes.append(.categoryCellDetails(cell))
                 }
-            case .categoryCellDetails(let cell):
-                CellDetailsView(cell: cell,
-                                authService: authService,
-                                favoritesService: favoritesService)
         }
     }
 }

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SignInAlreadyHaveAccountView: View {
     @Environment(\.displayScale) var displayScale
-    let type: SignInAlreadyHaveAccountType
+    let type: SignInAlreadyHaveAccountTypes
     let onTapHandler: () -> Void
     
     var body: some View {
@@ -29,20 +29,18 @@ struct SignInAlreadyHaveAccountView: View {
             
             Spacer()
         }
-        .font(Components.displaySize(.footnote, .system(size: 14), .callout))
+        .font(Adaptive.size(.footnote, .system(size: 14), .callout))
     }
 }
 
-enum SignInAlreadyHaveAccountType: String {
+enum SignInAlreadyHaveAccountTypes: String {
     case signIn = "Нет аккаунта?"
     case alreadyHaveAccount = "Уже есть аккаунт?"
     
     var buttonTitle: String {
         switch self {
-            case .signIn: 
-                return "Создать аккаунт"
-            case .alreadyHaveAccount: 
-                return "Войти"
+            case .signIn: "Создать аккаунт"
+            case .alreadyHaveAccount: "Войти"
         }
     }
 }

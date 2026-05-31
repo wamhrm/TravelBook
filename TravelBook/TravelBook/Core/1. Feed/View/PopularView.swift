@@ -11,17 +11,13 @@ struct PopularView: View {
     let cells: [CellModel]
     let onTapHandler: (CellModel) -> Void
     
-    private var displayCells: [CellModel] {
-        return !cells.isEmpty ? cells : CellModel.mockArray
-    }
-    
     var body: some View {
         ZStack {
-            Components.backgroundColor()
+            BackgroundView()
             
             ScrollView {
-                LazyVStack(alignment: .leading, spacing: Components.displaySize(10, 10, 12)) {
-                    ForEach(displayCells) { cell in
+                LazyVStack(alignment: .leading, spacing: Adaptive.size(10, 10, 12)) {
+                    ForEach(cells) { cell in
                         CompactCellView(cell: cell) {
                             onTapHandler(cell)
                         }

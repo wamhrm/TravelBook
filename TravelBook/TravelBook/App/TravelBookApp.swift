@@ -12,12 +12,12 @@ struct TravelBookApp: App {
     @StateObject private var authService: AuthService
     @StateObject private var contentService: ContentService
     @StateObject private var favoritesService: FavoritesService
-
     @AppStorage(Constants.selectedThemeKey) private var selectedTheme: AppTheme = .system
 
     init() {
-        let networkService = NetworkService()
-        let authService = AuthService(networkService: networkService)
+        let keychain = KeychainHelper()
+        let networkService = NetworkService(keychain: keychain)
+        let authService = AuthService(networkService: networkService, keychain: keychain)
 
         _authService = StateObject(wrappedValue: authService)
         _contentService = StateObject(wrappedValue: ContentService(networkService: networkService))
