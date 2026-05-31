@@ -13,10 +13,10 @@ struct CategoriesView: View {
 
     var body: some View {
         ZStack {
-            Components.backgroundColor()
+            BackgroundView()
 
             ScrollView {
-                LazyVStack(alignment: .leading, spacing: Components.displaySize(8, 8, 10)) {
+                LazyVStack(alignment: .leading, spacing: Adaptive.size(8, 8, 10)) {
                     ForEach(categories) { category in
                         CategoriesCellView(category: category,
                                            categoryCellsCount: category.cells.count) {
@@ -27,8 +27,8 @@ struct CategoriesView: View {
                 .padding(.horizontal)
                 .bottomAreaPadding(15)
             }
-            .navigationTitle("Категории")
         }
+        .navigationTitle("Категории")
     }
 }
 

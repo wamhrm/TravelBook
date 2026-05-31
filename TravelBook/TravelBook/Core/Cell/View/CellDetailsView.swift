@@ -11,13 +11,8 @@ import Kingfisher
 
 struct CellDetailsView: View {
     @StateObject private var vm: CellDetailsViewModel
-    @State private var showAuthAlert = false
     let cell: CellModel
     let authService: any AuthServiceProtocol
-
-    private var isMock: Bool {
-        return cell.image.isEmpty
-    }
 
     init(cell: CellModel,
          authService: any AuthServiceProtocol,
@@ -29,11 +24,11 @@ struct CellDetailsView: View {
 
     var body: some View {
         ZStack {
-            Components.backgroundColor()
+            BackgroundView()
 
             ScrollView {
                 VStack(spacing: 17) {
-                    if !isMock {
+                    if !cell.isMock {
                         KFImage(URL(string: cell.image))
                             .resizable()
                             .cellDetailsModifier()
@@ -52,39 +47,31 @@ struct CellDetailsView: View {
                                 vm.isFavorite.toggle()
                             }
 
-                            showAuthAlert = true
+                            vm.showAuthAlert.toggle()
                         }
                     }
                     .padding(.horizontal, 20)
 
                     TabView {
-                        if !isMock {
-                            ForEach(cell.images, id: \.self) { image in
-                                KFImage(URL(string: image))
-                                    .resizable()
-                                    .scaledToFill()
-                                    .clipped()
-                            }
-                        } else {
-                            ForEach(CellModel.mockArray.prefix(3)) { cell in
-                                Image("test")
-                                    .resizable()
-                                    .scaledToFill()
-                                    .clipped()
-                            }
+                        ForEach(cell.images, id: \.self) { image in
+                            KFImage(URL(string: image))
+                                .resizable()
+                                .scaledToFill()
+                                .clipped()
                         }
                     }
-                    .frame(height: Components.displaySize(225, 237, 262))
+                    .frame(height: Adaptive.size(225, 237, 262))
                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .automatic))
                     .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .never))
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     .padding(.horizontal, 20)
                 }
+                .padding(.top, Adaptive.size(-116, -129, -153))
                 .bottomAreaPadding(50)
-                .alert("Пожалуйста, авторизуйтесь или зарегистрируйтесь", isPresented: $showAuthAlert) {
+                .alert("Пожалуйста, авторизуйтесь или зарегистрируйтесь",
+                       isPresented: $vm.showAuthAlert) {
                     Button("OK", role: .cancel) {}
                 }
-                .padding(.top, Components.displaySize(-116, -129, -153))
             }
         }
     }
@@ -95,7 +82,7 @@ struct CellDetailsView: View {
     let favoritesService = FavoritesService(authService: authService)
 
     return NavigationStack {
-        CellDetailsView(cell: .mock,
+        CellDetailsView(cell: CellModel.mock,
                         authService: authService,
                         favoritesService: favoritesService)
     }

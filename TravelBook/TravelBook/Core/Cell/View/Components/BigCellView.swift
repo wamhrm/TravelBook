@@ -13,17 +13,10 @@ struct BigCellView: View {
     @Binding private var isFavorite: Bool
     private var onFavoriteTapHandler: (() -> Void)?
 
-    init(cell: CellModel, isCellDetails: Bool) {
-        self.cell = cell
-        self.isCellDetails = isCellDetails
-        self._isFavorite = .constant(false)
-        self.onFavoriteTapHandler = nil
-    }
-
     init(cell: CellModel,
          isCellDetails: Bool,
-         isFavorite: Binding<Bool>,
-         onFavoriteTapHandler: (() -> Void)?) {
+         isFavorite: Binding<Bool> = .constant(false),
+         onFavoriteTapHandler: (() -> Void)? = nil) {
         self.cell = cell
         self.isCellDetails = isCellDetails
         self._isFavorite = isFavorite
@@ -31,9 +24,9 @@ struct BigCellView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: isCellDetails ? Components.displaySize(8, 8, 10) : Components.displaySize(6, 6, 8)) {
+        VStack(alignment: .leading, spacing: isCellDetails ? Adaptive.size(8, 8, 10) : Adaptive.size(6, 6, 8)) {
             if !isCellDetails {
-                Components.categoriesTheme(cell.category, .search)
+                CategoryThemeLabel(category: cell.category, size: .search)
             }
 
             VStack(alignment: .leading, spacing: isCellDetails ? 12 : 10) {
@@ -45,24 +38,24 @@ struct BigCellView: View {
                     .multilineTextAlignment(.leading)
 
                 Text(cell.subtitle)
-                    .font(isCellDetails ? Components.displaySize(.system(size: 14), .system(size: 15), .default) : Components.displaySize(.footnote, .system(size: 13), .system(size: 14)))
+                    .font(isCellDetails ? Adaptive.size(.system(size: 14), .system(size: 15), .default) : Adaptive.size(.footnote, .system(size: 13), .system(size: 14)))
                     .foregroundStyle(.subtitle)
                     .lineLimit(isCellDetails ? .max : 2)
                     .multilineTextAlignment(.leading)
 
                 HStack(spacing: isCellDetails ? 15 : 10) {
-                    Text("\(cell.dateString)")
+                    Text(cell.dateString)
 
                     Rectangle()
                         .foregroundStyle(.cellDivider)
-                        .frame(width: 1, height: Components.displaySize(13, 13, 15))
+                        .frame(width: 1, height: Adaptive.size(13, 13, 15))
 
                     Text("\(cell.readingTime) мин")
 
                     if isCellDetails {
                         Rectangle()
                             .foregroundStyle(.cellDivider)
-                            .frame(width: 1, height: Components.displaySize(13, 13, 15))
+                            .frame(width: 1, height: Adaptive.size(13, 13, 15))
 
                         Button {
                             withAnimation {
@@ -77,13 +70,15 @@ struct BigCellView: View {
                         }
                     }
                 }
-                .font(isCellDetails ? Components.displaySize(.footnote, .system(size: 13), .system(size: 14)) : Components.displaySize(.caption, .footnote, .footnote))
+                .font(isCellDetails ? Adaptive.size(.footnote, .system(size: 13), .system(size: 14))
+                                    : Adaptive.size(.caption, .footnote, .footnote))
                 .foregroundStyle(.subtitle)
             }
             .padding(.top, 7)
 
             Text(cell.description)
-                .font(isCellDetails ? Components.displaySize(.system(size: 14), .system(size: 15), .callout) : Components.displaySize(.footnote, .system(size: 14), .callout))
+                .font(isCellDetails ? Adaptive.size(.system(size: 14), .system(size: 15), .callout)
+                                    : Adaptive.size(.footnote, .system(size: 14), .callout))
                 .foregroundStyle(.description)
                 .lineSpacing(6)
                 .padding(.vertical, 10)
@@ -102,5 +97,5 @@ struct BigCellView: View {
 }
 
 #Preview {
-    BigCellView(cell: .mock, isCellDetails: true)
+    BigCellView(cell: CellModel.mock, isCellDetails: true)
 }

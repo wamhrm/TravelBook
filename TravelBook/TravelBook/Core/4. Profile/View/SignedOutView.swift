@@ -9,16 +9,14 @@ import SwiftUI
 
 struct SignedOutView: View {
     @ObservedObject var vm: ProfileViewModel
-    @State var showSignIn = false
-    @State var showCreateAccount = false
 
     var body: some View {
         ZStack {
-            Components.backgroundColor()
+            BackgroundView()
 
             VStack(spacing: 55) {
                 VStack(spacing: 25) {
-                    Components.bigLogo()
+                    BigLogo()
 
                     Text("Ваш профиль путешественника")
                         .font(.title2)
@@ -28,16 +26,18 @@ struct SignedOutView: View {
 
                 VStack(spacing: 12) {
                     SignInCreateAccountButtonView(type: .signIn,
-                                                  isSignedOut: true) {
-                        withAnimation(.spring) {
-                            showSignIn.toggle()
+                                                  isSignedOut: true,
+                                                  isLoading: vm.isLoading) {
+                        withAnimation(.easeInOut(duration: 0.25)) {
+                            vm.showSignIn.toggle()
                         }
                     }
 
                     SignInCreateAccountButtonView(type: .createAccount,
-                                                  isSignedOut: true) {
-                        withAnimation(.spring) {
-                            showCreateAccount.toggle()
+                                                  isSignedOut: true,
+                                                  isLoading: vm.isLoading) {
+                        withAnimation(.easeInOut(duration: 0.25)) {
+                            vm.showCreateAccount.toggle()
                         }
                     }
                 }
@@ -60,15 +60,17 @@ struct SignedOutView: View {
 extension SignedOutView {
     @ViewBuilder
     private func overlayView() -> some View {
-        if showSignIn {
-            SignInCreateAccountView(vm: vm, type: .signIn, showSignInCreate: $showSignIn) {
-                showSignIn = false
-                showCreateAccount = true
+        if vm.showSignIn {
+            SignInCreateAccountView(vm: vm,
+                                    type: .signIn) {
+                vm.showSignIn = false
+                vm.showCreateAccount = true
             }
-        } else if showCreateAccount {
-            SignInCreateAccountView(vm: vm, type: .createAccount, showSignInCreate: $showCreateAccount) {
-                showCreateAccount = false
-                showSignIn = true
+        } else if vm.showCreateAccount {
+            SignInCreateAccountView(vm: vm,
+                                    type: .createAccount) {
+                vm.showCreateAccount = false
+                vm.showSignIn = true
             }
         }
     }

@@ -14,8 +14,8 @@ struct CompactCellView: View {
 
     var body: some View {
         Button(action: onTapHandler) {
-            VStack(alignment: .leading, spacing: Components.displaySize(15, 15, 17)) {
-                Components.categoriesTheme(cell.category, .feed)
+            VStack(alignment: .leading, spacing: Adaptive.size(15, 15, 17)) {
+                CategoryThemeLabel(category: cell.category, size: .feed)
 
                 Text(cell.title)
                     .foregroundStyle(.blackAndWhite)
@@ -24,15 +24,15 @@ struct CompactCellView: View {
                     .multilineTextAlignment(.leading)
 
                 Text(cell.description)
-                    .font(Components.displaySize(.footnote, .system(size: 13), .system(size: 14)))
+                    .font(Adaptive.size(.footnote, .system(size: 13), .system(size: 14)))
                     .foregroundStyle(.deepGray)
                     .lineLimit(3)
                     .multilineTextAlignment(.leading)
 
-                Components.readingTime(cell, false)
+                ReadingTimeLabel(cell: cell, isFeed: false)
             }
             .padding(15)
-            .frame(maxWidth: .infinity, maxHeight: Components.displaySize(225, 237, 262))
+            .frame(maxWidth: .infinity, maxHeight: Adaptive.size(225, 237, 262))
             .backgroundWithShape(15)
         }
     }
@@ -40,11 +40,11 @@ struct CompactCellView: View {
 
 #Preview {
     VStack {
-        CompactCellView(cell: .mock) {
+        CompactCellView(cell: CellModel.mock) {
 
         }
 
-        CompactCellView(cell: .mock) {
+        CompactCellView(cell: CellModel.mock) {
 
         }
     }

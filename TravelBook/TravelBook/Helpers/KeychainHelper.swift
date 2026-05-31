@@ -8,11 +8,13 @@
 import Foundation
 import Security
 
-nonisolated final class KeychainHelper: @unchecked Sendable {
-    static let standard = KeychainHelper()
-    
-    private init() {}
-    
+nonisolated protocol KeychainHelperProtocol: Sendable {
+    func save(_ data: Data, path: String, key: String)
+    func read(path: String, key: String) -> Data?
+    func delete(path: String, key: String)
+}
+
+nonisolated final class KeychainHelper: KeychainHelperProtocol, @unchecked Sendable {
     func save(_ data: Data, path: String, key: String) {
         let query = [kSecValueData: data,
                      kSecClass: kSecClassGenericPassword,
@@ -35,7 +37,7 @@ nonisolated final class KeychainHelper: @unchecked Sendable {
     }
     
     func delete(path: String, key: String) {
-        let query = [kSecAttrServer: path,
+        let query = [kSecAttrService: path,
                      kSecAttrAccount: key,
                      kSecClass: kSecClassGenericPassword] as CFDictionary
         

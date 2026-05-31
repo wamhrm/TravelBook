@@ -12,17 +12,12 @@ struct CategoryCellsView: View {
     let category: CategoryModel
     let onTapHandler: (CellModel) -> Void
 
-    private var displayedCells: [CellModel] {
-        if !category.cells.isEmpty { return category.cells }
-        return vm.displayCategoryResults
-    }
-
     var body: some View {
         ZStack {
-            Components.backgroundColor()
+            BackgroundView()
 
             ScrollView {
-                ForEach(displayedCells) { cell in
+                ForEach(category.cells) { cell in
                     CompactCellView(cell: cell) {
                         vm.searchRoutes.append(.categoryCellDetails(cell))
                     }

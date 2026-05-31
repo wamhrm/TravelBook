@@ -12,34 +12,30 @@ struct FeedPopularCellView: View {
     let cell: CellModel
     let onTapHandler: () -> Void
 
-    private var isMock: Bool {
-        return cell.image.isEmpty
-    }
-
     var body: some View {
         Button(action: onTapHandler) {
             VStack(alignment: .leading, spacing: 15) {
-                if !isMock {
+                if !cell.isMock {
                     KFImage(URL(string: cell.image))
                         .placeholder {
                             ProgressView()
                         }
                         .resizable()
-                        .frame(height: Components.displaySize(140, 152, 177))
+                        .frame(height: Adaptive.size(140, 152, 177))
                         .clipped()
                 } else {
                     Image("test")
                         .resizable()
                         .scaledToFill()
-                        .frame(height: Components.displaySize(140, 152, 177))
+                        .frame(height: Adaptive.size(140, 152, 177))
                         .clipped()
                 }
 
                 VStack(alignment: .leading, spacing: 12) {
-                    Components.categoriesTheme(cell.category, .feed)
+                    CategoryThemeLabel(category: cell.category, size: .feed)
 
                     Text(cell.title)
-                        .font(.system(size: Components.displaySize(13, 13, 14)))
+                        .font(.system(size: Adaptive.size(13, 13, 14)))
                         .foregroundStyle(.title)
                         .fontWeight(.semibold)
                         .lineLimit(2)
@@ -49,16 +45,15 @@ struct FeedPopularCellView: View {
 
                 Spacer()
             }
-            .frame(width: Components.displaySize(230, 242, 267), height: Components.displaySize(250, 262, 287))
+            .frame(width: Adaptive.size(230, 242, 267),
+                   height: Adaptive.size(250, 262, 287))
             .backgroundWithShape(15)
         }
     }
 }
 
-
-
 #Preview {
-    FeedPopularCellView(cell: .mock) {
+    FeedPopularCellView(cell: CellModel.mock) {
 
     }
 }

@@ -13,20 +13,13 @@ struct UserModel: Identifiable, Codable, Equatable {
     let email: String
     let dateRegistered: Date
 
-    init(id: UUID, name: String, email: String, dateRegistered: Date) {
-        self.id = id
-        self.name = name
-        self.email = email
-        self.dateRegistered = dateRegistered
-    }
-
     private enum CodingKeys: String, CodingKey {
         case id, name, email
         case dateRegistered = "date_registered"
     }
-    
+
     static func == (lhs: UserModel, rhs: UserModel) -> Bool {
-        return lhs.id == rhs.id
+        lhs.id == rhs.id
     }
 }
 

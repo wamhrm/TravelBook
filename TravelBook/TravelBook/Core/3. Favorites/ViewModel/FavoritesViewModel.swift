@@ -13,20 +13,20 @@ enum FavoritesRoutes: Hashable {
 }
 
 @MainActor
-final class FavoritesViewModel: ObservableObject {
+final class FavoritesViewModel: ObservableObject, AlertPresentable {
     @Published var favoritesRoutes: [FavoritesRoutes] = []
     @Published private(set) var favoriteCells: [CellModel] = []
-    
+
     @Published var showAlert = false
-    @Published private(set) var alertMessage = ""
+    @Published var alertMessage = ""
 
     let authService: any AuthServiceProtocol
     let favoritesService: any FavoritesServiceProtocol
 
     private var cancellables = Set<AnyCancellable>()
-    
+
     var isSignedOut: Bool {
-        return authService.authState.value == .signedOut
+        authService.authState.value == .signedOut
     }
 
     init(authService: any AuthServiceProtocol,
@@ -36,10 +36,6 @@ final class FavoritesViewModel: ObservableObject {
         self.favoriteCells = favoritesService.favoriteCells.value
 
         setupSubscriptions()
-    }
-    
-    deinit {
-        cancellables.removeAll()
     }
 
     private func setupSubscriptions() {
@@ -65,7 +61,7 @@ final class FavoritesViewModel: ObservableObject {
         do {
             try await favoritesService.fetchFavorites()
         } catch {
-            showAlert(message: error.localizedDescription)
+            presentAlert(error.localizedDescription)
         }
     }
 
@@ -74,13 +70,8 @@ final class FavoritesViewModel: ObservableObject {
             do {
                 try await favoritesService.toggleFavorite(for: cell)
             } catch {
-                showAlert(message: error.localizedDescription)
+                presentAlert(error.localizedDescription)
             }
         }
-    }
-
-    private func showAlert(message: String) {
-        showAlert = true
-        alertMessage = message
     }
 }

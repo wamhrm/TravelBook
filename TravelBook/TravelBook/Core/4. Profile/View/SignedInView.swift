@@ -10,14 +10,13 @@ import SwiftUI
 struct SignedInView: View {
     @ObservedObject var vm: ProfileViewModel
     let user: UserModel
-    @State private var showSignOutConfirmation = false
 
     var body: some View {
         ZStack {
-            Components.backgroundColor()
+            BackgroundView()
 
             ScrollView {
-                VStack(alignment: .leading, spacing: Components.displaySize(14, 14, 16)) {
+                VStack(alignment: .leading, spacing: Adaptive.size(14, 14, 16)) {
                     VStack(spacing: 15) {
                         Text(user.name.prefix(2).uppercased())
                             .font(.title)
@@ -34,12 +33,10 @@ struct SignedInView: View {
                             .font(.title2)
                             .fontWeight(.bold)
 
-                        Text(
-                            "Путешественник с \(user.dateRegistered.customMonthYear())"
-                        )
-                        .font(.system(size: 14))
-                        .foregroundStyle(.blackAndWhite)
-                        .fontWeight(.medium)
+                        Text("Путешественник с \(user.dateRegistered.customMonthYear())")
+                            .font(.system(size: 14))
+                            .foregroundStyle(.blackAndWhite)
+                            .fontWeight(.medium)
                     }
                     .padding(22)
                     .frame(maxWidth: .infinity)
@@ -52,7 +49,7 @@ struct SignedInView: View {
                         Text("""
                              "Путешествия - это не только места, которые вы посещаете, но и моменты, которые остаются с вами навсегда."
                              """)
-                        .font(Components.displaySize(.footnote, .system(size: 14), .callout))
+                        .font(Adaptive.size(.footnote, .system(size: 14), .callout))
                         .italic()
                         .fontWeight(.medium)
                     }
@@ -66,7 +63,7 @@ struct SignedInView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 15))
 
 
-                    VStack(alignment: .leading, spacing: Components.displaySize(10, 10, 12)) {
+                    VStack(alignment: .leading, spacing: Adaptive.size(10, 10, 12)) {
                         ProfileCellView(type: .appearance) {
                             vm.profileRoutes.append(.appearance)
                         }
@@ -75,17 +72,16 @@ struct SignedInView: View {
                             vm.profileRoutes.append(.aboutApp)
                         }
 
-                        ProfileCellView(type: .logOut, isLoading: vm.isLoading) {
-                            showSignOutConfirmation = true
+                        ProfileCellView(type: .signOut, isLoading: vm.isLoading) {
+                            vm.showSignOut.toggle()
                         }
                     }
                 }
+                .padding(.horizontal)
             }
             .navigationTitle("Профиль")
             .navigationBarTitleDisplayMode(.inline)
-            .padding(.horizontal)
-            .scrollContentBackground(.hidden)
-            .alert("Выйти из аккаунта?", isPresented: $showSignOutConfirmation) {
+            .alert("Выйти из аккаунта?", isPresented: $vm.showSignOut) {
                 alertView()
             }
         }

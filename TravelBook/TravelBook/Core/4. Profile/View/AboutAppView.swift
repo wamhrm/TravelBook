@@ -10,11 +10,11 @@ import SwiftUI
 struct AboutAppView: View {
     var body: some View {
         ZStack {
-            Components.backgroundColor()
+            BackgroundView()
             
             ScrollView {
                 VStack(spacing: 25) {
-                    Components.bigLogo()
+                    BigLogo()
                     
                     VStack(spacing: 10) {
                         Text("УЧЕБНИК ПУТЕШЕСТВИЙ")

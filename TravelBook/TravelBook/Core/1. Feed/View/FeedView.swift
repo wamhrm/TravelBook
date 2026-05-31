@@ -24,7 +24,7 @@ struct FeedView: View {
     var body: some View {
         NavigationStack(path: $vm.feedRoutes) {
             ZStack {
-                Components.backgroundColor()
+                BackgroundView()
 
                 if vm.feedCells.isEmpty {
                     VStack(spacing: 30) {
@@ -46,8 +46,8 @@ struct FeedView: View {
                     }
                 } else {
                     ScrollView {
-                        VStack(alignment: .leading, spacing: Components.displaySize(30, 30, 32)) {
-                            VStack(alignment: .leading, spacing: Components.displaySize(10, 10, 12)) {
+                        VStack(alignment: .leading, spacing: Adaptive.size(30, 30, 32)) {
+                            VStack(alignment: .leading, spacing: Adaptive.size(10, 10, 12)) {
                                 HStack(spacing: 10) {
                                     Image("logo")
                                         .resizable()
@@ -59,22 +59,24 @@ struct FeedView: View {
                                         Text("УЧЕБНИК")
                                         Text("ПУТЕШЕСТВИЙ")
                                     }
-                                    .font(Components.displaySize(.footnote, .system(size: 13), .system(size: 14)))
+                                    .font(Adaptive.size(.footnote, .system(size: 13), .system(size: 14)))
                                     .fontDesign(.monospaced)
                                     .fontWeight(.heavy)
 
                                     Spacer()
                                 }
 
-                                FeedHeadView(cell: vm.displayHeadCell) {
-                                    vm.feedRoutes.append(.headCell(vm.displayHeadCell))
+                                if let headCell = vm.headCell {
+                                    FeedHeadView(cell: headCell) {
+                                        vm.feedRoutes.append(.headCell(headCell))
+                                    }
                                 }
                             }
                             .padding(.horizontal)
 
-                            VStack(alignment: .leading, spacing: Components.displaySize(10, 10, 12)) {
+                            VStack(alignment: .leading, spacing: Adaptive.size(10, 10, 12)) {
                                 HStack {
-                                    Components.headerView("Популярное")
+                                    HeaderView("Популярное")
 
                                     Spacer()
 
@@ -88,8 +90,8 @@ struct FeedView: View {
                                 .padding(.horizontal)
 
                                 ScrollView(.horizontal) {
-                                    HStack(spacing: Components.displaySize(10, 10, 12)) {
-                                        ForEach(vm.displayPopularCells.prefix(5)) { cell in
+                                    HStack(spacing: Adaptive.size(10, 10, 12)) {
+                                        ForEach(vm.popularCells.prefix(5)) { cell in
                                             FeedPopularCellView(cell: cell) {
                                                 vm.feedRoutes.append(.bigCell(cell))
                                             }
@@ -99,11 +101,11 @@ struct FeedView: View {
                                 }
                             }
 
-                            VStack(alignment: .leading, spacing: Components.displaySize(10, 10, 12)) {
-                                Components.headerView("Лента")
+                            VStack(alignment: .leading, spacing: Adaptive.size(10, 10, 12)) {
+                                HeaderView("Лента")
 
                                 LazyVStack(alignment: .leading, spacing: 12) {
-                                    ForEach(vm.displayFeedCells) { cell in
+                                    ForEach(vm.feedCells) { cell in
                                         CompactCellView(cell: cell) {
                                             vm.feedRoutes.append(.feedCell(cell))
                                         }

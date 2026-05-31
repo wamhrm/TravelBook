@@ -12,17 +12,13 @@ struct FeedHeadView: View {
     @Environment(\.colorScheme) var colorScheme
     let cell: CellModel
     let onTapHandler: () -> Void
-    
-    private var isMock: Bool {
-        return cell.image.isEmpty
-    }
-    
+
     var body: some View {
         Button(action: onTapHandler) {
             ZStack(alignment: .leading) {
                 Color.black
                 
-                if !isMock {
+                if !cell.isMock {
                     KFImage(URL(string: cell.image))
                         .placeholder {
                             ProgressView()
@@ -38,16 +34,16 @@ struct FeedHeadView: View {
                 VStack(alignment: .leading) {
                     VStack(alignment: .leading, spacing: 15) {
                         Text("УЧЕБНИК")
-                            .font(Components.displaySize(.caption2, .caption, .caption))
+                            .font(Adaptive.size(.caption2, .caption, .caption))
                             .foregroundStyle(.white)
                             .bold()
-                            .padding(Components.displaySize(6, 6, 7))
-                            .padding(.horizontal, Components.displaySize(3, 3, 4))
+                            .padding(Adaptive.size(6, 6, 7))
+                            .padding(.horizontal, Adaptive.size(3, 3, 4))
                             .background(.feedBigPopular.opacity(colorScheme == .light ? 0.75 : 0.5))
                             .clipShape(RoundedRectangle(cornerRadius: 8))
                         
                         Text(cell.title)
-                            .font(Components.displaySize(.title3, .system(size: 21), .title2))
+                            .font(Adaptive.size(.title3, .system(size: 21), .title2))
                             .foregroundStyle(.white)
                             .fontWeight(.bold)
                             .lineLimit(3)
@@ -56,18 +52,19 @@ struct FeedHeadView: View {
                     
                     Spacer()
                     
-                    Components.readingTime(cell, true)
+                    ReadingTimeLabel(cell: cell, isFeed: true)
                 }
                 .padding(20)
             }
-            .frame(width: Components.displaySize(370, 391, 407), height: Components.displaySize(215, 227, 252))
+            .frame(width: Adaptive.size(370, 391, 407),
+                   height: Adaptive.size(215, 227, 252))
             .clipShape(RoundedRectangle(cornerRadius: 15))
         }
     }
 }
 
 #Preview {
-    FeedHeadView(cell: .mock) {
+    FeedHeadView(cell: CellModel.mock) {
         
     }
     .padding(.horizontal)

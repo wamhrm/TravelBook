@@ -20,28 +20,30 @@ private enum AuthInput {
 }
 
 @MainActor
-final class ProfileViewModel: ObservableObject {
+final class ProfileViewModel: ObservableObject, AlertPresentable {
     @Published var profileRoutes: [ProfileRoutes] = []
     @Published private(set) var authState = AuthState.signedOut
-    
+
     @Published var name = ""
     @Published var email = ""
     @Published var password = ""
 
     @Published var showAlert = false
-    @Published private(set) var alertMessage = ""
+    @Published var alertMessage = ""
     @Published private(set) var isLoading = false
+    
+    @Published var showSignInCreateAccount = false
+    @Published var showCreateAccount = false
+    @Published var showSignIn = false
+    @Published var showSignOut = false
 
     private let authService: any AuthServiceProtocol
+    
     private var cancellables = Set<AnyCancellable>()
 
     init(authService: any AuthServiceProtocol) {
         self.authService = authService
         setupSubscriptions()
-    }
-
-    deinit {
-        cancellables.removeAll()
     }
 
     private func setupSubscriptions() {
@@ -60,7 +62,7 @@ final class ProfileViewModel: ObservableObject {
         let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
 
         if let message = validateCreateAccount(name: trimmedName, email: trimmedEmail, password: password) {
-            showError(message)
+            presentAlert(message)
             return
         }
 
@@ -72,11 +74,9 @@ final class ProfileViewModel: ObservableObject {
             do {
                 try await Task.sleep(for: AuthInput.authActionDelay)
                 try await authService.createAccount(name: trimmedName, email: trimmedEmail, password: password)
-
                 profileRoutes = []
-                clearTextFields()
             } catch {
-                showError(error.localizedDescription)
+                presentAlert(error.localizedDescription)
             }
 
             isLoading = false
@@ -87,7 +87,7 @@ final class ProfileViewModel: ObservableObject {
         let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
 
         if let message = validateSignIn(email: trimmedEmail, password: password) {
-            showError(message)
+            presentAlert(message)
             return
         }
 
@@ -99,11 +99,9 @@ final class ProfileViewModel: ObservableObject {
             do {
                 try await Task.sleep(for: AuthInput.authActionDelay)
                 try await authService.signIn(email: trimmedEmail, password: password)
-
                 profileRoutes = []
-                clearTextFields()
             } catch {
-                showError(error.localizedDescription)
+                presentAlert(error.localizedDescription)
             }
 
             isLoading = false
@@ -119,9 +117,8 @@ final class ProfileViewModel: ObservableObject {
             try? await Task.sleep(for: AuthInput.authActionDelay)
             authService.signOut()
             profileRoutes = []
+            isLoading = false
         }
-        
-        isLoading = false
     }
 
     func clearTextFields() {
@@ -129,10 +126,10 @@ final class ProfileViewModel: ObservableObject {
         email = ""
         password = ""
     }
-
-    private func showError(_ message: String) {
-        showAlert = true
-        alertMessage = message
+    
+    func dismissSignInCreateView() {
+        showSignIn = false
+        showCreateAccount = false
     }
 
     private func validateSignIn(email: String, password: String) -> String? {
@@ -187,6 +184,4 @@ final class ProfileViewModel: ObservableObject {
         return !local.isEmpty && !domain.isEmpty
     }
 }
-
-
 

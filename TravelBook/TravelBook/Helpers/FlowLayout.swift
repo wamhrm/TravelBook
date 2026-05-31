@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 struct FlowLayout: Layout {
-    private var spacing: CGFloat
+    private let spacing: CGFloat
 
     init(spacing: CGFloat = 8) {
         self.spacing = spacing
