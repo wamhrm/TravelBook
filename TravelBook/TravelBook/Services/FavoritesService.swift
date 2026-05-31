@@ -23,11 +23,14 @@ final class FavoritesService: FavoritesServiceProtocol {
     var likedIDs = CurrentValueSubject<Set<UUID>, Never>([])
     
     private let authService: any AuthServiceProtocol
-    
+    private let networkService: any NetworkServiceProtocol
+
     private var cancellables = Set<AnyCancellable>()
 
-    init(authService: any AuthServiceProtocol) {
+    init(authService: any AuthServiceProtocol,
+         networkService: any NetworkServiceProtocol = NetworkService()) {
         self.authService = authService
+        self.networkService = networkService
     }
     
     deinit {
@@ -38,7 +41,7 @@ final class FavoritesService: FavoritesServiceProtocol {
         guard authService.authState.value != .signedOut else { return }
 
         do {
-            let cells = try await NetworkHelper.fetchFavorites()
+            let cells = try await networkService.fetchFavorites()
             self.favoriteCells.send(cells)
             
             let ids = Set(cells.compactMap { $0.id })
@@ -61,9 +64,9 @@ final class FavoritesService: FavoritesServiceProtocol {
         
         do {
             if isCurrentlyLiked {
-                try await NetworkHelper.removeFavorite(id: id)
+                try await networkService.removeFavorite(id: id)
             } else {
-                try await NetworkHelper.addFavorite(id: id)
+                try await networkService.addFavorite(id: id)
             }
         } catch {
             if isCurrentlyLiked {

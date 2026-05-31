@@ -28,18 +28,21 @@ final class AuthService: AuthServiceProtocol {
     private let tokenKey = Constants.tokenKey
     private let userKey = Constants.userKey
 
-    init() {
+    private let networkService: any NetworkServiceProtocol
+
+    init(networkService: any NetworkServiceProtocol = NetworkService()) {
+        self.networkService = networkService
         autoSignIn()
     }
 
     func createAccount(name: String, email: String, password: String) async throws {
         let normalizedEmail = normalizeEmail(email)
-        try await NetworkHelper.createAccount(name: name, email: normalizedEmail, password: password)
+        try await networkService.createAccount(name: name, email: normalizedEmail, password: password)
         try await signIn(email: normalizedEmail, password: password)
     }
 
     func signIn(email: String, password: String) async throws {
-        let response = try await NetworkHelper.signIn(email: normalizeEmail(email), password: password)
+        let response = try await networkService.signIn(email: normalizeEmail(email), password: password)
 
         saveToken(response.token)
         saveUserLocally(response.user)
@@ -52,7 +55,6 @@ final class AuthService: AuthServiceProtocol {
     func signOut() {
         KeychainHelper.standard.delete(path: tokenPath, key: tokenKey)
         UserDefaults.standard.removeObject(forKey: userKey)
-
         authState.send(.signedOut)
     }
 

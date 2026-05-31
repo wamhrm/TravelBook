@@ -43,7 +43,11 @@ final class ContentService: ContentServiceProtocol {
     private var feedPage = 1
     private var searchPage = 1
 
-    init() {}
+    private let networkService: any NetworkServiceProtocol
+
+    init(networkService: any NetworkServiceProtocol = NetworkService()) {
+        self.networkService = networkService
+    }
 
     func fetchData() async throws {
         feedPage = 1
@@ -89,11 +93,11 @@ final class ContentService: ContentServiceProtocol {
     }
     
     private func fetchFeedCells(page: Int, seed: String) async throws -> [CellModel] {
-        try await NetworkHelper.fetchCells(page: page, limit: limit, seed: seed)
+        try await networkService.fetchCells(page: page, limit: limit, seed: seed)
     }
 
     private func fetchPopularCells() async throws -> [CellModel] {
-        let cells = try await NetworkHelper.fetchPopularCells()
+        let cells = try await networkService.fetchPopularCells()
         return cells.shuffled()
     }
     
@@ -146,7 +150,7 @@ final class ContentService: ContentServiceProtocol {
         let seed = (pagePath == \.feedPage) ? currentFeedSeed : currentSearchSeed
 
         do {
-            let newCells = try await NetworkHelper.fetchCells(page: currentPage, limit: limit, seed: seed)
+            let newCells = try await networkService.fetchCells(page: currentPage, limit: limit, seed: seed)
 
             await MainActor.run {
                 let cellsSubject = self[keyPath: cellsSubjectPath]
@@ -180,7 +184,7 @@ final class ContentService: ContentServiceProtocol {
     
     private func fetchCategories() async throws {
         do {
-            let loadedCategories = try await NetworkHelper.fetchCategories()
+            let loadedCategories = try await networkService.fetchCategories()
             await MainActor.run { self.allCategories.send(loadedCategories) }
         } catch {
             throw ContentServiceErrors.failedToFetchCategories
@@ -188,7 +192,7 @@ final class ContentService: ContentServiceProtocol {
     }
 
     func fetchSearchResults(term: String) async throws -> [CellModel] {
-        try await NetworkHelper.fetchSearchResults(term: term)
+        try await networkService.fetchSearchResults(term: term)
     }
 }
 

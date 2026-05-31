@@ -30,7 +30,7 @@ final class CellDetailsViewModel: ObservableObject {
         guard let id = cell.id else { return }
         
         favoritesService.likedIDs
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .map { $0.contains(id) }
             .sink { [weak self] isLiked in
                 self?.isFavorite = isLiked

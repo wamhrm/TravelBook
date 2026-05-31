@@ -69,17 +69,17 @@ final class SearchViewModel: ObservableObject {
 
     private func setupSubscriptions() {
         contentService.searchCells
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .assign(to: \.cells, on: self)
             .store(in: &cancellables)
 
         contentService.allCategories
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .assign(to: \.categories, on: self)
             .store(in: &cancellables)
 
         contentService.canLoadMoreSearch
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .assign(to: \.canLoadMore, on: self)
             .store(in: &cancellables)
     }

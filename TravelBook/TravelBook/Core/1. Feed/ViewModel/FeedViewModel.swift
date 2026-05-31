@@ -65,7 +65,7 @@ final class FeedViewModel: ObservableObject {
 
     private func setupSubscriptions() {
         contentService.feedCells
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] newCells in
                 guard let self else { return }
 
@@ -75,12 +75,12 @@ final class FeedViewModel: ObservableObject {
             .store(in: &cancellables)
 
         contentService.popularCells
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .assign(to: \.popularCells, on: self)
             .store(in: &cancellables)
 
         contentService.canLoadMoreFeed
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .assign(to: \.canLoadMore, on: self)
             .store(in: &cancellables)
     }
