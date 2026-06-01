@@ -10,7 +10,6 @@ import SwiftUI
 struct SignInCreateAccountView: View {
     @ObservedObject var vm: ProfileViewModel
     let type: SignInCreateAccountTypes
-    let onTapHandler: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 25) {
@@ -23,7 +22,7 @@ struct SignInCreateAccountView: View {
 
                 Button {
                     withAnimation(.easeInOut(duration: 0.25)) {
-                        vm.dismissSignInCreateView()
+                        vm.dismissSignInCreateViews()
                     }
                 } label: {
                     Image(systemName: "xmark")
@@ -38,8 +37,8 @@ struct SignInCreateAccountView: View {
 
             if type == .signIn {
                 VStack(spacing: 13) {
-                    SignInCreateAccountTextFieldView(type: .email, field: $vm.email)
-                    SignInCreateAccountTextFieldView(type: .password, field: $vm.password)
+                    textFieldView(type: .email, field: $vm.email)
+                    textFieldView(type: .password, field: $vm.password)
                     SignInCreateAccountButtonView(type: .signIn,
                                                   isSignedOut: false,
                                                   isLoading: vm.isLoading) {
@@ -49,9 +48,9 @@ struct SignInCreateAccountView: View {
                 }
             } else {
                 VStack(spacing: 13) {
-                    SignInCreateAccountTextFieldView(type: .name, field: $vm.name)
-                    SignInCreateAccountTextFieldView(type: .email, field: $vm.email)
-                    SignInCreateAccountTextFieldView(type: .password, field: $vm.password)
+                    textFieldView(type: .name, field: $vm.name)
+                    textFieldView(type: .email, field: $vm.email)
+                    textFieldView(type: .password, field: $vm.password)
                     SignInCreateAccountButtonView(type: .createAccount,
                                                   isSignedOut: false,
                                                   isLoading: vm.isLoading) {
@@ -83,15 +82,15 @@ struct SignInCreateAccountView: View {
             }
 
             if type == .signIn {
-                SignInAlreadyHaveAccountView(type: .signIn) {
+                alreadyHaveAccountView(type: .signIn) {
                     withAnimation {
-                        onTapHandler()
+                        vm.toggleSignInCreateView()
                     }
                 }
             } else {
-                SignInAlreadyHaveAccountView(type: .alreadyHaveAccount) {
+                alreadyHaveAccountView(type: .alreadyHaveAccount) {
                     withAnimation {
-                        onTapHandler()
+                        vm.toggleSignInCreateView()
                     }
                 }
             }
@@ -104,7 +103,56 @@ struct SignInCreateAccountView: View {
         .dismissKeyboardOnTap()
         .onDisappear {
             vm.clearTextFields()
-            vm.dismissSignInCreateView()
+            vm.dismissSignInCreateViews()
+        }
+    }
+}
+
+extension SignInCreateAccountView {
+    private func textFieldView(type: TextFieldTypes,
+                               field: Binding<String>) -> some View {
+        VStack(alignment: .leading, spacing: 5) {
+            Text(type.rawValue)
+                .font(Adaptive.size(.footnote, .system(size: 14), .callout))
+                .foregroundStyle(.blackAndWhite)
+                .fontWeight(.semibold)
+                
+            Group {
+                if type == .name || type == .email {
+                    TextField(type.textField, text: field)
+                        .textInputAutocapitalization(type == .email ? .never : .words)
+                        .keyboardType(type == .email ? .emailAddress : .default)
+                } else {
+                    SecureField(type.textField, text: field)
+                        .textInputAutocapitalization(.never)
+                }
+            }
+            .font(Adaptive.size(.footnote, .system(size: 14), .callout))
+            .frame(maxWidth: .infinity)
+            .frame(height: Adaptive.size(20, 20, 22))
+            .padding(15)
+            .background(.signInTextField)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .autocorrectionDisabled(type == .email || type == .password)
+        }
+    }
+    
+    private func alreadyHaveAccountView(type: AlreadyHaveAccountButtonTypes,
+                                        onTapHandler: @escaping () -> Void) -> some View {
+        Button(action: onTapHandler) {
+            HStack {
+                Spacer()
+
+                Text(type.rawValue)
+                    .foregroundStyle(.blackAndWhite)
+
+                Text(type.buttonTitle)
+                    .foregroundStyle(.blue)
+                    .bold()
+
+                Spacer()
+            }
+            .font(Adaptive.size(.footnote, .system(size: 14), .callout))
         }
     }
 }
@@ -114,14 +162,39 @@ enum SignInCreateAccountTypes: String {
     case createAccount = "Создать аккаунт"
 }
 
+fileprivate enum AlreadyHaveAccountButtonTypes: String {
+    case signIn = "Нет аккаунта?"
+    case alreadyHaveAccount = "Уже есть аккаунт?"
+    
+    var buttonTitle: String {
+        switch self {
+            case .signIn: "Создать аккаунт"
+            case .alreadyHaveAccount: "Войти"
+        }
+    }
+}
+
+fileprivate enum TextFieldTypes: String {
+    case name = "Имя"
+    case email = "Почта"
+    case password = "Пароль"
+    
+    var textField: String {
+        switch self {
+            case .name: "Введите ваше имя"
+            case .email: "Введите вашу почту"
+            case .password: "Введите ваш пароль"
+        }
+    }
+}
+
+
 #Preview {
     NavigationStack {
         ZStack {
             BackgroundView()
             SignInCreateAccountView(vm: ProfileViewModel(authService: AuthService()),
-                                    type: .createAccount) {
-
-            }
+                                    type: .createAccount)
         }
         .navigationTitle("Профиль")
         .navigationBarTitleDisplayMode(.inline)

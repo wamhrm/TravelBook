@@ -91,7 +91,7 @@ final class FavoritesService: FavoritesServiceProtocol {
     }
 }
 
-enum FavoritesServiceError: LocalizedError {
+private enum FavoritesServiceError: LocalizedError {
     case failedToFetchFavorites
     case failedToToggle
     

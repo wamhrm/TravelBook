@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-enum ScreenSizeClass {
+fileprivate enum ScreenSizeClass {
     case base
     case air
     case plus
@@ -25,7 +25,7 @@ struct Adaptive {
 }
 
 extension UIDevice {
-    static let screenSizeClass: ScreenSizeClass = {
+    fileprivate static let screenSizeClass: ScreenSizeClass = {
         guard let screen = UIApplication.shared.connectedScenes
             .compactMap({ $0 as? UIWindowScene })
             .first?.screen

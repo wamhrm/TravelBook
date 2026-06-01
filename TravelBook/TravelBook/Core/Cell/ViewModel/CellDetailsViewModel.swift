@@ -10,16 +10,19 @@ import Combine
 
 final class CellDetailsViewModel: ObservableObject {
     @Published var isFavorite = false
-    @Published var showAuthAlert = false
+    @Published var showAlert = false
     
     private let cell: CellModel
+    let authService: any AuthServiceProtocol
     private let favoritesService: any FavoritesServiceProtocol
     
     private var cancellables = Set<AnyCancellable>()
     
     init(cell: CellModel,
+         authService: any AuthServiceProtocol,
          favoritesService: any FavoritesServiceProtocol) {
         self.cell = cell
+        self.authService = authService
         self.favoritesService = favoritesService
         
         setupSubscription()

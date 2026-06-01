@@ -24,11 +24,11 @@ final class FeedViewModel: ObservableObject, AlertPresentable {
     @Published private(set) var popularCells: [CellModel] = []
     @Published private(set) var headCell: CellModel?
     
+    @Published var showAlert = false
+    @Published var alertMessage = ""
     @Published private(set) var isFetchingMore = false
     @Published private(set) var canLoadMore = false
     @Published private(set) var isServerWakingUp = false
-    @Published var showAlert = false
-    @Published var alertMessage = ""
 
     private let contentService: any ContentServiceProtocol
     private let favoritesService: any FavoritesServiceProtocol

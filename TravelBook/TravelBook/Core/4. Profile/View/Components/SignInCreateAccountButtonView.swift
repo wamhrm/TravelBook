@@ -13,17 +13,6 @@ struct SignInCreateAccountButtonView: View {
     let isLoading: Bool
     let onTapHandler: () -> Void
     
-    init(type: SignInCreateAccountButtonTypes,
-         isSignedOut: Bool,
-         isLoading: Bool,
-         onTapHandler: @escaping () -> Void) {
-        self.type = type
-        self.isSignedOut = isSignedOut
-        self.isLoading = isLoading
-        self.onTapHandler = onTapHandler
-    }
-    
-
     private var buttonTitle: String {
         isLoading ? type.loadingTitle : type.rawValue
     }

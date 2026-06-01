@@ -9,17 +9,9 @@ import SwiftUI
 
 struct ProfileCellView: View {
     let type: ProfileCellTypes
-    let isLoading: Bool?
+    var isLoading: Bool? = nil
     let onTapHandler: () -> Void
 
-    init(type: ProfileCellTypes,
-         isLoading: Bool? = nil,
-         onTapHandler: @escaping () -> Void) {
-        self.type = type
-        self.isLoading = isLoading
-        self.onTapHandler = onTapHandler
-    }
-    
     private var isLoadingHandler: Bool {
         isLoading ?? false
     }
@@ -61,7 +53,7 @@ enum ProfileCellTypes: String {
     case aboutApp = "О приложении"
     case signOut = "Выйти"
     
-    fileprivate var icon: String {
+    var icon: String {
         switch self {
             case .appearance: "paintpalette.fill"
             case .aboutApp: "info.circle.fill"
@@ -69,7 +61,7 @@ enum ProfileCellTypes: String {
         }
     }
 
-    fileprivate var backgroundColor: Color {
+    var backgroundColor: Color {
         switch self {
             case .appearance: .green
             case .aboutApp: .gray

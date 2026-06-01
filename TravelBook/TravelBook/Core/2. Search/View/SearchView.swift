@@ -10,16 +10,8 @@ import SwiftUI
 struct SearchView: View {
     @ObservedObject var vm: SearchViewModel
 
-    private let authService: any AuthServiceProtocol
-    private let favoritesService: any FavoritesServiceProtocol
-
-    init(vm: SearchViewModel,
-         authService: any AuthServiceProtocol,
-         favoritesService: any FavoritesServiceProtocol) {
-        self.vm = vm
-        self.authService = authService
-        self.favoritesService = favoritesService
-    }
+    let authService: any AuthServiceProtocol
+    let favoritesService: any FavoritesServiceProtocol
 
     var body: some View {
         NavigationStack(path: $vm.searchRoutes) {
@@ -118,9 +110,7 @@ extension SearchView {
     private func destinationView(_ destination: SearchRoutes) -> some View {
         switch destination {
             case .searchResults:
-                SearchResultsView(vm: vm) { cell in
-                    vm.searchRoutes.append(.searchResultsCellDetails(cell))
-                }
+                SearchResultsView(vm: vm)
             case .searchResultsCellDetails(let cell),
                  .searchFeedCellDetails(let cell),
                  .categoryCellDetails(let cell):
@@ -132,9 +122,7 @@ extension SearchView {
                     vm.searchRoutes.append(.categoryCells(category))
                 }
             case .categoryCells(let category):
-                CategoryCellsView(vm: vm, category: category) { cell in
-                    vm.searchRoutes.append(.categoryCellDetails(cell))
-                }
+                CategoryCellsView(vm: vm, category: category)
         }
     }
 }

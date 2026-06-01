@@ -9,7 +9,6 @@ import SwiftUI
 
 struct SearchResultsView: View {
     @ObservedObject var vm: SearchViewModel
-    let onTapHandler: (CellModel) -> Void
 
     var body: some View {
         ZStack {
@@ -24,7 +23,7 @@ struct SearchResultsView: View {
                     LazyVStack(alignment: .leading, spacing: Adaptive.size(10, 10, 12)) {
                         ForEach(vm.searchResults) { cell in
                             CompactCellView(cell: cell) {
-                                onTapHandler(cell)
+                                vm.searchRoutes.append(.searchResultsCellDetails(cell))
                             }
                         }
                     }
@@ -40,8 +39,6 @@ struct SearchResultsView: View {
 
 #Preview {
     NavigationStack {
-        SearchResultsView(vm: SearchViewModel(contentService: ContentService())) { _ in
-
-        }
+        SearchResultsView(vm: SearchViewModel(contentService: ContentService()))
     }
 }

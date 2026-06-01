@@ -191,7 +191,7 @@ private struct AuthSignInBody: Encodable {
     let password: String
 }
 
-enum NetworkError: LocalizedError {
+private enum NetworkError: LocalizedError {
     case invalidURL
     case invalidResponse
     case apiError(message: String)

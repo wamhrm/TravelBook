@@ -10,7 +10,6 @@ import SwiftUI
 struct CategoryCellsView: View {
     @ObservedObject var vm: SearchViewModel
     let category: CategoryModel
-    let onTapHandler: (CellModel) -> Void
 
     var body: some View {
         ZStack {
@@ -38,8 +37,6 @@ struct CategoryCellsView: View {
 
 #Preview {
     NavigationStack {
-        CategoryCellsView(vm: SearchViewModel(contentService: ContentService()), category: .mock) { _ in
-
-        }
+        CategoryCellsView(vm: SearchViewModel(contentService: ContentService()), category: .mock)
     }
 }

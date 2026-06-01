@@ -60,18 +60,8 @@ struct SignedOutView: View {
 extension SignedOutView {
     @ViewBuilder
     private func overlayView() -> some View {
-        if vm.showSignIn {
-            SignInCreateAccountView(vm: vm,
-                                    type: .signIn) {
-                vm.showSignIn = false
-                vm.showCreateAccount = true
-            }
-        } else if vm.showCreateAccount {
-            SignInCreateAccountView(vm: vm,
-                                    type: .createAccount) {
-                vm.showCreateAccount = false
-                vm.showSignIn = true
-            }
+        if vm.showSignIn || vm.showCreateAccount {
+            SignInCreateAccountView(vm: vm, type: vm.showSignIn ? .signIn : .createAccount)
         }
     }
 }
