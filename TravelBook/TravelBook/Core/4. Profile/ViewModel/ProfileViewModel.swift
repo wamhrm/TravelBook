@@ -32,7 +32,6 @@ final class ProfileViewModel: ObservableObject, AlertPresentable {
     @Published var alertMessage = ""
     @Published private(set) var isLoading = false
     
-    @Published var showSignInCreateAccount = false
     @Published var showCreateAccount = false
     @Published var showSignIn = false
     @Published var showSignOut = false
@@ -127,9 +126,14 @@ final class ProfileViewModel: ObservableObject, AlertPresentable {
         password = ""
     }
     
-    func dismissSignInCreateView() {
+    func dismissSignInCreateViews() {
         showSignIn = false
         showCreateAccount = false
+    }
+
+    func toggleSignInCreateView() {
+        showSignIn.toggle()
+        showCreateAccount.toggle()
     }
 
     private func validateSignIn(email: String, password: String) -> String? {

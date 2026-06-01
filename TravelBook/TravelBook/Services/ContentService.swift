@@ -178,7 +178,7 @@ private final class PaginatedCells {
     }
 }
 
-enum ContentServiceErrors: LocalizedError {
+private enum ContentServiceErrors: LocalizedError {
     case failedToFetchFeedAndPopularCells
     case failedToFetchCells
     case failedToFetchCategories

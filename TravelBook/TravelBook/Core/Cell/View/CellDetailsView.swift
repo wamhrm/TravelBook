@@ -12,14 +12,14 @@ import Kingfisher
 struct CellDetailsView: View {
     @StateObject private var vm: CellDetailsViewModel
     let cell: CellModel
-    let authService: any AuthServiceProtocol
 
     init(cell: CellModel,
          authService: any AuthServiceProtocol,
          favoritesService: any FavoritesServiceProtocol) {
         self.cell = cell
-        self.authService = authService
-        _vm = StateObject(wrappedValue: CellDetailsViewModel(cell: cell, favoritesService: favoritesService))
+        _vm = StateObject(wrappedValue: CellDetailsViewModel(cell: cell,
+                                                             authService: authService,
+                                                             favoritesService: favoritesService))
     }
 
     var body: some View {
@@ -39,15 +39,15 @@ struct CellDetailsView: View {
                             .cellDetailsModifier()
                     }
 
-                    BigCellView(cell: cell, isCellDetails: true, isFavorite: $vm.isFavorite) {
-                        if case .signedIn = authService.authState.value {
-                            vm.toggleFavorite()
-                        } else {
+                    BigCellView(cell: cell, isCellDetails: true, isFavorite: vm.isFavorite) {
+                        if case .signedIn = vm.authService.authState.value {
                             withAnimation {
                                 vm.isFavorite.toggle()
                             }
 
-                            vm.showAuthAlert.toggle()
+                            vm.toggleFavorite()
+                        } else {
+                            vm.showAlert.toggle()
                         }
                     }
                     .padding(.horizontal, 20)
@@ -69,7 +69,7 @@ struct CellDetailsView: View {
                 .padding(.top, Adaptive.size(-116, -129, -153))
                 .bottomAreaPadding(50)
                 .alert("Пожалуйста, авторизуйтесь или зарегистрируйтесь",
-                       isPresented: $vm.showAuthAlert) {
+                       isPresented: $vm.showAlert) {
                     Button("OK", role: .cancel) {}
                 }
             }

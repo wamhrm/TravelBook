@@ -76,14 +76,10 @@ fileprivate enum Tabs {
 
     var icon: String {
         switch self {
-            case .feed:
-                return "airplane.up.right"
-            case .search:
-                return "magnifyingglass"
-            case .favorites:
-                return "heart"
-            case .profile:
-                return "person"
+            case .feed: "airplane.up.right"
+            case .search: "magnifyingglass"
+            case .favorites: "heart"
+            case .profile: "person"
         }
     }
 }

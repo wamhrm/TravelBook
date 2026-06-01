@@ -10,18 +10,8 @@ import SwiftUI
 struct BigCellView: View {
     let cell: CellModel
     let isCellDetails: Bool
-    @Binding private var isFavorite: Bool
-    private var onFavoriteTapHandler: (() -> Void)?
-
-    init(cell: CellModel,
-         isCellDetails: Bool,
-         isFavorite: Binding<Bool> = .constant(false),
-         onFavoriteTapHandler: (() -> Void)? = nil) {
-        self.cell = cell
-        self.isCellDetails = isCellDetails
-        self._isFavorite = isFavorite
-        self.onFavoriteTapHandler = onFavoriteTapHandler
-    }
+    var isFavorite = false
+    var onFavoriteTapHandler: (() -> Void)? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: isCellDetails ? Adaptive.size(8, 8, 10) : Adaptive.size(6, 6, 8)) {
@@ -58,10 +48,6 @@ struct BigCellView: View {
                             .frame(width: 1, height: Adaptive.size(13, 13, 15))
 
                         Button {
-                            withAnimation {
-                                isFavorite.toggle()
-                            }
-
                             onFavoriteTapHandler?()
                         } label: {
                             Image(systemName: isFavorite ? "heart.fill" : "heart")

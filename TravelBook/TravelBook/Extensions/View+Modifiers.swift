@@ -23,7 +23,7 @@ extension View {
     func feedHeadCellModifier() -> some View {
         self
             .scaledToFill()
-            .frame(width: Adaptive.size(370, 382, 407),
+            .frame(width: Adaptive.size(372, 391, 410),
                    height: Adaptive.size(215, 227, 252))
             .clipped()
             .opacity(0.35)

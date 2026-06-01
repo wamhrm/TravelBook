@@ -10,16 +10,8 @@ import SwiftUI
 struct FeedView: View {
     @ObservedObject var vm: FeedViewModel
 
-    private let authService: any AuthServiceProtocol
-    private let favoritesService: any FavoritesServiceProtocol
-
-    init(vm: FeedViewModel,
-         authService: any AuthServiceProtocol,
-         favoritesService: any FavoritesServiceProtocol) {
-        self.vm = vm
-        self.authService = authService
-        self.favoritesService = favoritesService
-    }
+    let authService: any AuthServiceProtocol
+    let favoritesService: any FavoritesServiceProtocol
 
     var body: some View {
         NavigationStack(path: $vm.feedRoutes) {

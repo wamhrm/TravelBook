@@ -29,10 +29,10 @@ final class SearchViewModel: ObservableObject, AlertPresentable {
     @Published var searchText = ""
     @Published private(set) var searchResults: [CellModel] = []
     
-    @Published private(set) var isFetchingMore = false
-    @Published private(set) var canLoadMore = false
     @Published var showAlert = false
     @Published var alertMessage = ""
+    @Published private(set) var isFetchingMore = false
+    @Published private(set) var canLoadMore = false
 
     private let contentService: any ContentServiceProtocol
 

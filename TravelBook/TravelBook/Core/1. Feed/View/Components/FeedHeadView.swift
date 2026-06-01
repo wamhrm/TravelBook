@@ -56,7 +56,7 @@ struct FeedHeadView: View {
                 }
                 .padding(20)
             }
-            .frame(width: Adaptive.size(370, 391, 407),
+            .frame(width: Adaptive.size(372, 391, 410),
                    height: Adaptive.size(215, 227, 252))
             .clipShape(RoundedRectangle(cornerRadius: 15))
         }
