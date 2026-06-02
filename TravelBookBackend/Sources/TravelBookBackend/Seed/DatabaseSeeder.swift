@@ -1,3 +1,10 @@
+//
+//  DatabaseSeeder.swift
+//  TravelBookBackend
+//
+//  Created by ddorsat on 09.05.2026.
+//
+
 import Fluent
 import FluentSQL
 import Vapor

@@ -1,3 +1,10 @@
+//
+//  UserDTO.swift
+//  TravelBookBackend
+//
+//  Created by ddorsat on 14.05.2026.
+//
+
 import Vapor
 
 struct UserDTO: Content {

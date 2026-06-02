@@ -1,8 +1,8 @@
 //
-//  File.swift
-//  TravelBookServer
+//  Token.swift
+//  TravelBookBackend
 //
-//  Created by ddorsat on 06.01.2026.
+//  Created by ddorsat on 12.05.2026.
 //
 
 import Fluent
@@ -21,11 +21,9 @@ final class Token: Model, @unchecked Sendable {
     var user: User
     
     init() {}
-    
-    init(id: UUID? = nil,
-         value: String,
+
+    init(value: String,
          userID: User.IDValue) {
-        self.id = id
         self.value = value
         self.$user.id = userID
     }

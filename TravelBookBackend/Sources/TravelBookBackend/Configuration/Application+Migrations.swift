@@ -1,3 +1,10 @@
+//
+//  Application+Migrations.swift
+//  TravelBookBackend
+//
+//  Created by ddorsat on 04.05.2026.
+//
+
 import Fluent
 import Vapor
 

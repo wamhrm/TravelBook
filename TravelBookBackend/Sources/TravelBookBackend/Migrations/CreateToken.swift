@@ -1,8 +1,8 @@
 //
-//  File.swift
-//  TravelBookServer
+//  CreateToken.swift
+//  TravelBookBackend
 //
-//  Created by ddorsat on 06.01.2026.
+//  Created by ddorsat on 13.05.2026.
 //
 
 import Fluent
