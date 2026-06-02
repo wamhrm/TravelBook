@@ -1,3 +1,10 @@
+//
+//  Application+Database.swift
+//  TravelBookBackend
+//
+//  Created by ddorsat on 04.05.2026.
+//
+
 import Fluent
 import FluentPostgresDriver
 import Foundation

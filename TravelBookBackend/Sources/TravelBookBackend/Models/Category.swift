@@ -1,8 +1,8 @@
 //
-//  File.swift
-//  TravelBookServer
+//  Category.swift
+//  TravelBookBackend
 //
-//  Created by ddorsat on 06.01.2026.
+//  Created by ddorsat on 05.05.2026.
 //
 
 import Fluent
@@ -28,11 +28,9 @@ final class Category: Model, @unchecked Sendable {
 
     init() {}
 
-    init(id: UUID? = nil,
-         title: String,
+    init(title: String,
          type: String,
          image: String) {
-        self.id = id
         self.title = title
         self.type = type
         self.image = image
@@ -41,10 +39,10 @@ final class Category: Model, @unchecked Sendable {
 
 extension Category {
     func toDTO() -> CategoryDTO {
-        CategoryDTO(id: self.id,
-                    title: self.title,
-                    type: self.type,
-                    image: self.image,
-                    cells: self.cells.map { $0.toDTO() })
+        CategoryDTO(id: id,
+                    title: title,
+                    type: type,
+                    image: image,
+                    cells: cells.map { $0.toDTO() })
     }
 }

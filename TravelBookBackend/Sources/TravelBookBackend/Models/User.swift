@@ -1,8 +1,8 @@
 //
-//  File.swift
-//  TravelBookServer
+//  User.swift
+//  TravelBookBackend
 //
-//  Created by ddorsat on 06.01.2026.
+//  Created by ddorsat on 12.05.2026.
 //
 
 import Fluent
@@ -28,12 +28,10 @@ final class User: Model, @unchecked Sendable, Authenticatable {
 
     init() {}
 
-    init(id: UUID? = nil,
-         email: String,
+    init(email: String,
          name: String,
          dateRegistered: Date = .now,
          passwordHash: String) {
-        self.id = id
         self.name = name
         self.email = email
         self.passwordHash = passwordHash
@@ -43,9 +41,9 @@ final class User: Model, @unchecked Sendable, Authenticatable {
 
 extension User {
     func toDTO() -> UserDTO {
-        UserDTO(id: self.id,
-                name: self.name,
-                email: self.email,
-                dateRegistered: self.dateRegistered)
+        UserDTO(id: id,
+                name: name,
+                email: email,
+                dateRegistered: dateRegistered)
     }
 }
