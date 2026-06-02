@@ -1,3 +1,10 @@
+//
+//  FavoritesController.swift
+//  TravelBookBackend
+//
+//  Created by ddorsat on 19.05.2026.
+//
+
 import Fluent
 import Vapor
 
@@ -8,7 +15,7 @@ struct FavoritesController: RouteCollection {
 
         favorites.post(":cellID", use: addFavorite)
         favorites.delete(":cellID", use: removeFavorite)
-        favorites.get(use: getFavorites)
+        favorites.get(use: fetchFavorites)
     }
 
     private func addFavorite(_ req: Request) async throws -> HTTPStatus {
@@ -16,7 +23,7 @@ struct FavoritesController: RouteCollection {
         let userID = try user.requireID()
 
         guard let cellID = req.parameters.get("cellID", as: UUID.self) else { throw Abort(.badRequest) }
-        guard let _ = try await Cell.find(cellID, on: req.db) else { throw Abort(.notFound, reason: "Cell not found") }
+        guard try await Cell.find(cellID, on: req.db) != nil else { throw Abort(.notFound, reason: "Cell not found") }
 
         let existing = try await UserFavorite.query(on: req.db)
             .filter(\.$user.$id == userID)
@@ -46,7 +53,7 @@ struct FavoritesController: RouteCollection {
         return .ok
     }
 
-    private func getFavorites(_ req: Request) async throws -> [CellDTO] {
+    private func fetchFavorites(_ req: Request) async throws -> [CellDTO] {
         let user = try req.auth.require(User.self)
         let userID = try user.requireID()
 
@@ -56,9 +63,7 @@ struct FavoritesController: RouteCollection {
             .sort(\.$createdAt, .ascending)
             .all()
 
-        return favorites.map { fav in
-            fav.cell.toDTO()
-        }
+        return favorites.map { $0.cell.toDTO() }
     }
 }
 

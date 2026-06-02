@@ -1,8 +1,8 @@
 //
-//  File.swift
-//  TravelBookServer
+//  UserFavorite.swift
+//  TravelBookBackend
 //
-//  Created by ddorsat on 09.01.2026.
+//  Created by ddorsat on 18.05.2026.
 //
 
 import Fluent
@@ -24,11 +24,9 @@ final class UserFavorite: Model, @unchecked Sendable {
     var createdAt: Date?
     
     init() {}
-    
-    init(id: UUID? = nil,
-         userID: User.IDValue,
+
+    init(userID: User.IDValue,
          cellID: Cell.IDValue) {
-        self.id = id
         self.$user.id = userID
         self.$cell.id = cellID
     }

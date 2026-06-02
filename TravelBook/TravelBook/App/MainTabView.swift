@@ -38,7 +38,7 @@ struct MainTabView: View {
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            Tab(value: .feed, role: .none) {
+            Tab(value: .feed) {
                 FeedView(vm: feedViewModel,
                          authService: authService,
                          favoritesService: favoritesService)
@@ -46,7 +46,7 @@ struct MainTabView: View {
                 Image(systemName: Tabs.feed.icon)
             }
 
-            Tab(value: .search, role: .none) {
+            Tab(value: .search) {
                 SearchView(vm: searchViewModel,
                            authService: authService,
                            favoritesService: favoritesService)
@@ -54,13 +54,13 @@ struct MainTabView: View {
                 Image(systemName: Tabs.search.icon)
             }
 
-            Tab(value: .favorites, role: .none) {
+            Tab(value: .favorites) {
                 FavoritesView(vm: favoritesViewModel)
             } label: {
                 Image(systemName: Tabs.favorites.icon)
             }
 
-            Tab(value: .profile, role: .none) {
+            Tab(value: .profile) {
                 ProfileView(vm: profileViewModel)
             } label: {
                 Image(systemName: Tabs.profile.icon)

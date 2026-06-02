@@ -1,8 +1,8 @@
 //
-//  File.swift
-//  TravelBookServer
+//  Cell.swift
+//  TravelBookBackend
 //
-//  Created by ddorsat on 05.01.2026.
+//  Created by ddorsat on 05.05.2026.
 //
 
 import Fluent
@@ -46,8 +46,7 @@ final class Cell: Model, @unchecked Sendable {
 
     init() {}
 
-    init(id: UUID? = nil,
-         title: String,
+    init(title: String,
          subtitle: String,
          description: String,
          categoryID: Category.IDValue,
@@ -57,7 +56,6 @@ final class Cell: Model, @unchecked Sendable {
          images: [String],
          isPopular: Bool = false,
          isHeadCell: Bool = false) {
-        self.id = id
         self.title = title
         self.subtitle = subtitle
         self.description = description
@@ -73,16 +71,16 @@ final class Cell: Model, @unchecked Sendable {
 
 extension Cell {
     func toDTO() -> CellDTO {
-        CellDTO(id: self.id,
-                image: self.image,
-                type: self.category.type,
-                title: self.title,
-                subtitle: self.subtitle,
-                date: self.date,
-                readingTime: self.readingTime,
-                description: self.description,
-                images: self.images,
-                isPopular: self.isPopular,
-                isHeadCell: self.isHeadCell)
+        CellDTO(id: id,
+                image: image,
+                type: category.type,
+                title: title,
+                subtitle: subtitle,
+                date: date,
+                readingTime: readingTime,
+                description: description,
+                images: images,
+                isPopular: isPopular,
+                isHeadCell: isHeadCell)
     }
 }

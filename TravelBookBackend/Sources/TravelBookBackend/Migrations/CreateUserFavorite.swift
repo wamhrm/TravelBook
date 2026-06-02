@@ -1,8 +1,8 @@
 //
-//  File.swift
-//  TravelBookServer
+//  CreateUserFavorite.swift
+//  TravelBookBackend
 //
-//  Created by ddorsat on 09.01.2026.
+//  Created by ddorsat on 18.05.2026.
 //
 
 import Fluent

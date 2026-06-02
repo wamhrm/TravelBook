@@ -1,3 +1,10 @@
+//
+//  AuthController.swift
+//  TravelBookBackend
+//
+//  Created by ddorsat on 15.05.2026.
+//
+
 import Fluent
 import Vapor
 
@@ -69,15 +76,4 @@ struct AuthController: RouteCollection {
         let domain = parts[1]
         return !local.isEmpty && !domain.isEmpty
     }
-}
-
-struct CreateAccountRequest: Content {
-    let email: String
-    let name: String
-    let password: String
-}
-
-struct SignInRequest: Content {
-    let email: String
-    let password: String
 }
