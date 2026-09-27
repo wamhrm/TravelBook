@@ -8,6 +8,9 @@ func configure(_ app: Application) async throws {
     try app.configureDatabase()
     app.configureMigrations()
     try await app.autoMigrate()
+    
+    let seeder = DatabaseSeeder()
+    try await seeder.seed(on: app.db)
 
     try routes(app)
 }
